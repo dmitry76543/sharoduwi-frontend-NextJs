@@ -5,6 +5,9 @@
    ШАРОДУВЫ — дизайн-система
    ============================================================ */
 :root{
+  --font-onest:'Onest',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --font-unbounded:'Unbounded',sans-serif;
+
   /* Шариковая палитра */
   --pink:#FF2D95;        /* фирменный */
   --pink-deep:#D81271;

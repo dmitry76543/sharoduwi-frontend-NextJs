@@ -10,6 +10,8 @@
     "probe:advantshop": "node scripts/probe-advantshop.mjs"
   },
   "dependencies": {
+    "@fontsource/onest": "^5.2.11",
+    "@fontsource/unbounded": "^5.2.8",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",

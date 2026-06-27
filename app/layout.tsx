@@ -1,20 +1,6 @@
 import type { Metadata } from "next";
-import { Unbounded, Onest } from "next/font/google";
+import "./fonts.css";
 import "./globals.css";
-
-const unbounded = Unbounded({
-  subsets: ["latin", "cyrillic"],
-  weight: ["400", "500", "600", "700", "800", "900"],
-  variable: "--font-unbounded",
-  display: "swap",
-});
-
-const onest = Onest({
-  subsets: ["latin", "cyrillic"],
-  weight: ["400", "500", "600", "700", "800"],
-  variable: "--font-onest",
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   title: "ШАРОДУВЫ — гелиевые шары и композиции в Жуковском",
@@ -28,7 +14,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ru" className={`${unbounded.variable} ${onest.variable}`}>
+    <html lang="ru">
       <body>{children}</body>
     </html>
   );
