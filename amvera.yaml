@@ -1,0 +1,16 @@
+# Amvera — https://docs.amvera.ru/applications/environments/nodejs-server.html
+# Рекомендуемый тариф: Стандартный (2.5 ГБ RAM), регион: Москва
+# Переменные окружения задайте в панели Amvera (см. .env.example)
+
+meta:
+  environment: node
+  toolchain:
+    name: npm
+    version: "20"
+
+build:
+  additionalCommands: npm ci --include=dev && npm run build
+
+run:
+  command: node scripts/start-server.mjs
+  containerPort: 80
