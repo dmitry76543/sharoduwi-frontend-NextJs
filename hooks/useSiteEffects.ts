@@ -139,3 +139,27 @@ export function useEscapeKey(onEscape: () => void) {
     return () => document.removeEventListener("keydown", handler);
   }, [onEscape]);
 }
+
+/** Прокрутка к якорю после перехода на главную (например /#how) */
+export function useHashScroll() {
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (pathname !== "/") return;
+
+    const scrollToHash = () => {
+      const hash = window.location.hash;
+      if (!hash) return;
+      document.getElementById(hash.slice(1))?.scrollIntoView({ behavior: "smooth", block: "start" });
+    };
+
+    scrollToHash();
+    const timer = window.setTimeout(scrollToHash, 120);
+    const retry = window.setTimeout(scrollToHash, 400);
+
+    return () => {
+      window.clearTimeout(timer);
+      window.clearTimeout(retry);
+    };
+  }, [pathname]);
+}

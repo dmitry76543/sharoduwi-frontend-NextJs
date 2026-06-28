@@ -1,14 +1,24 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useApp } from "@/context/AppContext";
 import { HERO_MINI } from "@/lib/data";
 import { COLORS } from "@/lib/data";
-import { balloonSVG } from "@/lib/balloons";
+import { balloonSVG, fmt } from "@/lib/balloons";
+import {
+  findHeroFeaturedProduct,
+  HERO_FEATURED_NAME,
+  HERO_FEATURED_SUBTITLE,
+} from "@/lib/hero-featured";
 
 export function Hero() {
-  const { addToCart, openContact } = useApp();
+  const { addToCart, openContact, products } = useApp();
   const miniRef = useRef<HTMLDivElement>(null);
+  const featured = useMemo(() => findHeroFeaturedProduct(products), [products]);
+  const title = featured?.name ?? HERO_FEATURED_NAME;
+  const subtitle = featured?.collection ?? HERO_FEATURED_SUBTITLE;
+  const price = featured?.price;
+  const oldPrice = featured?.old;
 
   useEffect(() => {
     const el = miniRef.current;
@@ -74,21 +84,47 @@ export function Hero() {
           <div className="hero-visual">
             <div className="hero-stage">
               <div className="mini-balloons" id="heroMini" ref={miniRef} />
-              <div className="hero-badge">
+              <div className={`hero-badge${featured?.img ? " hero-badge--photo" : ""}`}>
                 <span className="ribbon-knot" />
-                <h3>Облако из 15 шаров</h3>
-                <p>хит для дня рождения</p>
-                <div className="price">
-                  1 890 ₽ <s>2 300 ₽</s>
+                {featured?.img && (
+                  <>
+                    <img
+                      className="hero-badge-bg"
+                      src={featured.img}
+                      alt=""
+                      aria-hidden="true"
+                      loading="eager"
+                      decoding="async"
+                    />
+                    <div className="hero-badge-overlay" aria-hidden="true" />
+                  </>
+                )}
+                <div className="hero-badge-content">
+                  <h3>{title}</h3>
+                  <p>{subtitle}</p>
+                  <div className="price">
+                    {price != null && price > 0 ? (
+                      <>
+                        {fmt(price)} ₽{" "}
+                        {oldPrice != null && oldPrice > price && <s>{fmt(oldPrice)} ₽</s>}
+                      </>
+                    ) : (
+                      "уточняйте цену"
+                    )}
+                  </div>
+                  <button
+                    className="btn btn-primary"
+                    type="button"
+                    style={{ width: "100%", justifyContent: "center", marginTop: 18, padding: 13 }}
+                    disabled={!featured}
+                    onClick={(e) => {
+                      if (!featured) return;
+                      addToCart(featured.id, e.clientX, e.clientY);
+                    }}
+                  >
+                    В корзину
+                  </button>
                 </div>
-                <button
-                  className="btn btn-primary"
-                  type="button"
-                  style={{ width: "100%", justifyContent: "center", marginTop: 18, padding: 13 }}
-                  onClick={(e) => addToCart(3, e.clientX, e.clientY)}
-                >
-                  В корзину
-                </button>
               </div>
             </div>
           </div>

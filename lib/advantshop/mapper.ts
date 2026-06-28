@@ -12,18 +12,21 @@ import type {
 } from "./types";
 
 function pickImage(
-  product: Pick<AdvantShopCatalogProduct, "photoMiddle" | "photoSmall" | "photos">
+  product: Pick<
+    AdvantShopCatalogProduct,
+    "photoBig" | "photoMiddle" | "photoSmall" | "photos"
+  >
 ): string | undefined {
-  if (product.photoMiddle) return product.photoMiddle;
-  if (product.photoSmall) return product.photoSmall;
-
   const photos = product.photos ?? [];
   const main = photos.find((photo) => photo.main) ?? photos[0];
 
   return (
-    main?.middleSrc ??
     main?.bigSrc ??
+    product.photoBig ??
+    main?.middleSrc ??
+    product.photoMiddle ??
     main?.smallSrc ??
+    product.photoSmall ??
     undefined
   );
 }

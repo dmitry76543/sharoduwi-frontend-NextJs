@@ -91,7 +91,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
       }}
     >
       <Link href={href} className="card-vis-link" aria-label={product.name}>
-        <div className="card-vis" style={bgTint}>
+        <div className={`card-vis${product.img ? "" : " card-vis--fallback"}`} style={bgTint}>
           {tag}
           {product.img ? (
             <img

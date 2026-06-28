@@ -1,3 +1,5 @@
+import { HowToOrderLink } from "@/components/HowToOrderLink";
+
 const LOGO = ["Ш", "А", "Р", "О", "Д", "У", "В", "Ы"];
 
 export function Footer() {
@@ -27,7 +29,7 @@ export function Footer() {
                 <a href="/catalog">Каталог</a>
               </li>
               <li>
-                <a href="#how">Как заказать</a>
+                <HowToOrderLink>Как заказать</HowToOrderLink>
               </li>
               <li>
                 <a href="#why">О нас</a>

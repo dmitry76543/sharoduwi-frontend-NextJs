@@ -19,6 +19,7 @@ export type AdvantShopCatalogProduct = {
   sales?: boolean;
   photoMiddle?: string | null;
   photoSmall?: string | null;
+  photoBig?: string | null;
   photos?: AdvantShopPhoto[] | null;
   offers?: AdvantShopOffer[] | null;
 };
@@ -66,6 +67,7 @@ export type AdvantShopProductDetails = {
   sales?: boolean;
   photoMiddle?: string | null;
   photoSmall?: string | null;
+  photoBig?: string | null;
   photos?: AdvantShopPhoto[] | null;
   offers?: AdvantShopOffer[];
 };

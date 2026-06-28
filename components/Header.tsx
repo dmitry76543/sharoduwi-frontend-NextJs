@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useApp } from "@/context/AppContext";
+import { HowToOrderLink } from "@/components/HowToOrderLink";
 
 const LOGO = ["Ш", "А", "Р", "О", "Д", "У", "В", "Ы"];
 
@@ -125,7 +126,7 @@ export function Header() {
             Акции
           </a>
           <a href="#reviews">Отзывы</a>
-          <a href="#how">Как заказать</a>
+          <HowToOrderLink>Как заказать</HowToOrderLink>
           <a href="#contacts">Контакты</a>
         </nav>
         <div className="head-actions">

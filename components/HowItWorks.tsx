@@ -48,7 +48,7 @@ export function HowItWorks() {
       <div className="wrap">
         <div className="sec-head reveal">
           <div className="sec-tag">
-            <span className="dot" /> Просто
+            <span className="dot" /> Заказать просто
           </div>
           <h2>Как это работает</h2>
         </div>

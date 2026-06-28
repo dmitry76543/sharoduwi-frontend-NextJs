@@ -1,6 +1,7 @@
 "use client";
 
 import { useApp } from "@/context/AppContext";
+import { HowToOrderLink } from "@/components/HowToOrderLink";
 
 const LOGO = ["Ш", "А", "Р", "О", "Д", "У", "В", "Ы"];
 
@@ -34,9 +35,7 @@ export function MobMenu() {
         <a href="#reviews" onClick={closeMob}>
           Отзывы
         </a>
-        <a href="#how" onClick={closeMob}>
-          Как заказать
-        </a>
+        <HowToOrderLink onNavigate={closeMob}>Как заказать</HowToOrderLink>
         <a href="#contacts" onClick={closeMob}>
           Контакты
         </a>

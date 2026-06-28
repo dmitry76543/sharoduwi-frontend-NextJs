@@ -9,6 +9,7 @@ import {
   useRisingLetters,
   useScrollProgressFallback,
   useScrollReveal,
+  useHashScroll,
 } from "@/hooks/useSiteEffects";
 import {
   useConfettiCursor,
@@ -43,6 +44,7 @@ function SiteEffects() {
   }, [closeAll, closeMob]);
 
   useScrollReveal();
+  useHashScroll();
   useHeaderScroll();
   useCountUp();
   useRisingLetters();

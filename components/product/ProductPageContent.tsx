@@ -1,11 +1,16 @@
 "use client";
 
 import Link from "next/link";
+import { HowToOrderLink } from "@/components/HowToOrderLink";
 import type { Product, ProductDetails } from "@/lib/data";
 import { fmt } from "@/lib/balloons";
 import { ProductActions } from "@/components/product/ProductActions";
 import { ProductCard } from "@/components/product/ProductCard";
 import { ProductGallery } from "@/components/product/ProductGallery";
+import {
+  prepareProductDescription,
+  prepareProductLead,
+} from "@/lib/product-description";
 
 interface ProductPageContentProps {
   product: ProductDetails;
@@ -22,6 +27,13 @@ export function ProductPageContent({
     ) : product.tag === "new" ? (
       <span className="tag new product-badge">Новинка</span>
     ) : null;
+  const descriptionHtml = prepareProductDescription(
+    product.description,
+    product.artNo
+  );
+  const leadHtml = prepareProductLead(product.briefDescription);
+  const leadFallback =
+    "Гелиевые шары и композиции — надуваем при вас и привозим точно к торжеству.";
 
   return (
     <section className="sec product-page">
@@ -61,10 +73,14 @@ export function ProductPageContent({
                 </div>
               )}
             </div>
-            <p className="product-lead">
-              {product.briefDescription ??
-                "Гелиевые шары и композиции — надуваем при вас и привозим точно к торжеству."}
-            </p>
+            {leadHtml ? (
+              <div
+                className="product-lead product-rich-text"
+                dangerouslySetInnerHTML={{ __html: leadHtml }}
+              />
+            ) : (
+              <p className="product-lead">{leadFallback}</p>
+            )}
             <ProductActions productId={product.id} />
           </div>
         </div>
@@ -72,7 +88,17 @@ export function ProductPageContent({
         <div className="product-details-grid reveal">
           <div className="product-desc">
             <h2>Описание</h2>
-            <p>{product.description}</p>
+            {descriptionHtml ? (
+              <div
+                className="product-desc-body product-rich-text"
+                dangerouslySetInnerHTML={{ __html: descriptionHtml }}
+              />
+            ) : (
+              <p className="product-desc-empty">
+                Подробное описание скоро появится. Напишите нам — расскажем состав набора и
+                поможем с заказом.
+              </p>
+            )}
             {product.artNo && (
               <p className="product-artno">
                 Артикул: <span>{product.artNo}</span>
@@ -107,7 +133,7 @@ export function ProductPageContent({
               <h3>Полезно перед заказом</h3>
               <ul>
                 <li>
-                  <Link href="/#how">Как оформить заказ</Link>
+                  <HowToOrderLink>Как оформить заказ</HowToOrderLink>
                 </li>
                 <li>
                   <Link href="/#guarantee">Гарантия на полёт шаров</Link>
