@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useState } from "react";
 import { COLLECTIONS, COL_VISIBLE, COLORS } from "@/lib/data";
-import { cluster, hexa } from "@/lib/balloons";
+import { getCollectionImageSrc } from "@/lib/collection-images";
+import { hexa } from "@/lib/balloons";
 
 export function Collections() {
   const [expanded, setExpanded] = useState(false);
@@ -36,6 +37,7 @@ export function Collections() {
             const grad =
               c.bg ||
               `linear-gradient(150deg,${hexa(COLORS[c.colors[0]], 0.3)},${hexa(COLORS[c.colors[c.colors.length - 1]], 0.16)})`;
+            const imgSrc = c.img ?? getCollectionImageSrc(c.slug);
             return (
               <Link
                 href={`/categories/${c.slug}`}
@@ -44,13 +46,8 @@ export function Collections() {
                 style={{ animationDelay: `${idx * 0.04}s` }}
               >
                 <div className="col-bg" style={{ background: grad }}>
-                  {c.img && <img className="col-img" src={c.img} alt={c.name} loading="lazy" />}
+                  <img className="col-img" src={imgSrc} alt={c.name} loading="lazy" decoding="async" />
                 </div>
-                {!c.img && (
-                  <div className="col-balloons" style={{ display: "grid", placeItems: "center", paddingBottom: 30 }}
-                    dangerouslySetInnerHTML={{ __html: cluster(c.colors, 72, `col-${idx}`) }}
-                  />
-                )}
                 <div className="col-overlay" />
                 <div className="col-info">
                   <h3>{c.name}</h3>
