@@ -976,13 +976,15 @@ a.col-card{color:inherit}
     scrollbar-width:none;-webkit-overflow-scrolling:touch}
   .topbar-row::-webkit-scrollbar{display:none}
   .hero{overflow-x:clip;padding:0 0 54px}
-  .hero-copy{min-width:0;width:100%}
+  .hero-grid{gap:10px}
+  .hero-copy{min-width:0;width:100%;margin-top:-6px}
+  .hero h1{margin-top:0}
   .hero-cta{flex-direction:column;align-items:stretch;width:100%;margin-top:24px;gap:10px}
   .hero-cta .btn{width:100%;max-width:100%;justify-content:center;padding:14px 18px;font-size:15px;
     white-space:normal;text-align:center;box-sizing:border-box}
   .hero-stats{gap:20px}
-  .hero-visual{height:auto;transform:none;overflow:visible;max-width:100%;padding:12px 0 0}
-  .hero-stage{height:379px;display:flex;align-items:flex-start;justify-content:center;padding-top:10px;
+  .hero-visual{height:auto;transform:none;overflow:visible;max-width:100%;padding:8px 0 0;margin-bottom:-10px}
+  .hero-stage{height:348px;display:flex;align-items:flex-start;justify-content:center;padding-top:10px;
     animation:floatBigMob 7s ease-in-out infinite}
   @keyframes floatBigMob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
   .hero-badge{position:relative;left:auto;top:auto;width:min(100%,248px);border-radius:28px;
@@ -1016,15 +1018,15 @@ a.col-card{color:inherit}
   .collections{gap:14px}
   .col-card{padding:18px}
   .col-card .col-info h3{font-size:18px}
-  .hero-grid{gap:14px}
-  .hero-copy{padding-top:4px}
-  .hero-stage{height:362px;padding-top:8px}
+  .hero-grid{gap:8px}
+  .hero-copy{padding-top:0;margin-top:-10px}
+  .hero-stage{height:332px;padding-top:8px}
   .hero-badge{width:min(100%,228px);border-radius:24px}
   .hero-badge--photo .hero-badge-content{padding:8px 10px 10px}
   .hero-badge-photo{height:222px}
   .hero-badge h3{font-size:13px}
   .hero-badge .price{font-size:20px}
-  .hero h1{margin-top:16px;font-size:clamp(28px,8vw,40px)}
+  .hero h1{margin-top:0;font-size:clamp(28px,8vw,40px)}
   .hero p.lead{max-width:none}
   .footer .f-about{max-width:none}
 }
@@ -1038,8 +1040,9 @@ a.col-card{color:inherit}
   .icon-btn svg{width:17px;height:17px}
   .head-search{width:34px;height:34px}
   .head-search .hs-btn{width:32px;height:32px}
-  .hero-visual{padding-top:10px}
-  .hero-stage{height:342px;padding-top:6px}
+  .hero-visual{padding-top:8px;margin-bottom:-12px}
+  .hero-copy{margin-top:-12px}
+  .hero-stage{height:312px;padding-top:6px}
   .hero-badge{width:min(100%,212px)}
   .hero-badge-content{padding:16px 14px 14px}
   .hero-badge--photo .hero-badge-content{padding:8px 10px 10px}
