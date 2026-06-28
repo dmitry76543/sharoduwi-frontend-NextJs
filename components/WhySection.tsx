@@ -21,8 +21,8 @@ export function WhySection() {
           <div className="sec-tag">
             <span className="dot" /> Почему мы
           </div>
-          <h2>
-            Почему{" "}
+          <h2 className="why-heading">
+            <span className="why-heading-line">Почему</span>{" "}
             <span className="brand-word">
               {LOGO.map((l) => (
                 <span key={l}>{l}</span>

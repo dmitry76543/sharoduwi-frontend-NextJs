@@ -139,7 +139,11 @@ export function FabContacts() {
           type="button"
           onClick={toggle}
         >
-          <span className="flabel">Заказать</span>
+          <span className="flabel" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+            </svg>
+          </span>
           <span className="fic">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round">
               <path d="M18 6L6 18M6 6l12 12" />

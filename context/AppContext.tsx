@@ -18,9 +18,10 @@ import {
   type CatalogSource,
 } from "@/lib/client-catalog-cache";
 import type { CollectionSlug, TagFilter } from "@/lib/products";
+import { persistFav, readStoredFav, type FavMap } from "@/lib/fav-storage";
 
 type Cart = Record<number, number>;
-type Fav = Record<number, boolean>;
+type Fav = FavMap;
 
 interface InitialCatalog {
   products: Product[];
@@ -49,6 +50,7 @@ interface AppContextValue {
   setActiveCollection: (slug: CollectionSlug | null) => void;
   setFavOnly: (v: boolean) => void;
   toggleFav: (id: number) => void;
+  clearFavorites: () => void;
   addToCart: (id: number, x?: number, y?: number) => void;
   incrementCart: (id: number) => void;
   decrementCart: (id: number) => void;
@@ -83,6 +85,11 @@ function getStaticFallback(collection?: CollectionSlug): Product[] {
     : PRODUCTS;
 }
 
+function readInitialFavOnly(): boolean {
+  if (typeof window === "undefined") return false;
+  return new URLSearchParams(window.location.search).get("fav") === "1";
+}
+
 export function AppProvider({
   children,
   catalogCollection,
@@ -90,8 +97,9 @@ export function AppProvider({
 }: AppProviderProps) {
   const cacheKey = getClientCatalogCacheKey(catalogCollection);
   const [cart, setCart] = useState<Cart>({});
-  const [fav, setFav] = useState<Fav>({});
-  const [favOnly, setFavOnly] = useState(false);
+  const [fav, setFav] = useState<Fav>(() => readStoredFav());
+  const [favHydrated, setFavHydrated] = useState(false);
+  const [favOnly, setFavOnly] = useState(() => readInitialFavOnly());
   const [activeTag, setActiveTag] = useState<TagFilter>("Все");
   const [activeCollection, setActiveCollection] = useState<CollectionSlug | null>(
     catalogCollection ?? null
@@ -127,6 +135,20 @@ export function AppProvider({
   });
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const burstRef = useRef<((x: number, y: number, count?: number) => void) | null>(null);
+
+  useEffect(() => {
+    setFav(readStoredFav());
+    setFavHydrated(true);
+
+    if (readInitialFavOnly()) {
+      setFavOnly(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!favHydrated) return;
+    persistFav(fav);
+  }, [fav, favHydrated]);
 
   useEffect(() => {
     let cancelled = false;
@@ -233,6 +255,10 @@ export function AppProvider({
     });
   }, []);
 
+  const clearFavorites = useCallback(() => {
+    setFav({});
+  }, []);
+
   const openCart = useCallback(() => setCartOpen(true), []);
   const closeCart = useCallback(() => setCartOpen(false), []);
   const openMob = useCallback(() => setMobOpen(true), []);
@@ -290,6 +316,7 @@ export function AppProvider({
       setActiveCollection: handleSetActiveCollection,
       setFavOnly: handleSetFavOnly,
       toggleFav,
+      clearFavorites,
       addToCart,
       incrementCart,
       decrementCart,
@@ -328,6 +355,7 @@ export function AppProvider({
       handleSetActiveCollection,
       handleSetFavOnly,
       toggleFav,
+      clearFavorites,
       addToCart,
       incrementCart,
       decrementCart,

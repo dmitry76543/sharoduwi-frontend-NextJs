@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { useApp } from "@/context/AppContext";
 
 const LOGO = ["Ш", "А", "Р", "О", "Д", "У", "В", "Ы"];
@@ -18,6 +19,8 @@ export function Header() {
     setActiveCollection,
   } = useApp();
 
+  const pathname = usePathname();
+  const router = useRouter();
   const searchRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const scrolledOnce = useRef(false);
@@ -94,11 +97,17 @@ export function Header() {
 
   const onFavClick = () => {
     const next = !favOnly;
-    setFavOnly(next);
     if (next) {
       setActiveTag("Все");
       setActiveCollection(null);
+      if (pathname !== "/catalog") {
+        router.push("/catalog?fav=1#shop");
+        return;
+      }
+    } else if (pathname === "/catalog") {
+      router.replace("/catalog", { scroll: false });
     }
+    setFavOnly(next);
     gotoShop();
   };
 
