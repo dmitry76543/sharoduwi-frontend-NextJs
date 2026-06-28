@@ -5,11 +5,21 @@ import { useApp } from "@/context/AppContext";
 
 const FAB_CONFIG = { gapY: 66, fanX: 18, baseY: 84, stagger: 60 };
 
+const MAX_URL = "https://max.ru/u/f9LHodD0cOJ0iFHpDtxRvHxZb55wWIT4L1UpmBingh61XxPU-GdBpm5h-ls";
+const TELEGRAM_URL = "https://t.me/sharoduwi_Zhukovskiy";
+
 const FAB_ITEMS = [
-  { c: "#2A7DF0", href: "https://max.ru/", label: "Max", external: true, icon: <path d="M4 18V6l8 7 8-7v12" /> },
+  {
+    c: "transparent",
+    href: MAX_URL,
+    label: "MAX",
+    external: true,
+    iconSrc: "/images/max.svg",
+    brandIcon: true,
+  },
   {
     c: "#2AABEE",
-    href: "https://t.me/",
+    href: TELEGRAM_URL,
     label: "Telegram",
     external: true,
     icon: <path d="M21.9 4.3l-3.2 15c-.2 1-.9 1.3-1.8.8l-4.9-3.6-2.4 2.3c-.3.3-.5.5-1 .5l.4-5 9.1-8.2c.4-.4-.1-.6-.6-.2L6.5 13 1.7 11.5c-1-.3-1-1 .2-1.5L20.7 2.8c.9-.3 1.6.2 1.2 1.5z" />,
@@ -113,7 +123,7 @@ export function FabContacts() {
         {FAB_ITEMS.map((item, i) => (
           <a
             key={item.label}
-            className="fab-item"
+            className={`fab-item${"brandIcon" in item && item.brandIcon ? " fab-item--brand" : ""}`}
             style={{ ["--c" as string]: item.c }}
             href={item.href}
             {...(item.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
@@ -125,9 +135,14 @@ export function FabContacts() {
           >
             <span className="ftip">{item.label}</span>
             <span className="fic">
-              <svg viewBox="0 0 24 24" fill={item.filled ? "currentColor" : "none"} stroke={item.filled ? undefined : "currentColor"} strokeWidth={item.filled ? undefined : "2.4"} strokeLinecap="round" strokeLinejoin="round">
-                {item.icon}
-              </svg>
+              {"iconSrc" in item && item.iconSrc ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={item.iconSrc} alt="" width={56} height={56} />
+              ) : (
+                <svg viewBox="0 0 24 24" fill={"filled" in item && item.filled ? "currentColor" : "none"} stroke={"filled" in item && item.filled ? undefined : "currentColor"} strokeWidth={"filled" in item && item.filled ? undefined : "2.4"} strokeLinecap="round" strokeLinejoin="round">
+                  {"icon" in item ? item.icon : null}
+                </svg>
+              )}
             </span>
           </a>
         ))}

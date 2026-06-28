@@ -571,14 +571,18 @@ a.col-card{color:inherit}
 .rv-ph svg{width:26px;height:26px}
 .rv-photo:has(img) .rv-ph{display:none}
 .yandex-reviews{margin-top:36px;text-align:center}
-.yandex-reviews .yr-lead{font-weight:700;color:var(--ink-2);font-size:15px;margin-bottom:16px}
-.yr-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
-.yandex-btn{display:inline-flex;align-items:center;gap:9px;font-weight:800;font-size:15px;padding:13px 22px;
-  border-radius:999px;background:#fff;border:1.5px solid var(--line);color:var(--ink);transition:.25s var(--ease)}
-.yandex-btn:hover{transform:translateY(-3px);border-color:var(--pink);box-shadow:var(--shadow-soft)}
-.yandex-btn .yr-star{color:#FFC93C;display:inline-flex}
-.yandex-btn .yr-star svg{width:18px;height:18px}
-.yandex-btn b{color:var(--pink-deep);font-weight:800}
+.yandex-reviews .yr-lead{font-weight:700;color:var(--ink-2);font-size:15px;margin-bottom:20px}
+.yr-widgets{display:flex;gap:20px;justify-content:center;flex-wrap:wrap;align-items:flex-start}
+.yr-widget-wrap{width:100%;max-width:560px;text-align:left}
+.yr-widget-label{margin:0 0 10px;font-weight:800;font-size:15px;color:var(--pink-deep)}
+.yr-widget{width:100%;height:800px;overflow:hidden;position:relative}
+.yr-widget iframe{width:100%;height:100%;border:1px solid #e6e6e6;border-radius:8px;box-sizing:border-box;display:block}
+.yr-widget-link{box-sizing:border-box;text-decoration:none;color:#b3b3b3;font-size:10px;font-family:"YS Text",sans-serif;
+  padding:0 16px;position:absolute;bottom:8px;width:100%;text-align:center;left:0;overflow:hidden;text-overflow:ellipsis;
+  display:block;max-height:14px;white-space:nowrap}
+@media (max-width:720px){
+  .yr-widget{height:min(800px,72vh)}
+}
 
 /* ============================================================
    АКЦИИ
@@ -628,6 +632,7 @@ a.col-card{color:inherit}
   transition:.25s var(--ease)}
 .f-social a:hover{transform:translateY(-4px);background:var(--pink)}
 .f-social a svg{width:20px;height:20px;color:#fff}
+.f-social a img{width:24px;height:24px;border-radius:50%;display:block}
 .footer-bottom{border-top:1px solid rgba(255,255,255,.1);margin-top:48px;padding-top:24px;
   display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;color:rgba(255,255,255,.45);font-size:13px;font-weight:600}
 
@@ -805,6 +810,8 @@ a.col-card{color:inherit}
   transition:transform .52s var(--ease-pop),opacity .3s ease,filter .2s ease,box-shadow .2s ease}
 .fab-item .fic{display:grid;place-items:center;transition:transform .25s var(--ease-pop)}
 .fab-item .fic svg{width:24px;height:24px}
+.fab-item--brand{background:transparent;box-shadow:0 14px 30px -10px rgba(40,16,42,.45)}
+.fab-item--brand .fic img{width:56px;height:56px;border-radius:50%;display:block}
 .fab-item:hover{filter:brightness(1.08) saturate(1.1)}
 .fab-item:hover .fic{transform:scale(1.18)}
 /* подписи мессенджеров — видны сразу при раскрытии */
