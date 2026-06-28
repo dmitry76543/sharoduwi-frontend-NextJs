@@ -6,7 +6,7 @@ import { useApp } from "@/context/AppContext";
 const FAB_CONFIG = { gapY: 66, fanX: 18, baseY: 84, stagger: 60 };
 
 const MAX_URL = "https://max.ru/u/f9LHodD0cOJ0iFHpDtxRvHxZb55wWIT4L1UpmBingh61XxPU-GdBpm5h-ls";
-const TELEGRAM_URL = "https://t.me/sharoduwi_Zhukovskiy";
+const TELEGRAM_URL = "https://t.me/+79267086374";
 
 const FAB_ITEMS = [
   {

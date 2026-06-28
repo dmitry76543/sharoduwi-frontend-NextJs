@@ -86,7 +86,7 @@ export function Footer() {
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/images/max.svg" alt="" width={24} height={24} />
               </a>
-              <a href="https://t.me/sharoduwi_Zhukovskiy" target="_blank" rel="noopener noreferrer" aria-label="Telegram" title="Telegram">
+              <a href="https://t.me/+79267086374" target="_blank" rel="noopener noreferrer" aria-label="Telegram" title="Telegram">
                 <svg viewBox="0 0 24 24" fill="currentColor">
                   <path d="M21.9 4.3l-3.2 15c-.2 1-.9 1.3-1.8.8l-4.9-3.6-2.4 2.3c-.3.3-.5.5-1 .5l.4-5 9.1-8.2c.4-.4-.1-.6-.6-.2L6.5 13 1.7 11.5c-1-.3-1-1 .2-1.5L20.7 2.8c.9-.3 1.6.2 1.2 1.5z" />
                 </svg>
