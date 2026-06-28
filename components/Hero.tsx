@@ -113,9 +113,8 @@ export function Hero() {
                     )}
                   </div>
                   <button
-                    className="btn btn-primary"
+                    className="btn btn-primary hero-badge-btn"
                     type="button"
-                    style={{ width: "100%", justifyContent: "center", marginTop: 18, padding: 13 }}
                     disabled={!featured}
                     onClick={(e) => {
                       if (!featured) return;

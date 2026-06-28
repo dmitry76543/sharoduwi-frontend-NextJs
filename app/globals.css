@@ -278,6 +278,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .hero-badge .price{font-family:'Unbounded';font-weight:800;font-size:34px;color:var(--pink)}
 .hero-badge .price s{font-family:'Onest';font-size:18px;color:var(--ink-2);font-weight:600;margin-left:6px}
 .hero-badge p{font-size:14px;color:var(--ink-2);font-weight:600;margin:8px 0 18px}
+.hero-badge-btn{width:100%;justify-content:center;margin-top:18px;padding:13px}
 
 /* 7 мини-шариков вокруг бейджа */
 .mini-balloons{position:absolute;inset:0;z-index:1}
@@ -898,6 +899,16 @@ a.col-card{color:inherit}
     white-space:normal;text-align:center;box-sizing:border-box}
   .hero-stats{gap:20px}
   .hero-visual{height:340px;transform:none;overflow:hidden;max-width:100%}
+  .hero-badge{width:min(100%,248px);border-radius:28px;top:50%;transform-origin:50% -72px}
+  .hero-badge-content{padding:20px 16px 18px}
+  .hero-badge--photo .hero-badge-content{padding-top:68px}
+  .hero-badge h3{font-size:14px;margin-bottom:4px;-webkit-line-clamp:3;line-clamp:3;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden}
+  .hero-badge p{font-size:12px;margin:4px 0 10px}
+  .hero-badge .price{font-size:24px}
+  .hero-badge .price s{font-size:13px;margin-left:4px}
+  .hero-badge-btn{margin-top:10px;padding:10px 12px;font-size:14px}
+  .hero-badge .ribbon-knot{width:12px;height:12px;top:-8px}
+  .mb{width:calc(var(--w,64px)*0.78);height:calc(var(--w,64px)*0.78*1.22)}
   .shop-controls{flex-direction:column;align-items:stretch}
   .search{min-width:0}
   .cta-final{padding:50px 24px}
@@ -915,6 +926,10 @@ a.col-card{color:inherit}
   .col-card{padding:18px}
   .col-card .col-info h3{font-size:18px}
   .hero-visual{height:320px;transform:none}
+  .hero-badge{width:min(100%,228px);border-radius:24px}
+  .hero-badge--photo .hero-badge-content{padding-top:58px}
+  .hero-badge h3{font-size:13px}
+  .hero-badge .price{font-size:22px}
   .hero h1{margin-top:16px;font-size:clamp(28px,8vw,40px)}
   .hero p.lead{max-width:none}
   .footer .f-about{max-width:none}
@@ -929,7 +944,11 @@ a.col-card{color:inherit}
   .icon-btn svg{width:17px;height:17px}
   .head-search{width:34px;height:34px}
   .head-search .hs-btn{width:32px;height:32px}
-  .hero-visual{height:290px;transform:none}
+  .hero-visual{height:280px;transform:none}
+  .hero-badge{width:min(100%,212px)}
+  .hero-badge-content{padding:16px 14px 14px}
+  .hero-badge--photo .hero-badge-content{padding-top:52px}
+  .hero-badge-btn{margin-top:8px;padding:9px 10px;font-size:13px}
   .sec-head h2,.cta-final h2{font-size:27px}
   .modal{padding:26px 22px}
 }
