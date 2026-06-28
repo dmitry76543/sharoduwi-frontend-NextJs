@@ -836,7 +836,9 @@ a.col-card{color:inherit}
   .promo-art{display:none}
   .hero-burger{display:grid;top:14px;right:18px;width:46px;height:46px}
   .products{grid-template-columns:repeat(2,1fr);gap:14px}
-  .products .card{min-width:0}
+  .products .card{min-width:0;contain-intrinsic-size:auto 520px}
+  .card-vis{aspect-ratio:4/5;background:var(--cream-2)}
+  .card-vis .vis-photo{object-fit:contain;object-position:center}
   .card-body{min-width:0;padding:14px 14px 16px}
   .card-body h3{font-size:15px;line-height:1.25;word-break:break-word}
   .card-foot{gap:6px}
@@ -921,7 +923,7 @@ a.col-card{color:inherit}
 /* Очень узкие экраны */
 @media (max-width:360px){
   .products{grid-template-columns:1fr;gap:16px}
-  .card-vis{aspect-ratio:16/10}
+  .card-vis{aspect-ratio:4/5}
   .collections{grid-template-columns:1fr}
   .col-card{aspect-ratio:16/10}
   .logo{font-size:14px;max-width:calc(100% - 160px)}
