@@ -261,15 +261,18 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   background:rgba(255,252,250,.86);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
   border:1px solid rgba(255,200,225,.8);box-shadow:var(--shadow-pop);
   animation:gentleRock 5.5s ease-in-out infinite;transform-origin:50% -120px;z-index:2}
-.hero-badge--photo{padding:0;background:var(--ink);border-color:rgba(255,255,255,.22)}
-.hero-badge-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;z-index:0}
-.hero-badge-overlay{position:absolute;inset:0;z-index:1;pointer-events:none;
-  background:linear-gradient(to top,rgba(40,16,42,.92) 0%,rgba(40,16,42,.55) 42%,rgba(40,16,42,.18) 100%)}
+.hero-badge--photo{padding:0;background:#fff;border-color:rgba(255,200,225,.95);
+  box-shadow:0 28px 70px -28px rgba(255,45,149,.28),0 12px 32px -16px rgba(40,16,42,.12)}
+.hero-badge-photo{position:relative;height:155px;overflow:hidden;background:linear-gradient(165deg,#fff8fc 0%,#fff2f8 55%,#ffe8f4 100%)}
+.hero-badge-photo img{width:100%;height:100%;object-fit:cover;object-position:center center;transform:scale(1.08)}
 .hero-badge-content{position:relative;z-index:2;padding:38px 28px 32px}
-.hero-badge--photo .hero-badge-content{padding-top:112px}
-.hero-badge--photo h3,.hero-badge--photo .price{color:#fff}
-.hero-badge--photo p{color:rgba(255,255,255,.88)}
-.hero-badge--photo .price s{color:rgba(255,255,255,.62)}
+.hero-badge--photo .hero-badge-content{padding:10px 16px 14px;text-align:left}
+.hero-badge-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:6px}
+.hero-badge-foot .price{margin:0;text-align:left;flex:1;min-width:0;line-height:1.1}
+.hero-badge--photo .hero-badge-cart{flex-shrink:0;width:42px;height:42px}
+.hero-badge--photo .hero-badge-cart:disabled{opacity:.55;cursor:not-allowed;transform:none}
+.hero-badge--photo h3{margin-bottom:2px}
+.hero-badge--photo p{margin:2px 0 0}
 @keyframes gentleRock{0%,100%{transform:translate(-50%,-50%) rotate(-2.2deg)}50%{transform:translate(-50%,-50%) rotate(2.2deg)}}
 .hero-badge .ribbon-knot{position:absolute;top:-10px;left:50%;transform:translateX(-50%);width:14px;height:14px;
   background:var(--pink);border-radius:50%;box-shadow:0 0 0 4px rgba(255,45,149,.18);z-index:3}
@@ -279,8 +282,6 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .hero-badge .price s{font-family:'Onest';font-size:18px;color:var(--ink-2);font-weight:600;margin-left:6px}
 .hero-badge p{font-size:14px;color:var(--ink-2);font-weight:600;margin:8px 0 18px}
 .hero-badge-btn{width:100%;justify-content:center;margin-top:18px;padding:13px}
-
-/* 7 мини-шариков вокруг бейджа */
 .mini-balloons{position:absolute;inset:0;z-index:1}
 .mb{position:absolute;width:var(--w,64px);height:calc(var(--w,64px)*1.22);
   filter:drop-shadow(0 14px 18px rgba(120,30,90,.28));
@@ -830,7 +831,8 @@ a.col-card{color:inherit}
   .bt-wide{grid-column:span 2}
   .footer-grid{grid-template-columns:1fr 1fr}
   .hero-grid{grid-template-columns:1fr;gap:20px}
-  .hero-visual{height:440px;order:-1}
+  .hero{padding-top:8px}
+  .hero-visual{height:440px;order:-1;padding-top:12px}
   .reviews{grid-template-columns:1fr}
   .steps{grid-template-columns:repeat(2,1fr)}
   .nav a{padding:9px 12px;font-size:14px}
@@ -879,8 +881,8 @@ a.col-card{color:inherit}
     padding:10px max(10px,env(safe-area-inset-right)) 10px max(10px,env(safe-area-inset-left));
     border-left:none;border-right:none}
   .header.scrolled .header-inner{margin-top:0}
-  .logo{font-size:clamp(14px,4vw,18px);min-width:0;flex:1 1 auto;max-width:calc(100% - 184px);overflow:hidden}
-  .logo span{flex-shrink:0}
+  .header .logo{font-size:clamp(14px,4vw,18px);min-width:0;flex:1 1 auto;max-width:calc(100% - 184px);overflow:hidden}
+  .header .logo span{flex-shrink:0}
   .head-actions{gap:3px;flex:0 0 auto;padding-right:0}
   .icon-btn{width:36px;height:36px;flex-shrink:0;background:#fff;
     box-shadow:0 0 0 1px var(--line),0 4px 12px -6px rgba(40,16,42,.12)}
@@ -892,21 +894,29 @@ a.col-card{color:inherit}
   .topbar-row{flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;padding:0 16px;
     scrollbar-width:none;-webkit-overflow-scrolling:touch}
   .topbar-row::-webkit-scrollbar{display:none}
-  .hero{overflow-x:clip;padding:32px 0 54px}
+  .hero{overflow-x:clip;padding:0 0 54px}
   .hero-copy{min-width:0;width:100%}
   .hero-cta{flex-direction:column;align-items:stretch;width:100%;margin-top:24px;gap:10px}
   .hero-cta .btn{width:100%;max-width:100%;justify-content:center;padding:14px 18px;font-size:15px;
     white-space:normal;text-align:center;box-sizing:border-box}
   .hero-stats{gap:20px}
-  .hero-visual{height:340px;transform:none;overflow:hidden;max-width:100%}
-  .hero-badge{width:min(100%,248px);border-radius:28px;top:50%;transform-origin:50% -72px}
+  .hero-visual{height:auto;transform:none;overflow:visible;max-width:100%;padding:12px 0 0}
+  .hero-stage{height:264px;display:flex;align-items:flex-start;justify-content:center;padding-top:10px;
+    animation:floatBigMob 7s ease-in-out infinite}
+  @keyframes floatBigMob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+  .hero-badge{position:relative;left:auto;top:auto;width:min(100%,248px);border-radius:28px;
+    transform:none;transform-origin:50% -72px;animation:heroBadgeRock 5.5s ease-in-out infinite;margin:0 auto}
+  @keyframes heroBadgeRock{0%,100%{transform:rotate(-2.2deg)}50%{transform:rotate(2.2deg)}}
   .hero-badge-content{padding:20px 16px 18px}
-  .hero-badge--photo .hero-badge-content{padding-top:68px}
-  .hero-badge h3{font-size:14px;margin-bottom:4px;-webkit-line-clamp:3;line-clamp:3;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden}
-  .hero-badge p{font-size:12px;margin:4px 0 10px}
-  .hero-badge .price{font-size:24px}
+  .hero-badge--photo .hero-badge-content{padding:8px 12px 10px}
+  .hero-badge-photo{height:118px}
+  .hero-badge h3{font-size:14px;margin-bottom:4px;-webkit-line-clamp:2;line-clamp:2;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden}
+  .hero-badge p{font-size:12px;margin:2px 0 0}
+  .hero-badge .price{font-size:22px}
   .hero-badge .price s{font-size:13px;margin-left:4px}
-  .hero-badge-btn{margin-top:10px;padding:10px 12px;font-size:14px}
+  .hero-badge-foot{margin-top:4px;gap:8px}
+  .hero-badge--photo .hero-badge-cart{width:36px;height:36px}
+  .hero-badge--photo .hero-badge-cart svg{width:18px;height:18px}
   .hero-badge .ribbon-knot{width:12px;height:12px;top:-8px}
   .mb{width:calc(var(--w,64px)*0.78);height:calc(var(--w,64px)*0.78*1.22)}
   .shop-controls{flex-direction:column;align-items:stretch}
@@ -925,11 +935,14 @@ a.col-card{color:inherit}
   .collections{gap:14px}
   .col-card{padding:18px}
   .col-card .col-info h3{font-size:18px}
-  .hero-visual{height:320px;transform:none}
+  .hero-grid{gap:14px}
+  .hero-copy{padding-top:4px}
+  .hero-stage{height:256px;padding-top:8px}
   .hero-badge{width:min(100%,228px);border-radius:24px}
-  .hero-badge--photo .hero-badge-content{padding-top:58px}
+  .hero-badge--photo .hero-badge-content{padding:8px 10px 10px}
+  .hero-badge-photo{height:110px}
   .hero-badge h3{font-size:13px}
-  .hero-badge .price{font-size:22px}
+  .hero-badge .price{font-size:20px}
   .hero h1{margin-top:16px;font-size:clamp(28px,8vw,40px)}
   .hero p.lead{max-width:none}
   .footer .f-about{max-width:none}
@@ -939,16 +952,18 @@ a.col-card{color:inherit}
   .products{grid-template-columns:1fr 1fr;gap:12px}
   .card-price{font-size:14px}
   .add-btn{width:38px;height:38px}
-  .logo{font-size:14px;max-width:calc(100% - 168px)}
+  .header .logo{font-size:14px;max-width:calc(100% - 168px)}
   .icon-btn{width:34px;height:34px}
   .icon-btn svg{width:17px;height:17px}
   .head-search{width:34px;height:34px}
   .head-search .hs-btn{width:32px;height:32px}
-  .hero-visual{height:280px;transform:none}
+  .hero-visual{padding-top:10px}
+  .hero-stage{height:248px;padding-top:6px}
   .hero-badge{width:min(100%,212px)}
   .hero-badge-content{padding:16px 14px 14px}
-  .hero-badge--photo .hero-badge-content{padding-top:52px}
-  .hero-badge-btn{margin-top:8px;padding:9px 10px;font-size:13px}
+  .hero-badge--photo .hero-badge-content{padding:8px 10px 10px}
+  .hero-badge-photo{height:100px}
+  .hero-badge--photo .hero-badge-cart{width:34px;height:34px}
   .sec-head h2,.cta-final h2{font-size:27px}
   .modal{padding:26px 22px}
 }
@@ -957,7 +972,7 @@ a.col-card{color:inherit}
   .products{grid-template-columns:1fr;gap:16px}
   .collections{grid-template-columns:1fr}
   .col-card{aspect-ratio:16/10}
-  .logo{font-size:14px;max-width:calc(100% - 160px)}
+  .header .logo{font-size:14px;max-width:calc(100% - 160px)}
   .mob-menu nav a{font-size:24px}
 }
 /* Ландшафт на телефонах (низкая высота) */
@@ -973,7 +988,9 @@ a.col-card{color:inherit}
 .mob-menu{position:fixed;inset:0;z-index:103;background:var(--cream);transform:translateY(-100%);
   transition:.5s var(--ease);display:flex;flex-direction:column;padding:30px 26px}
 .mob-menu.open{transform:translateY(0)}
-.mob-menu .mm-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:30px}
+.mob-menu .mm-head{display:flex;justify-content:space-between;align-items:center;gap:12px;min-width:0;margin-bottom:30px}
+.mob-menu .mm-head .logo{flex:1 1 auto;min-width:0;max-width:calc(100% - 54px);font-size:clamp(15px,4.8vw,22px);overflow:visible}
+.mob-menu .mm-head .close-btn{flex:0 0 auto}
 .mob-menu nav{display:flex;flex-direction:column;gap:4px}
 .mob-menu nav a{font-family:'Unbounded';font-size:28px;font-weight:700;padding:12px 0;border-bottom:1px solid var(--line)}
 .mob-menu nav a:nth-child(1){color:var(--pink)}

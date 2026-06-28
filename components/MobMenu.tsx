@@ -11,7 +11,7 @@ export function MobMenu() {
   return (
     <div className={`mob-menu${mobOpen ? " open" : ""}`} id="mobMenu">
       <div className="mm-head">
-        <a href="/" className="logo" style={{ fontSize: 22 }} onClick={closeMob}>
+        <a href="/" className="logo" onClick={closeMob}>
           {LOGO.map((l) => (
             <span key={l}>{l}</span>
           ))}

@@ -87,42 +87,45 @@ export function Hero() {
               <div className={`hero-badge${featured?.img ? " hero-badge--photo" : ""}`}>
                 <span className="ribbon-knot" />
                 {featured?.img && (
-                  <>
+                  <div className="hero-badge-photo">
                     <img
-                      className="hero-badge-bg"
                       src={featured.img}
                       alt=""
                       aria-hidden="true"
                       loading="eager"
                       decoding="async"
                     />
-                    <div className="hero-badge-overlay" aria-hidden="true" />
-                  </>
+                  </div>
                 )}
                 <div className="hero-badge-content">
                   <h3>{title}</h3>
                   <p>{subtitle}</p>
-                  <div className="price">
-                    {price != null && price > 0 ? (
-                      <>
-                        {fmt(price)} ₽{" "}
-                        {oldPrice != null && oldPrice > price && <s>{fmt(oldPrice)} ₽</s>}
-                      </>
-                    ) : (
-                      "уточняйте цену"
-                    )}
+                  <div className="hero-badge-foot">
+                    <div className="price">
+                      {price != null && price > 0 ? (
+                        <>
+                          {fmt(price)} ₽{" "}
+                          {oldPrice != null && oldPrice > price && <s>{fmt(oldPrice)} ₽</s>}
+                        </>
+                      ) : (
+                        "уточняйте цену"
+                      )}
+                    </div>
+                    <button
+                      className="add-btn hero-badge-cart"
+                      type="button"
+                      aria-label="В корзину"
+                      disabled={!featured}
+                      onClick={(e) => {
+                        if (!featured) return;
+                        addToCart(featured.id, e.clientX, e.clientY);
+                      }}
+                    >
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
+                        <path d="M12 5v14M5 12h14" />
+                      </svg>
+                    </button>
                   </div>
-                  <button
-                    className="btn btn-primary hero-badge-btn"
-                    type="button"
-                    disabled={!featured}
-                    onClick={(e) => {
-                      if (!featured) return;
-                      addToCart(featured.id, e.clientX, e.clientY);
-                    }}
-                  >
-                    В корзину
-                  </button>
                 </div>
               </div>
             </div>
