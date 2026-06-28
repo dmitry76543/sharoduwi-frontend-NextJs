@@ -59,9 +59,13 @@ export type AdvantShopProductDetails = {
   urlPath: string;
   briefDescription?: string;
   description?: string;
+  price: number;
+  priceWithDiscount?: number;
   newProduct?: boolean;
   bestseller?: boolean;
   sales?: boolean;
+  photoMiddle?: string | null;
+  photoSmall?: string | null;
   photos?: AdvantShopPhoto[] | null;
   offers?: AdvantShopOffer[];
 };

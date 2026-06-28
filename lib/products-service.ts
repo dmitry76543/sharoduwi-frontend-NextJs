@@ -1,11 +1,18 @@
 import { unstable_cache } from "next/cache";
 
-import { fetchAdvantShopProducts } from "@/lib/advantshop/catalog";
+import {
+  fetchAdvantShopProducts,
+  loadAdvantShopProductDetails,
+} from "@/lib/advantshop/catalog";
 import {
   CATALOG_REVALIDATE_SECONDS,
   isAdvantShopConfigured,
 } from "@/lib/advantshop/config";
-import { PRODUCTS, type Product, type ProductTag } from "@/lib/data";
+import { PRODUCTS, type Product, type ProductDetails, type ProductTag } from "@/lib/data";
+import {
+  buildStaticProductDetails,
+  findProductBySlug,
+} from "@/lib/product-slug";
 import {
   resolveCollectionSlug,
   type CollectionSlug,
@@ -91,6 +98,45 @@ export function filterProductsByCollection(
   return products.filter(
     (product) => product.collectionSlug === collectionSlug
   );
+}
+
+export async function getProductDetails(
+  slug: string
+): Promise<ProductDetails | null> {
+  const products = await getCatalogProducts();
+  const summary = findProductBySlug(products, slug);
+  if (!summary) return null;
+
+  if (isAdvantShopConfigured()) {
+    try {
+      const details = await loadAdvantShopProductDetails(
+        summary.id,
+        summary.collectionSlug
+      );
+      if (details) {
+        if (!Number.isFinite(details.price) || details.price <= 0) {
+          details.price = summary.price;
+          details.old = summary.old;
+        }
+        return details;
+      }
+    } catch (error) {
+      console.error(`AdvantShop product details unavailable for ${slug}:`, error);
+    }
+  }
+
+  return buildStaticProductDetails(summary);
+}
+
+export async function getRelatedProducts(
+  product: Product,
+  limit = 4
+): Promise<Product[]> {
+  const products = await getCatalogProducts({
+    collection: product.collectionSlug,
+  });
+
+  return products.filter((item) => item.id !== product.id).slice(0, limit);
 }
 
 export { resolveCollectionSlug };

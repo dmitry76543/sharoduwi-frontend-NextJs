@@ -1,11 +1,13 @@
-import type { Product, ProductTag } from "@/lib/data";
+import type { Product, ProductDetails, ProductTag } from "@/lib/data";
 import { getCollectionName } from "@/lib/data";
 import type { CollectionSlug } from "@/lib/products";
+import { getProductSlug } from "@/lib/product-slug";
 import { inferProductTags, parseTagsFromPropertyValue } from "@/lib/products";
-import { resolveProductImageUrl } from "./images";
+import { resolveProductImageUrl, resolveProductImages } from "./images";
 import type {
   AdvantShopCatalogProduct,
   AdvantShopPhoto,
+  AdvantShopProductDetails,
   AdvantShopProperty,
 } from "./types";
 
@@ -35,6 +37,36 @@ function pickArtNo(
     item.offers?.[0]?.artNo ??
     undefined
   );
+}
+
+function pickPrices(
+  item: Pick<AdvantShopCatalogProduct, "price" | "priceWithDiscount" | "offers">
+): { price: number; old?: number } {
+  const mainOffer = item.offers?.find((offer) => offer.isMain) ?? item.offers?.[0];
+  const basePrice = item.price ?? mainOffer?.price;
+  const discountPrice =
+    item.priceWithDiscount ??
+    (mainOffer?.oldPrice != null &&
+    mainOffer.oldPrice > (mainOffer.price ?? 0)
+      ? mainOffer.price
+      : undefined);
+
+  if (basePrice == null || !Number.isFinite(basePrice)) {
+    const offerPrice = mainOffer?.price;
+    if (offerPrice != null && Number.isFinite(offerPrice)) {
+      return { price: Math.round(offerPrice) };
+    }
+    return { price: 0 };
+  }
+
+  const price = Math.round(discountPrice ?? basePrice);
+  const hasDiscount =
+    discountPrice != null && Number.isFinite(basePrice) && basePrice > discountPrice;
+
+  return {
+    price,
+    old: hasDiscount ? Math.round(basePrice) : undefined,
+  };
 }
 
 function mapBadge(
@@ -74,10 +106,7 @@ export function mapCatalogProduct(
   collectionSlug: CollectionSlug,
   properties: AdvantShopProperty[] = []
 ): Product {
-  const price = Math.round(item.priceWithDiscount ?? item.price);
-  const hasDiscount =
-    item.priceWithDiscount != null && item.price > item.priceWithDiscount;
-  const old = hasDiscount ? Math.round(item.price) : undefined;
+  const { price, old } = pickPrices(item);
   const rawImage = pickImage(item);
 
   return {
@@ -102,4 +131,23 @@ export function collectImages(photos?: AdvantShopPhoto[] | null): string[] {
   return photos
     .map((photo) => photo.bigSrc ?? photo.middleSrc ?? photo.smallSrc)
     .filter((src): src is string => Boolean(src));
+}
+
+export function mapProductDetails(
+  item: AdvantShopProductDetails,
+  collectionSlug: CollectionSlug,
+  properties: AdvantShopProperty[] = []
+): ProductDetails {
+  const base = mapCatalogProduct(item, collectionSlug, properties);
+  const images = resolveProductImages(collectImages(item.photos));
+  const primaryImage = images[0] ?? base.img;
+
+  return {
+    ...base,
+    img: primaryImage,
+    slug: getProductSlug({ ...base, urlPath: item.urlPath }),
+    description: item.description?.trim() || item.briefDescription?.trim(),
+    briefDescription: item.briefDescription?.trim(),
+    images: images.length ? images : primaryImage ? [primaryImage] : [],
+  };
 }

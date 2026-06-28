@@ -109,6 +109,13 @@ export interface Product {
   urlPath?: string;
 }
 
+export interface ProductDetails extends Product {
+  slug: string;
+  description?: string;
+  briefDescription?: string;
+  images: string[];
+}
+
 export const PRODUCTS: Product[] = [
   { id: 1, name: "Фольгированная цифра «Гелий»", collectionSlug: "set-s-tsifroi", collection: "Сет с цифрой", tags: ["Цифры"], price: 590, colors: ["pink"], tag: "hit" },
   { id: 2, name: "Набор «С Днём Рождения»", collectionSlug: "nabory-sharov-bazovye", collection: "Наборы шаров базовые", tags: ["Композиции"], price: 2490, old: 2900, colors: ["pink", "sun", "sky"], tag: "hit" },

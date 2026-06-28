@@ -3,41 +3,9 @@
 import Link from "next/link";
 import { useMemo } from "react";
 import { useApp } from "@/context/AppContext";
-import { COLORS, TAGS, getCollectionBySlug } from "@/lib/data";
+import { TAGS, getCollectionBySlug } from "@/lib/data";
 import type { CollectionSlug } from "@/lib/products";
-import { cluster, fmt, hexa } from "@/lib/balloons";
-
-function CartControl({ id }: { id: number }) {
-  const { getCartQty, addToCart, incrementCart, decrementCart } = useApp();
-  const q = getCartQty(id);
-
-  if (q > 0) {
-    return (
-      <div className="qty-stepper">
-        <button className="qbtn" type="button" aria-label="Меньше" onClick={() => decrementCart(id)}>
-          −
-        </button>
-        <span className="qv">{q}</span>
-        <button className="qbtn" type="button" aria-label="Больше" onClick={() => incrementCart(id)}>
-          +
-        </button>
-      </div>
-    );
-  }
-
-  return (
-    <button
-      className="add-btn"
-      type="button"
-      aria-label="В корзину"
-      onClick={(e) => addToCart(id, e.clientX, e.clientY)}
-    >
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
-        <path d="M12 5v14M5 12h14" />
-      </svg>
-    </button>
-  );
-}
+import { ProductCard } from "@/components/product/ProductCard";
 
 interface ShopProps {
   /** Фиксированная коллекция (страница категории) */
@@ -57,7 +25,6 @@ export function Shop({ pageCollection, heading, description, previewLimit }: Sho
     searchQuery,
     setSearchQuery,
     favOnly,
-    toggleFav,
     isFav,
     products,
     catalogLoading,
@@ -163,70 +130,9 @@ export function Shop({ pageCollection, heading, description, previewLimit }: Sho
                   : "Ничего не нашли. Попробуйте другой запрос."}
             </div>
           ) : (
-            visibleList.map((p, i) => {
-              const tag =
-                p.tag === "hit" ? (
-                  <span className="tag hit">Хит</span>
-                ) : p.tag === "new" ? (
-                  <span className="tag new">Новинка</span>
-                ) : null;
-              const bgTint = p.img
-                ? undefined
-                : {
-                    background: `linear-gradient(160deg,${hexa(COLORS[p.colors[0]], 0.16)},${hexa(COLORS[p.colors[p.colors.length - 1]], 0.1)})`,
-                  };
-
-              return (
-                <div
-                  key={p.id}
-                  className="card"
-                  data-pid={p.id}
-                  style={{
-                    animation: "ciIn .5s var(--ease) both",
-                    animationDelay: i * 0.04 + "s",
-                  }}
-                >
-                  <div className="card-vis" style={bgTint}>
-                    {tag}
-                    {p.img ? (
-                      <img className="vis-photo" src={p.img} alt={p.name} loading="lazy" decoding="async" />
-                    ) : (
-                      <div className="vis-balloons" dangerouslySetInnerHTML={{ __html: cluster(p.colors, 70, `p-${p.id}`) }} />
-                    )}
-                    <button
-                      className={`fav-heart${isFav(p.id) ? " on" : ""}`}
-                      type="button"
-                      aria-label="В избранное"
-                      onClick={() => toggleFav(p.id)}
-                    >
-                      <svg viewBox="0 0 24 24">
-                        <path d="M20.8 5.2a5.5 5.5 0 00-7.8 0L12 6.2l-1-1a5.5 5.5 0 00-7.8 7.8L12 22l8.8-9a5.5 5.5 0 000-7.8z" />
-                      </svg>
-                    </button>
-                  </div>
-                  <div className="card-body">
-                    <span className="card-cat">{p.collection}</span>
-                    <h3>{p.name}</h3>
-                    <div className="card-foot">
-                      <div className="card-price">
-                        {fmt(p.price)} ₽
-                        {p.old && (
-                          <>
-                            {" "}
-                            <small>
-                              <s>{fmt(p.old)}</s>
-                            </small>
-                          </>
-                        )}
-                      </div>
-                      <div className="card-cart">
-                        <CartControl id={p.id} />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })
+            visibleList.map((p, i) => (
+              <ProductCard key={p.id} product={p} index={i} />
+            ))
           )}
         </div>
         {hasMore && (

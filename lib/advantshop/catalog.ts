@@ -1,11 +1,12 @@
 import type { CollectionSlug } from "@/lib/products";
-import type { Product } from "@/lib/data";
+import type { Product, ProductDetails } from "@/lib/data";
 import { advantshopClientFetch, advantshopFetch } from "./client";
 import { getCategoryUrlMap } from "./config";
-import { mapCatalogProduct } from "./mapper";
+import { mapCatalogProduct, mapProductDetails } from "./mapper";
 import type {
   AdvantShopCatalogResponse,
   AdvantShopCategoriesResponse,
+  AdvantShopProductDetails as AdvantShopProductDetailsResponse,
   AdvantShopProperty,
   AdvantShopPropertiesResponse,
 } from "./types";
@@ -155,4 +156,20 @@ export async function findAdvantShopProductById(
 ): Promise<Product | undefined> {
   const products = await fetchAdvantShopProducts();
   return products.find((product) => product.id === productId);
+}
+
+export async function loadAdvantShopProductDetails(
+  productId: number,
+  collectionSlug: CollectionSlug
+): Promise<ProductDetails | null> {
+  const [details, properties] = await Promise.all([
+    advantshopClientFetch<AdvantShopProductDetailsResponse>(
+      `/api/products/${productId}`
+    ),
+    fetchProductProperties(productId).catch(() => [] as AdvantShopProperty[]),
+  ]);
+
+  if (!details?.productId) return null;
+
+  return mapProductDetails(details, collectionSlug, properties);
 }
