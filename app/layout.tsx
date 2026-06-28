@@ -7,9 +7,9 @@ export const metadata: Metadata = {
   description:
     "ШАРОДУВЫ — гелиевые шары, фольгированные цифры и праздничные композиции в Жуковском и Раменском районе. Делаем праздник с 2005 года.",
   icons: {
-    icon: [{ url: "/favicon.png", type: "image/png" }],
-    shortcut: "/favicon.png",
-    apple: "/favicon.png",
+    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
+    shortcut: "/favicon.svg",
+    apple: "/favicon.svg",
   },
 };
 
