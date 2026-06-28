@@ -1,11 +1,11 @@
 import type { Product } from "@/lib/data";
 
-export const HERO_FEATURED_NAME = "Фонтан из 10 воздушных шаров №349";
+export const HERO_FEATURED_NAME = "Фонтан из 10 воздушных шаров №373а";
 export const HERO_FEATURED_SUBTITLE = "фонтан для праздника";
-export const HERO_FEATURED_ART_NO = "349";
+export const HERO_FEATURED_ART_NO = "373а";
 
 function normalize(value: string): string {
-  return value.replace(/\s+/g, "").toLowerCase();
+  return value.replace(/\s+/g, "").toLowerCase().replace(/а/g, "a");
 }
 
 export function findHeroFeaturedProduct(products: Product[]): Product | undefined {
@@ -23,7 +23,7 @@ export function findHeroFeaturedProduct(products: Product[]): Product | undefine
     const name = product.name.toLowerCase();
     return (
       name.includes(nameNeedle) ||
-      (name.includes("фонтан из 10") && name.includes("349"))
+      (name.includes("фонтан из 10") && (name.includes("373а") || name.includes("373a")))
     );
   });
   return byName;
