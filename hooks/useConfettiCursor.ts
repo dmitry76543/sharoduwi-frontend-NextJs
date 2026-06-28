@@ -2,12 +2,12 @@
 
 import { useEffect } from "react";
 import { useApp } from "@/context/AppContext";
+import {
+  CURSOR_PREF_CHANGE_EVENT,
+  isBalloonCursorEnabled,
+} from "@/lib/cursor-preference";
 
 const CONF_COLORS = ["#FF2D95", "#36B7F0", "#FFC93C", "#2FD3A5", "#FF7A59", "#A98BF5"];
-
-function isCustomCursorEnabled() {
-  return window.matchMedia("(pointer:fine) and (min-width: 721px)").matches;
-}
 
 interface Particle {
   x: number;
@@ -109,7 +109,7 @@ export function useConfettiCursor() {
     let ribbonPath: SVGPathElement | null = null;
 
     function syncCursorVisibility() {
-      const enabled = isCustomCursorEnabled();
+      const enabled = isBalloonCursorEnabled();
       if (enabled) {
         document.documentElement.classList.add("has-balloon-cursor");
         if (cursorEl) cursorEl.style.display = "block";
@@ -139,6 +139,7 @@ export function useConfettiCursor() {
       cursorEnabled = syncCursorVisibility();
     };
     window.addEventListener("resize", onViewportChange);
+    window.addEventListener(CURSOR_PREF_CHANGE_EVENT, onViewportChange);
 
     const onMouseMove = (e: MouseEvent) => {
       mouse.x = e.clientX;
@@ -152,7 +153,10 @@ export function useConfettiCursor() {
     };
     window.addEventListener("mousemove", onMouseMove, { passive: true });
 
-    const onMouseDown = (e: MouseEvent) => burst(e.clientX, e.clientY, 10);
+    const onMouseDown = (e: MouseEvent) => {
+      if (!cursorEnabled) return;
+      burst(e.clientX, e.clientY, 10);
+    };
     window.addEventListener("mousedown", onMouseDown);
 
     let raf = 0;
@@ -255,6 +259,7 @@ export function useConfettiCursor() {
     return () => {
       window.removeEventListener("resize", resize);
       window.removeEventListener("resize", onViewportChange);
+      window.removeEventListener(CURSOR_PREF_CHANGE_EVENT, onViewportChange);
       window.removeEventListener("mousemove", onMouseMove);
       window.removeEventListener("mousedown", onMouseDown);
       cancelAnimationFrame(raf);
@@ -266,10 +271,10 @@ export function useConfettiCursor() {
 
 export function useHeroParallax() {
   useEffect(() => {
-    const fine = isCustomCursorEnabled();
     const heroMini = document.getElementById("heroMini");
-    if (!fine || !heroMini) return;
+    if (!heroMini) return;
 
+    let active = isBalloonCursorEnabled();
     let pmx = 0;
     let pmy = 0;
     let ptx = 0;
@@ -288,15 +293,33 @@ export function useHeroParallax() {
     }
 
     const onMove = (e: MouseEvent) => {
+      if (!active) return;
       const cx = window.innerWidth / 2;
       const cy = window.innerHeight * 0.42;
       ptx = ((e.clientX - cx) / cx) * 18;
       pty = ((e.clientY - cy) / cy) * 14;
       if (!praf) praf = requestAnimationFrame(pstep);
     };
+
+    const onPrefChange = () => {
+      active = isBalloonCursorEnabled();
+      if (!active) {
+        ptx = 0;
+        pty = 0;
+        heroMini!.style.transform = "";
+      }
+    };
+
     window.addEventListener("mousemove", onMove, { passive: true });
+    window.addEventListener("resize", onPrefChange);
+    window.addEventListener(CURSOR_PREF_CHANGE_EVENT, onPrefChange);
+
+    if (!active) heroMini.style.transform = "";
+
     return () => {
       window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("resize", onPrefChange);
+      window.removeEventListener(CURSOR_PREF_CHANGE_EVENT, onPrefChange);
       if (praf) cancelAnimationFrame(praf);
     };
   }, []);

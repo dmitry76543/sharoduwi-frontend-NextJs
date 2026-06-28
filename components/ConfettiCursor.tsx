@@ -1,3 +1,5 @@
+import { CursorToggle } from "@/components/CursorToggle";
+
 export function ConfettiCursor() {
   return (
     <>
@@ -5,6 +7,7 @@ export function ConfettiCursor() {
       <div id="cursor">
         <div className="cur-balloon" />
       </div>
+      <CursorToggle />
     </>
   );
 }

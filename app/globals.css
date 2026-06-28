@@ -118,6 +118,26 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   transform:translateX(-50%) rotate(45deg);background:var(--pink-deep);border-radius:2px}
 #cursor svg{position:absolute;top:0;left:0;overflow:visible;pointer-events:none}
 
+.cursor-toggle{position:fixed;left:26px;bottom:26px;z-index:56;display:inline-flex;align-items:center;gap:8px;
+  padding:10px 14px 10px 12px;border-radius:999px;background:rgba(255,252,250,.92);
+  border:1.5px solid var(--line);box-shadow:var(--shadow-soft);font-weight:800;font-size:13px;color:var(--ink);
+  transition:transform .25s var(--ease),border-color .25s var(--ease),background .25s var(--ease),color .25s var(--ease);
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.cursor-toggle:hover{transform:translateY(-3px);border-color:var(--pink);color:var(--pink-deep)}
+.cursor-toggle.is-off{background:#fff;color:var(--ink-2)}
+.cursor-toggle.is-off:hover{color:var(--pink-deep)}
+.cursor-toggle-icon{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;
+  background:var(--pink-soft);color:var(--pink-deep);flex:none;transition:background .25s var(--ease),color .25s var(--ease)}
+.cursor-toggle.is-off .cursor-toggle-icon{background:var(--cream-2);color:var(--ink-2)}
+.cursor-toggle-icon svg{width:16px;height:16px}
+.cursor-toggle-label{line-height:1}
+@media (max-width:720px){
+  .cursor-toggle{display:none}
+}
+@media (max-width:480px){
+  .cursor-toggle{left:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+}
+
 /* ============================================================
    TOP BENEFITS BAR — плавающие бейджи
    ============================================================ */
