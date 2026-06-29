@@ -1,7 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { useApp } from "@/context/AppContext";
 import { HowToOrderLink } from "@/components/HowToOrderLink";
+import { SiteSectionLink } from "@/components/SiteSectionLink";
 
 const LOGO = ["Ш", "А", "Р", "О", "Д", "У", "В", "Ы"];
 
@@ -28,22 +30,22 @@ export function MobMenu() {
         </button>
       </div>
       <nav>
-        <a href="#collections" onClick={closeMob}>
+        <SiteSectionLink sectionId="collections" onNavigate={closeMob}>
           Коллекции
-        </a>
-        <a href="/catalog" onClick={closeMob}>
+        </SiteSectionLink>
+        <Link href="/catalog" onClick={closeMob}>
           Каталог
-        </a>
-        <a href="#delivery" onClick={closeMob}>
+        </Link>
+        <SiteSectionLink sectionId="delivery" scrollOnAnyPage onNavigate={closeMob}>
           Доставка
-        </a>
-        <a href="#reviews" onClick={closeMob}>
+        </SiteSectionLink>
+        <SiteSectionLink sectionId="reviews" onNavigate={closeMob}>
           Отзывы
-        </a>
+        </SiteSectionLink>
         <HowToOrderLink onNavigate={closeMob}>Как заказать</HowToOrderLink>
-        <a href="#contacts" onClick={closeMob}>
+        <SiteSectionLink sectionId="contacts" scrollOnAnyPage onNavigate={closeMob}>
           Контакты
-        </a>
+        </SiteSectionLink>
       </nav>
     </div>
   );

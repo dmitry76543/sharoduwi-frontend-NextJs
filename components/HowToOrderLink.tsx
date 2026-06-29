@@ -4,11 +4,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { MouseEvent, ReactNode } from "react";
 
+import { scrollToSiteSection } from "@/components/SiteSectionLink";
+
 export const HOW_SECTION_ID = "how";
 export const HOW_SECTION_HREF = "/#how";
 
 export function scrollToHowSection(behavior: ScrollBehavior = "smooth") {
-  document.getElementById(HOW_SECTION_ID)?.scrollIntoView({ behavior, block: "start" });
+  scrollToSiteSection(HOW_SECTION_ID, behavior);
 }
 
 interface HowToOrderLinkProps {
