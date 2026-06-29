@@ -46,11 +46,6 @@ export function Header() {
 
     const onBtnClick = (e: Event) => {
       e.stopPropagation();
-      if (window.matchMedia("(max-width:860px)").matches) {
-        gotoShop();
-        setTimeout(() => document.getElementById("search")?.focus(), 450);
-        return;
-      }
       if (box.classList.contains("open")) {
         if (input.value.trim()) gotoShop();
         else closeBox();

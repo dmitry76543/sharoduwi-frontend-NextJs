@@ -39,7 +39,7 @@ export function Hero() {
           <div className="hero-copy">
             <h1 className="reveal" data-d="1">
               <span className="hero-float">
-                Праздник, который <span className="hl" id="rising-word">взлетает</span> вместе с настроением
+                Ваш праздник <span className="hl" id="rising-word">начинается</span> здесь
               </span>
             </h1>
             <p className="lead reveal" data-d="2">

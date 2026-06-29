@@ -971,13 +971,16 @@ a.col-card{color:inherit}
   .header.scrolled .header-inner{margin-top:0}
   .header .logo{font-size:clamp(14px,4vw,18px);min-width:0;flex:1 1 auto;max-width:calc(100% - 184px);overflow:hidden}
   .header .logo span{flex-shrink:0}
-  .head-actions{gap:3px;flex:0 0 auto;padding-right:0}
+  .head-actions{gap:3px;flex:0 0 auto;padding-right:0;position:relative}
   .icon-btn{width:36px;height:36px;flex-shrink:0;background:#fff;
     box-shadow:0 0 0 1px var(--line),0 4px 12px -6px rgba(40,16,42,.12)}
   .icon-btn svg{width:18px;height:18px}
   .head-search{width:36px;height:36px;flex-shrink:0;
     box-shadow:0 0 0 1px var(--line),0 4px 12px -6px rgba(40,16,42,.12)}
   .head-search .hs-btn{width:34px;height:34px}
+  .head-search.open{position:absolute;right:max(10px,env(safe-area-inset-right,0));top:50%;
+    transform:translateY(-50%);width:min(280px,calc(100vw - 24px));z-index:30}
+  .head-search.open input{width:calc(100% - 40px);padding-right:12px}
   .topbar{padding-left:env(safe-area-inset-left,0);padding-right:env(safe-area-inset-right,0)}
   .topbar-row{flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;padding:0 16px;
     scrollbar-width:none;-webkit-overflow-scrolling:touch}
@@ -1077,8 +1080,11 @@ a.col-card{color:inherit}
 
 /* Мобильное меню */
 .mob-menu{position:fixed;inset:0;z-index:103;background:var(--cream);transform:translateY(-100%);
-  transition:.5s var(--ease);display:flex;flex-direction:column;padding:30px 26px}
-.mob-menu.open{transform:translateY(0)}
+  visibility:hidden;pointer-events:none;clip-path:inset(0 0 100% 0);
+  transition:transform .5s var(--ease),visibility 0s linear .5s,clip-path 0s linear .5s;
+  display:flex;flex-direction:column;padding:30px 26px}
+.mob-menu.open{transform:translateY(0);visibility:visible;pointer-events:auto;clip-path:none;
+  transition:transform .5s var(--ease),visibility 0s linear 0s,clip-path 0s linear 0s}
 .mob-menu .mm-head{display:flex;justify-content:space-between;align-items:center;gap:12px;min-width:0;margin-bottom:30px}
 .mob-menu .mm-head .logo{flex:1 1 auto;min-width:0;max-width:calc(100% - 54px);font-size:clamp(15px,4.8vw,22px);overflow:visible}
 .mob-menu .mm-head .close-btn{flex:0 0 auto}

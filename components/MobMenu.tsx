@@ -9,7 +9,12 @@ export function MobMenu() {
   const { mobOpen, closeMob } = useApp();
 
   return (
-    <div className={`mob-menu${mobOpen ? " open" : ""}`} id="mobMenu">
+    <div
+      className={`mob-menu${mobOpen ? " open" : ""}`}
+      id="mobMenu"
+      aria-hidden={!mobOpen}
+      inert={mobOpen ? undefined : true}
+    >
       <div className="mm-head">
         <a href="/" className="logo" onClick={closeMob}>
           {LOGO.map((l) => (
