@@ -16,6 +16,7 @@ import type { CartItem } from "@/lib/cart";
 import { COLORS } from "@/lib/data";
 import { balloonSVG, fmt } from "@/lib/balloons";
 import { normalizePhone } from "@/lib/checkout";
+import { trackOrderSent } from "@/lib/metrika/track";
 import { getProductSlug } from "@/lib/product-slug";
 import { Background } from "@/components/Background";
 import { TopBar } from "@/components/TopBar";
@@ -119,7 +120,19 @@ function CheckoutContent() {
         return;
       }
 
-      setOrderId(data.id ?? null);
+      const id = data.id ?? "unknown";
+      trackOrderSent(
+        id,
+        total,
+        rows.map(({ p, qty }) => ({
+          id: p.id,
+          name: p.name,
+          price: p.price,
+          collection: p.collection,
+          quantity: qty,
+        }))
+      );
+      setOrderId(id);
       clearCart();
     } catch {
       setError("Ошибка сети. Попробуйте ещё раз или напишите нам в мессенджер.");

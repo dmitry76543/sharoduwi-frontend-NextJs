@@ -155,10 +155,14 @@ export function FabContacts() {
           onClick={toggle}
         >
           <span className="flabel" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="2.5" y="5" width="11" height="8" rx="1.5" />
-              <path d="M2.5 6.5l5.5 3.5L13.5 6.5" />
-              <path d="M15.8 11.2c.9 1.8 2.3 3.2 4.1 4.1l.9-1.6a.9.9 0 01.9-.15l1.8.6a.9.9 0 01.5.85v2a.9.9 0 01-.8.9A9.5 9.5 0 019.2 8.3a.9.9 0 01.8-.85l1.8-.45a.9.9 0 01.85.6l.55 1.8a.9.9 0 01-.15.9l-1.6.9z" />
+            <svg viewBox="0 0 32 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <g transform="translate(0 1)">
+                <rect x="1" y="4" width="11" height="8" rx="1.5" />
+                <path d="M1 5.5l5.5 3.5L12 5.5" />
+              </g>
+              <g transform="translate(17 1.5) scale(0.72)">
+                <path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3 19.5 19.5 0 01-6-6 19.8 19.8 0 01-3-8.6A2 2 0 014.1 2h3a2 2 0 012 1.7c.1.9.3 1.8.6 2.6a2 2 0 01-.5 2.1L8.1 9.9a16 16 0 006 6l1.5-1.1a2 2 0 012.1-.5c.8.3 1.7.5 2.6.6a2 2 0 011.7 2z" />
+              </g>
             </svg>
           </span>
           <span className="fic">

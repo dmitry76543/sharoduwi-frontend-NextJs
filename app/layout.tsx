@@ -1,4 +1,6 @@
 import { JsonLd } from "@/components/JsonLd";
+import { MetrikaTracker } from "@/components/MetrikaTracker";
+import { YandexMetrika } from "@/components/YandexMetrika";
 import { buildRootMetadata } from "@/lib/seo/metadata";
 import {
   buildLocalBusinessSchema,
@@ -25,6 +27,8 @@ export default function RootLayout({
   return (
     <html lang="ru">
       <body>
+        <YandexMetrika />
+        <MetrikaTracker />
         <JsonLd data={globalSchema} />
         {children}
       </body>

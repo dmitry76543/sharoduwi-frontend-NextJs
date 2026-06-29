@@ -20,6 +20,7 @@ import {
 import type { CollectionSlug, TagFilter } from "@/lib/products";
 import { persistCart, readStoredCart } from "@/lib/cart-storage";
 import { persistFav, readStoredFav, type FavMap } from "@/lib/fav-storage";
+import { trackAddToCart, trackFabOpen } from "@/lib/metrika/track";
 
 type Cart = Record<number, number>;
 type Fav = FavMap;
@@ -230,9 +231,18 @@ export function AppProvider({
     (id: number, x?: number, y?: number) => {
       setCart((prev) => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
       showToast(id);
+      const product = getProduct(id);
+      if (product) {
+        trackAddToCart({
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          collection: product.collection,
+        });
+      }
       if (x != null && y != null) burstRef.current?.(x, y, 40);
     },
-    [showToast]
+    [showToast, getProduct]
   );
 
   const incrementCart = useCallback((id: number) => {
@@ -277,9 +287,19 @@ export function AppProvider({
   const closeCart = useCallback(() => setCartOpen(false), []);
   const openMob = useCallback(() => setMobOpen(true), []);
   const closeMob = useCallback(() => setMobOpen(false), []);
-  const openContact = useCallback(() => setFabOpenState(true), []);
+  const openContact = useCallback(() => {
+    setFabOpenState((prev) => {
+      if (!prev) trackFabOpen();
+      return true;
+    });
+  }, []);
   const closeContact = useCallback(() => setFabOpenState(false), []);
-  const setFabOpen = useCallback((open: boolean) => setFabOpenState(open), []);
+  const setFabOpen = useCallback((open: boolean) => {
+    setFabOpenState((prev) => {
+      if (open && !prev) trackFabOpen();
+      return open;
+    });
+  }, []);
 
   const closeAll = useCallback(() => {
     setCartOpen(false);

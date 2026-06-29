@@ -8,6 +8,7 @@ import { COLORS } from "@/lib/data";
 import type { Product } from "@/lib/data";
 import { balloonSVG, fmt } from "@/lib/balloons";
 import { getProductSlug } from "@/lib/product-slug";
+import { trackCheckoutButtonClick } from "@/lib/metrika/track";
 
 export function CartDrawer() {
   const router = useRouter();
@@ -36,6 +37,7 @@ export function CartDrawer() {
   }, [cart, getProduct]);
 
   const onCheckout = () => {
+    trackCheckoutButtonClick(total, rows.length);
     closeCart();
     router.push("/checkout");
   };
