@@ -24,7 +24,7 @@ export function ReviewsSection() {
           <div className="sec-tag">
             <span className="dot" /> Отзывы
           </div>
-          <h2>Что пишут наши клиенты</h2>
+          <h2>Что пишут наши клиенты о нас</h2>
           <p>
             <Link href="/reviews" className="info-link">
               Все отзывы →
