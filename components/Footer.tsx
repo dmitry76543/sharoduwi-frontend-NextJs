@@ -42,7 +42,7 @@ export function Footer() {
               </li>
             </ul>
           </div>
-          <div>
+          <div id="delivery">
             <h4>Доставка</h4>
             <ul>
               <li>

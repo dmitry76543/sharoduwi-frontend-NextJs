@@ -20,7 +20,6 @@ import { TopBar } from "@/components/TopBar";
 import { Header } from "@/components/Header";
 import { Hero } from "@/components/Hero";
 import { Collections } from "@/components/Collections";
-import { PromoSection } from "@/components/PromoSection";
 import { Shop } from "@/components/Shop";
 import { HowItWorks } from "@/components/HowItWorks";
 import { WhySection } from "@/components/WhySection";
@@ -68,7 +67,6 @@ export default function SitePage() {
       <a id="top" />
       <Hero />
       <Collections />
-      <PromoSection />
       <Shop previewLimit={4} />
       <HowItWorks />
       <WhySection />

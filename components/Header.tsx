@@ -117,9 +117,7 @@ export function Header() {
         </a>
         <nav className="nav">
           <a href="/catalog">Каталог</a>
-          <a href="#promo" className="promo">
-            Акции
-          </a>
+          <a href="#delivery">Доставка</a>
           <a href="#reviews">Отзывы</a>
           <HowToOrderLink>Как заказать</HowToOrderLink>
           <a href="#contacts">Контакты</a>

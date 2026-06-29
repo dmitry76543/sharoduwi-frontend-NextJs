@@ -34,8 +34,8 @@ export function MobMenu() {
         <a href="/catalog" onClick={closeMob}>
           Каталог
         </a>
-        <a href="#promo" onClick={closeMob}>
-          Акции
+        <a href="#delivery" onClick={closeMob}>
+          Доставка
         </a>
         <a href="#reviews" onClick={closeMob}>
           Отзывы
