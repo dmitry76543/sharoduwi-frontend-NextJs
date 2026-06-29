@@ -10,7 +10,7 @@ import { buildBreadcrumbSchema, toJsonLdGraph } from "@/lib/seo/schema";
 const config = DELIVERY_ZHUKOVSKY;
 
 export const metadata: Metadata = buildPageMetadata({
-  title: "Доставка по Жуковскому",
+  title: config.title,
   description: config.metaDescription,
   path: config.path,
 });

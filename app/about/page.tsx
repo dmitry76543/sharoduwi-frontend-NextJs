@@ -9,7 +9,7 @@ import { buildBreadcrumbSchema, toJsonLdGraph } from "@/lib/seo/schema";
 export const metadata: Metadata = buildPageMetadata({
   title: "О компании",
   description:
-    "ШАРОДУВЫ — магазин гелиевых шаров в Жуковском с 2005 года. Два шоурума, ручная сборка композиций и доставка по Раменскому району.",
+    "ШАРОДУВЫ — магазин гелиевых и воздушных шаров в Жуковском с 2005 года. Два шоурума, ручная сборка композиций и доставка по Раменскому району.",
   path: "/about",
 });
 

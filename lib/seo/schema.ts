@@ -52,7 +52,7 @@ export function buildLocalBusinessSchema() {
     "@id": `${SITE_URL}/#localbusiness`,
     name: SITE_NAME,
     description:
-      "Магазин гелиевых шаров и праздничных композиций в Жуковском с доставкой по Раменскому району.",
+      "Магазин гелиевых и воздушных шаров и праздничных композиций в Жуковском с доставкой по Раменскому району.",
     url: SITE_URL,
     telephone: SITE_PHONE,
     image: resolveImageUrl(),
@@ -123,7 +123,7 @@ export function buildProductSchema(product: ProductDetails) {
   const productUrl = absoluteUrl(`/products/${slug}`);
   const description =
     stripHtml(product.briefDescription ?? product.description ?? "") ||
-    `${product.name} из коллекции «${product.collection}». Гелиевые шары с доставкой по Жуковскому и Раменскому району.`;
+    `${product.name} из коллекции «${product.collection}». Гелиевые и воздушные шары с доставкой по Жуковскому и Раменскому району.`;
   const images = (product.images.length ? product.images : product.img ? [product.img] : [])
     .map((src) => resolveImageUrl(src))
     .filter(Boolean);
@@ -246,7 +246,7 @@ export function buildBlogListSchema(posts: BlogPost[]) {
 export function buildCatalogItemListSchema(products: Product[]) {
   return {
     "@type": "ItemList",
-    name: "Каталог гелиевых шаров",
+    name: "Каталог гелиевых и воздушных шаров",
     url: absoluteUrl("/catalog"),
     numberOfItems: products.length,
     itemListElement: products.slice(0, 24).map((product, index) => {

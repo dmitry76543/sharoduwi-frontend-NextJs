@@ -13,9 +13,9 @@ import { getCatalogProducts, getCatalogSource } from "@/lib/products-service";
 export const revalidate = 300;
 
 export const metadata: Metadata = buildPageMetadata({
-  title: "Каталог гелиевых шаров и композиций",
+  title: "Каталог гелиевых и воздушных шаров",
   description:
-    "Полный каталог гелиевых шаров, композиций и наборов в Жуковском и Раменском районе. Цены, фото и доставка к торжеству.",
+    "Полный каталог гелиевых и воздушных шаров, композиций и наборов в Жуковском и Раменском районе. Цены, фото и доставка к торжеству.",
   path: "/catalog",
 });
 

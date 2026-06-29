@@ -33,7 +33,7 @@ export function ProductPageContent({
   );
   const leadHtml = prepareProductLead(product.briefDescription);
   const leadFallback =
-    "Гелиевые шары и композиции — надуваем при вас и привозим точно к торжеству.";
+    "Гелиевые и воздушные шары — надуваем при вас и привозим точно к торжеству.";
 
   return (
     <section className="sec product-page">

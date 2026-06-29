@@ -72,7 +72,7 @@ export function buildPageMetadata({
 
 export function buildRootMetadata(): Metadata {
   const canonical = absoluteUrl("/");
-  const title = `${SITE_NAME} — гелиевые шары и композиции в Жуковском`;
+  const title = `${SITE_NAME} — гелиевые и воздушные шары в Жуковском`;
   const ogImage = absoluteUrl(DEFAULT_OG_IMAGE);
 
   return {

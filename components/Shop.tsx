@@ -71,7 +71,7 @@ export function Shop({ pageCollection, heading, description, previewLimit }: Sho
               ? favCount > 0
                 ? `Избранное · ${favCount}`
                 : "Избранное"
-              : (heading ?? "Наши шары и композиции")}
+              : (heading ?? "Гелиевые и воздушные шары")}
           </h2>
           {favOnly && favCount > 0 && (
             <div className="shop-fav-actions">

@@ -1,12 +1,20 @@
 import Link from "next/link";
 
+import { DeliveryAreaDetails } from "@/components/DeliveryAreaDetails";
 import { COLLECTIONS } from "@/lib/data";
 import {
+  DELIVERY_DETAILS_BY_SLUG,
+  DELIVERY_MANAGER_MAX,
+  DELIVERY_MANAGER_PHONE,
+  DELIVERY_MANAGER_PHONE_HREF,
+  DELIVERY_MANAGER_TELEGRAM,
   FEATURED_COLLECTION_SLUGS,
   type DeliveryAreaConfig,
 } from "@/lib/info-pages";
 
 export function DeliveryPageContent({ config }: { config: DeliveryAreaConfig }) {
+  const areaDetails = DELIVERY_DETAILS_BY_SLUG[config.slug];
+  const hasDetailedTariffs = Boolean(areaDetails);
   const featuredCollections = FEATURED_COLLECTION_SLUGS.map((slug) =>
     COLLECTIONS.find((c) => c.slug === slug)
   ).filter(Boolean);
@@ -45,45 +53,72 @@ export function DeliveryPageContent({ config }: { config: DeliveryAreaConfig }) 
               </ul>
             </div>
             <div className="info-card info-card--wide">
-              <h2>Самовывоз</h2>
-              <p>{config.pickupNote}</p>
-              <a
-                href={config.mapUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="info-link"
-              >
-                {config.mapLabel} →
-              </a>
+              {hasDetailedTariffs ? (
+                <>
+                  <h2>Менеджеры на связи</h2>
+                  <p>
+                    Уточните стоимость доставки по вашему адресу, ночной тариф и состав заказа — ответим
+                    быстро.
+                  </p>
+                  <p className="delivery-contact-links">
+                    <a href={DELIVERY_MANAGER_PHONE_HREF}>{DELIVERY_MANAGER_PHONE}</a>
+                    {" · "}
+                    <a href={DELIVERY_MANAGER_MAX} target="_blank" rel="noopener noreferrer">
+                      MAX
+                    </a>
+                    {" · "}
+                    <a href={DELIVERY_MANAGER_TELEGRAM} target="_blank" rel="noopener noreferrer">
+                      Telegram
+                    </a>
+                  </p>
+                  <a href="#delivery-pickup" className="info-link">
+                    Самовывоз из магазинов →
+                  </a>
+                </>
+              ) : (
+                <>
+                  <h2>Самовывоз</h2>
+                  <p>{config.pickupNote}</p>
+                  <a
+                    href={config.mapUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="info-link"
+                  >
+                    {config.mapLabel} →
+                  </a>
+                </>
+              )}
             </div>
           </div>
         </div>
       </section>
 
-      <section className="sec info-page-section">
-        <div className="wrap">
-          <div className="info-placeholder reveal">
-            <h2>Стоимость и условия доставки</h2>
-            <p>
-              Актуальные тарифы, минимальная сумма заказа и интервалы доставки мы обновим на этой странице
-              в ближайшее время. Пока что уточняйте стоимость при оформлении заказа — менеджер сразу
-              подскажет варианты.
-            </p>
-            <div className="info-placeholder-box" aria-hidden="true">
-              <span>Тарифы и условия — скоро здесь</span>
+      {areaDetails ? (
+        <DeliveryAreaDetails details={areaDetails} />
+      ) : (
+        <section className="sec info-page-section">
+          <div className="wrap">
+            <div className="info-placeholder reveal">
+              <h2>Стоимость и условия доставки</h2>
+              <p>
+                Актуальные тарифы, минимальная сумма заказа и интервалы доставки мы обновим на этой странице
+                в ближайшее время. Пока что уточняйте стоимость при оформлении заказа — менеджер сразу
+                подскажет варианты.
+              </p>
+              <div className="info-placeholder-box" aria-hidden="true">
+                <span>Тарифы и условия — скоро здесь</span>
+              </div>
+              <p className="info-note">
+                Напишите в{" "}
+                <a href={DELIVERY_MANAGER_MAX}>MAX</a>,{" "}
+                <a href={DELIVERY_MANAGER_TELEGRAM}>Telegram</a> или позвоните{" "}
+                <a href={DELIVERY_MANAGER_PHONE_HREF}>{DELIVERY_MANAGER_PHONE}</a> — ответим быстро.
+              </p>
             </div>
-            <p className="info-note">
-              Напишите в{" "}
-              <a href="https://max.ru/u/f9LHodD0cOJ0iFHpDtxRvHxZb55wWIT4L1UpmBingh61XxPU-GdBpm5h-ls">
-                MAX
-              </a>
-              ,{" "}
-              <a href="https://t.me/+79267086374">Telegram</a> или позвоните{" "}
-              <a href="tel:+79267086374">+7 926 708-63-74</a> — ответим быстро.
-            </p>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       <section className="sec info-page-section">
         <div className="wrap">

@@ -10,7 +10,7 @@ import { buildBreadcrumbSchema, toJsonLdGraph } from "@/lib/seo/schema";
 const config = DELIVERY_RAMENSKOE;
 
 export const metadata: Metadata = buildPageMetadata({
-  title: "Доставка в Раменское и район",
+  title: config.title,
   description: config.metaDescription,
   path: config.path,
 });

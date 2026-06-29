@@ -21,7 +21,7 @@ export type BlogPost = {
 export const BLOG_POSTS: BlogPost[] = [
   {
     slug: "skolko-derzhatsya-gelievye-shary",
-    title: "Сколько держатся гелиевые шары зимой и летом",
+    title: "Сколько держатся гелиевые и воздушные шары зимой и летом",
     description:
       "Честные сроки полёта латексных и фольгированных шаров: Hi-Float, отопительный сезон, лето и что влияет на долговечность.",
     publishedAt: "2026-03-15",

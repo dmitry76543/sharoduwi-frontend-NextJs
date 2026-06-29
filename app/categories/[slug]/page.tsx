@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   return buildPageMetadata({
     title: `${collection.name} в Жуковском`,
-    description: `${collection.name}: ${collection.sub}. Гелиевые шары и композиции с доставкой по Жуковскому и Раменскому району.`,
+    description: `${collection.name}: ${collection.sub}. Гелиевые и воздушные шары с доставкой по Жуковскому и Раменскому району.`,
     path: `/categories/${collection.slug}`,
     image: getCollectionImageSrc(collection.slug),
   });

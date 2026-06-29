@@ -39,7 +39,7 @@ export async function generateMetadata({
   const description =
     product.briefDescription?.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim() ||
     product.description?.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim() ||
-    `${product.name} из коллекции «${product.collection}». Гелиевые шары в Жуковском и Раменском районе.`;
+    `${product.name} из коллекции «${product.collection}». Гелиевые и воздушные шары в Жуковском и Раменском районе.`;
 
   const image = product.images[0] ?? product.img;
 
