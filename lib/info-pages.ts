@@ -14,6 +14,8 @@ export type DeliveryAreaConfig = {
   slug: string;
   path: string;
   cityLabel: string;
+  /** Фраза после «доставки в …» в блоке «Как заказать» */
+  deliveryInLabel: string;
   title: string;
   metaDescription: string;
   lead: string;
@@ -206,6 +208,7 @@ export const DELIVERY_ZHUKOVSKY: DeliveryAreaConfig = {
   slug: "zhukovsky",
   path: "/delivery/zhukovsky",
   cityLabel: "Жуковский",
+  deliveryInLabel: "Жуковском",
   title: "Доставка гелиевых и воздушных шаров по Жуковскому",
   metaDescription:
     "Доставка гелиевых и воздушных шаров по Жуковскому — 24/7 до двери, от 400 ₽ при заказе от 1500 ₽. Предоплата 100%, самовывоз с ул. Чкалова и из ТЦ «Фермер».",
@@ -226,10 +229,11 @@ export const DELIVERY_ZHUKOVSKY: DeliveryAreaConfig = {
 export const DELIVERY_RAMENSKOE: DeliveryAreaConfig = {
   slug: "ramenskoe",
   path: "/delivery/ramenskoe",
-  cityLabel: "Раменское и район",
+  cityLabel: "Раменское и по Раменскому району",
+  deliveryInLabel: "Раменское и по Раменскому району",
   title: "Доставка гелиевых и воздушных шаров в Раменское и Раменский район",
   metaDescription:
-    "Доставка гелиевых и воздушных шаров в Раменское и район — 24/7 до двери, от 500 ₽. Тарифы по посёлкам и деревням, 40 ₽/км от Жуковского. Предоплата 100%.",
+    "Доставка гелиевых и воздушных шаров в Раменское и по Раменскому району — 24/7 до двери, от 500 ₽. Тарифы по посёлкам и деревням, 40 ₽/км от Жуковского. Предоплата 100%.",
   lead:
     "Возим шары из Жуковского в Раменское и по всему Раменскому району. Согласуем состав, время и адрес — курьер приедет точно к празднику.",
   zones: [

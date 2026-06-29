@@ -154,7 +154,7 @@ export function DeliveryPageContent({ config }: { config: DeliveryAreaConfig }) 
             <h2>Как заказать доставку</h2>
             <ol className="info-steps-list">
               <li>Выберите шары в каталоге или напишите нам — поможем с составом.</li>
-              <li>Согласуем адрес, дату и время доставки в {config.cityLabel.toLowerCase()}.</li>
+              <li>Согласуем адрес, дату и время доставки в {config.deliveryInLabel}.</li>
               <li>Соберём композицию, надуем гелием и привезём точно ко времени торжества.</li>
             </ol>
           </div>
@@ -168,7 +168,7 @@ export function DeliveryPageContent({ config }: { config: DeliveryAreaConfig }) 
             <p>
               Также возим по соседним направлениям —{" "}
               {config.slug === "zhukovsky" ? (
-                <Link href="/delivery/ramenskoe">доставка в Раменское и район</Link>
+                <Link href="/delivery/ramenskoe">доставка в Раменское и по Раменскому району</Link>
               ) : (
                 <Link href="/delivery/zhukovsky">доставка по Жуковскому</Link>
               )}

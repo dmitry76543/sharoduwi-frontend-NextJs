@@ -79,7 +79,9 @@ export function WhySection() {
               </svg>
             </div>
             <h3>Два магазина в Жуковском</h3>
-            <p>Удобный самовывоз на ул. Чкалова и в ТЦ «Фермер».</p>
+            <p>
+              Удобный самовывоз: ул. Чкалова, д. 6, цокольный этаж и ул. Мясищева, д. 28/1, ТЦ «Фермер».
+            </p>
           </article>
           <article className="bento-tile bt-wide">
             <div className="ic">
