@@ -44,10 +44,13 @@ async function request(url, { apiKey, userId, method = "GET", body } = {}) {
   const u = new URL(url);
   u.searchParams.set("apikey", apiKey);
   const headers = {
-    Accept: "application/json",
-    "Content-Type": "application/json",
+    Accept: "application/json, text/plain, */*",
+    "User-Agent": "Sharoduwi-Storefront/1.0",
     "X-API-KEY": apiKey,
   };
+  if (body) {
+    headers["Content-Type"] = "application/json; charset=utf-8";
+  }
   if (userId) headers["X-API-USER-ID"] = userId;
 
   const response = await fetch(u, {

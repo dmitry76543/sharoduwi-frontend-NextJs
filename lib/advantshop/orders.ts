@@ -3,10 +3,7 @@ import type { CheckoutFormData } from "@/lib/checkout";
 import { formatAdvantShopPhone } from "@/lib/checkout";
 import { findAdvantShopProductById } from "@/lib/advantshop/catalog";
 import { advantshopFetch } from "./client";
-import {
-  getAdvantShopApiBaseUrlProtocolFallback,
-  isAdvantShopConfigured,
-} from "./config";
+import { isAdvantShopConfigured } from "./config";
 import type { AdvantShopOrderAddResponse } from "./types";
 
 type AdvantShopOrderItem = {
@@ -122,17 +119,7 @@ export async function submitAdvantShopOrder(
   }
 
   const payload = buildOrderPayload(input, orderItems);
-
-  try {
-    return await postAdvantShopOrder(payload);
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "";
-    const fallbackBase = getAdvantShopApiBaseUrlProtocolFallback();
-    if (message.includes("405") && fallbackBase) {
-      return await postAdvantShopOrder(payload, fallbackBase);
-    }
-    throw error;
-  }
+  return postAdvantShopOrder(payload);
 }
 
 async function postAdvantShopOrder(

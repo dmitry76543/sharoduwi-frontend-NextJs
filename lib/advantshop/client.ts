@@ -1,5 +1,6 @@
 import {
   getAdvantShopApiBaseUrl,
+  getAdvantShopApiBaseUrlProtocolFallback,
   getAdvantShopClientApiKey,
   getAdvantShopServerApiKey,
   CATALOG_REVALIDATE_SECONDS,
@@ -131,6 +132,12 @@ async function parseAdvantShopResponse<T>(response: Response): Promise<T> {
           "Проверьте ADVANTSHOP_BASE_URL / ADVANTSHOP_API_BASE_URL (нужен домен магазина AdvantShop, например http://shop.funshar.ru, не sharoduwi.ru)."
       );
     }
+    if (response.status === 406) {
+      throw new Error(
+        "AdvantShop API 406: сервер не вернул JSON (часто из‑за https или неверного домена). " +
+          "Укажите ADVANTSHOP_BASE_URL=http://shop.funshar.ru или ADVANTSHOP_API_BASE_URL с http."
+      );
+    }
     throw new Error(`AdvantShop API ${response.status}: ${text.slice(0, 300)}`);
   }
 
@@ -156,7 +163,35 @@ async function parseAdvantShopResponse<T>(response: Response): Promise<T> {
   return payload;
 }
 
-async function advantshopRequest<T>(
+function buildAdvantShopHeaders(
+  apiKey: string,
+  hasBody: boolean,
+  extraHeaders?: Record<string, string>
+): Record<string, string> {
+  const headers: Record<string, string> = {
+    // Строгий Accept: application/json на IIS часто даёт 406, если ответ не JSON.
+    Accept: "application/json, text/plain, */*",
+    "X-API-KEY": apiKey,
+    "User-Agent": "Sharoduwi-Storefront/1.0",
+    ...extraHeaders,
+  };
+
+  if (hasBody) {
+    headers["Content-Type"] = "application/json; charset=utf-8";
+  }
+
+  return headers;
+}
+
+function isAdvantShopTransportError(error: unknown): boolean {
+  if (!(error instanceof Error)) return false;
+  return (
+    error.message.includes("AdvantShop API 405") ||
+    error.message.includes("AdvantShop API 406")
+  );
+}
+
+async function advantshopRequestOnce<T>(
   path: string,
   apiKey: string,
   options: FetchOptions = {},
@@ -176,15 +211,11 @@ async function advantshopRequest<T>(
 
   const method = options.method ?? "GET";
   const isMutation = method !== "GET";
+  const hasBody = Boolean(options.body);
 
   const fetchInit: RequestInit & { next?: { revalidate: number } } = {
     method,
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      "X-API-KEY": apiKey,
-      ...extraHeaders,
-    },
+    headers: buildAdvantShopHeaders(apiKey, hasBody, extraHeaders),
     body: options.body ? JSON.stringify(options.body) : undefined,
   };
 
@@ -203,39 +234,91 @@ async function advantshopRequest<T>(
   return parseAdvantShopResponse<T>(response);
 }
 
+async function advantshopRequest<T>(
+  path: string,
+  apiKey: string,
+  options: FetchOptions = {},
+  extraHeaders?: Record<string, string>,
+  baseUrl = getAdvantShopApiBaseUrl()
+): Promise<T> {
+  const bases = [baseUrl];
+  const fallback = getAdvantShopApiBaseUrlProtocolFallback(baseUrl);
+  if (fallback && fallback !== baseUrl) {
+    bases.push(fallback);
+  }
+
+  let lastError: unknown;
+
+  for (const currentBase of bases) {
+    try {
+      return await advantshopRequestOnce<T>(
+        path,
+        apiKey,
+        options,
+        extraHeaders,
+        currentBase
+      );
+    } catch (error) {
+      lastError = error;
+      if (!isAdvantShopTransportError(error)) {
+        throw error;
+      }
+    }
+  }
+
+  throw lastError;
+}
+
 async function fetchClientUserId(): Promise<string> {
   const apiKey = getAdvantShopClientApiKey();
-  const url = buildAdvantShopUrl(getAdvantShopApiBaseUrl(), "api/init");
-  url.searchParams.set("apikey", apiKey);
-
-  const response = await fetchWithRetry(url.toString(), {
-    headers: {
-      Accept: "application/json",
-      "X-API-KEY": apiKey,
-    },
-    cache: "no-store",
-  });
-
-  const userId =
-    readResponseHeader(response, "X-API-USER-ID") ??
-    readResponseHeader(response, "x-api-user-id");
-
-  if (userId) {
-    return userId;
+  const bases = [getAdvantShopApiBaseUrl()];
+  const fallback = getAdvantShopApiBaseUrlProtocolFallback(bases[0]);
+  if (fallback && fallback !== bases[0]) {
+    bases.push(fallback);
   }
 
-  const payload = await parseAdvantShopResponse<{ customer?: { id?: string } }>(
-    response
-  );
-  const customerId = payload.customer?.id;
+  let lastError: unknown;
 
-  if (customerId) {
-    return customerId;
+  for (const base of bases) {
+    try {
+      const url = buildAdvantShopUrl(base, "api/init");
+      url.searchParams.set("apikey", apiKey);
+
+      const response = await fetchWithRetry(url.toString(), {
+        method: "GET",
+        headers: buildAdvantShopHeaders(apiKey, false),
+        cache: "no-store",
+      });
+
+      const userId =
+        readResponseHeader(response, "X-API-USER-ID") ??
+        readResponseHeader(response, "x-api-user-id");
+
+      if (userId) {
+        return userId;
+      }
+
+      const payload = await parseAdvantShopResponse<{ customer?: { id?: string } }>(
+        response
+      );
+      const customerId = payload.customer?.id;
+
+      if (customerId) {
+        return customerId;
+      }
+
+      throw new Error(
+        "AdvantShop не вернул X-API-USER-ID. Проверьте Client API ключ (вкладка «API с авторизацией»)."
+      );
+    } catch (error) {
+      lastError = error;
+      if (!isAdvantShopTransportError(error)) {
+        throw error;
+      }
+    }
   }
 
-  throw new Error(
-    "AdvantShop не вернул X-API-USER-ID. Проверьте Client API ключ (вкладка «API с авторизацией»)."
-  );
+  throw lastError;
 }
 
 export async function fetchClientUserIdUncached(): Promise<string> {
