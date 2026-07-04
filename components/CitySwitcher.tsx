@@ -15,7 +15,14 @@ import {
   type CitySlug,
 } from "@/lib/cities";
 
-export function CitySwitcher({ compact = false }: { compact?: boolean }) {
+export function CitySwitcher({
+  compact = false,
+  inHeader = false,
+}: {
+  compact?: boolean;
+  /** В шапке сайта — компактная кнопка и полноширинная панель на мобильных */
+  inHeader?: boolean;
+}) {
   const { city, persistCity } = useCity();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -66,19 +73,23 @@ export function CitySwitcher({ compact = false }: { compact?: boolean }) {
   const label = city?.name ?? "Куда доставить?";
 
   return (
-    <div className={`city-switcher${compact ? " city-switcher--compact" : ""}`} ref={rootRef}>
+    <div
+      className={`city-switcher${compact ? " city-switcher--compact" : ""}${inHeader ? " city-switcher--header" : ""}`}
+      ref={rootRef}
+    >
       <button
         type="button"
         className="city-switcher-btn"
         aria-expanded={open}
         aria-haspopup="listbox"
+        aria-label={city ? `Место доставки: ${city.name}. Открыть список` : "Куда доставить? Открыть список"}
         onClick={() => setOpen((v) => !v)}
       >
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
           <path d="M21 10c0 6-9 11-9 11s-9-5-9-11a9 9 0 0118 0z" />
           <circle cx="12" cy="10" r="3" />
         </svg>
-        <span>{label}</span>
+        <span className="city-switcher-btn-text">{label}</span>
         <svg className="city-switcher-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
           <path d="M6 9l6 6 6-6" />
         </svg>
@@ -92,7 +103,8 @@ export function CitySwitcher({ compact = false }: { compact?: boolean }) {
             autoFocus
             value={query}
             onChange={setQuery}
-            placeholder="Поиск…"
+            placeholder="Поиск населённого пункта…"
+            label="Поиск населённого пункта"
           />
 
           {isSearching ? (
