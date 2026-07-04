@@ -108,24 +108,26 @@ export function CitySwitcher({
           />
 
           {isSearching ? (
-            <div className="city-switcher-section">
-              <span className="city-switcher-label">
-                {searchResults.length > 0
-                  ? `Найдено: ${searchResults.length}`
-                  : "Ничего не найдено"}
-              </span>
-              {searchResults.map((item) => (
-                <CitySwitcherItem
-                  key={item.slug}
-                  item={item}
-                  active={city?.slug === item.slug}
-                  targetHref={buildCitySwitchHref(item.slug, restPath)}
-                  onSelect={() => switchTo(item)}
-                />
-              ))}
+            <div className="city-switcher-list">
+              <div className="city-switcher-section">
+                <span className="city-switcher-label">
+                  {searchResults.length > 0
+                    ? `Найдено: ${searchResults.length}`
+                    : "Ничего не найдено"}
+                </span>
+                {searchResults.map((item) => (
+                  <CitySwitcherItem
+                    key={item.slug}
+                    item={item}
+                    active={city?.slug === item.slug}
+                    targetHref={buildCitySwitchHref(item.slug, restPath)}
+                    onSelect={() => switchTo(item)}
+                  />
+                ))}
+              </div>
             </div>
           ) : (
-            <>
+            <div className="city-switcher-list">
               <div className="city-switcher-section">
                 <span className="city-switcher-label">Города</span>
                 {primaryCities.map((item) => (
@@ -138,7 +140,7 @@ export function CitySwitcher({
                   />
                 ))}
               </div>
-              <div className="city-switcher-section city-switcher-section--scroll">
+              <div className="city-switcher-section">
                 <span className="city-switcher-label">Сёла, Посёлки и Деревни</span>
                 {secondaryCities.map((item) => (
                   <CitySwitcherItem
@@ -150,7 +152,7 @@ export function CitySwitcher({
                   />
                 ))}
               </div>
-            </>
+            </div>
           )}
 
           <Link
