@@ -18,6 +18,7 @@ type AdvantShopOrderPayload = {
     FirstName: string;
     LastName?: string;
     Phone: string;
+    Email?: string;
     City?: string;
     Street?: string;
     Apartment?: string;
@@ -91,6 +92,7 @@ function buildOrderPayload(
 ): AdvantShopOrderPayload {
   const { firstName, lastName } = splitCustomerName(input.customer.name);
   const phone = formatAdvantShopPhone(input.customer.phone);
+  const email = input.customer.email?.trim();
   const customerComment = buildCustomerComment(input);
 
   return {
@@ -98,6 +100,7 @@ function buildOrderPayload(
       FirstName: firstName,
       LastName: lastName,
       Phone: phone,
+      ...(email ? { Email: email } : {}),
       Country: "Россия",
       City: input.customer.city?.trim() || "Жуковский",
       Street: input.customer.address?.trim() || "Самовывоз / уточнить при звонке",

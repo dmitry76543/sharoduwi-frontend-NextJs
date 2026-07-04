@@ -36,6 +36,7 @@ export async function POST(request: Request) {
   const customer: CheckoutFormData = {
     name: body.customer.name?.trim() ?? "",
     phone: body.customer.phone?.trim() ?? "",
+    email: body.customer.email?.trim() ?? "",
     city: body.customer.city?.trim() ?? "",
     address: body.customer.address?.trim() ?? "",
     comment: body.customer.comment?.trim() ?? "",

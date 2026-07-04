@@ -24,6 +24,17 @@ interface Particle {
   shape: "rect" | "circ";
 }
 
+interface TrailPoint {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  size: number;
+  life: number;
+  decay: number;
+  color: string;
+}
+
 interface RopePoint {
   x: number;
   y: number;
@@ -39,6 +50,8 @@ export function useConfettiCursor() {
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
+
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     let W = 0;
     let H = 0;
@@ -58,6 +71,37 @@ export function useConfettiCursor() {
     window.addEventListener("resize", resize);
 
     const particles: Particle[] = [];
+    const trail: TrailPoint[] = [];
+    let lastTX = window.innerWidth / 2;
+    let lastTY = window.innerHeight / 2;
+
+    function spawnTrail(x: number, y: number) {
+      trail.push({
+        x: x + (Math.random() - 0.5) * 5,
+        y: y + (Math.random() - 0.5) * 5,
+        vx: (Math.random() - 0.5) * 0.5,
+        vy: -0.25 - Math.random() * 0.5,
+        size: 2.5 + Math.random() * 4.5,
+        life: 1,
+        decay: 0.018 + Math.random() * 0.018,
+        color: CONF_COLORS[(Math.random() * CONF_COLORS.length) | 0],
+      });
+      if (trail.length > 180) trail.splice(0, trail.length - 180);
+    }
+
+    function feedTrail(x: number, y: number) {
+      if (reduceMotion) return;
+      const dx = x - lastTX;
+      const dy = y - lastTY;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < 4) return;
+      const steps = Math.min(Math.floor(dist / 4), 4);
+      for (let s = 1; s <= steps; s++) {
+        spawnTrail(lastTX + (dx * s) / steps, lastTY + (dy * s) / steps);
+      }
+      lastTX = x;
+      lastTY = y;
+    }
 
     function burst(x: number, y: number, count = 18) {
       for (let i = 0; i < count; i++) {
@@ -116,6 +160,7 @@ export function useConfettiCursor() {
       } else {
         document.documentElement.classList.remove("has-balloon-cursor");
         if (cursorEl) cursorEl.style.display = "none";
+        trail.length = 0;
       }
       return enabled;
     }
@@ -149,6 +194,9 @@ export function useConfettiCursor() {
         bx = mouse.x;
         by = mouse.y + OFF_Y;
         initRope();
+        const ti = rope[rope.length - 1];
+        lastTX = ti.x;
+        lastTY = ti.y;
       }
     };
     window.addEventListener("mousemove", onMouseMove, { passive: true });
@@ -204,6 +252,7 @@ export function useConfettiCursor() {
           b.y = a.y + (dy / dist) * SEG;
         }
 
+        feedTrail(rope[rope.length - 1].x, rope[rope.length - 1].y);
         cursorEl.style.transform = `translate(${bx}px,${by}px)`;
 
         let d = `M ${knotX - bx} ${knotY - by}`;
@@ -217,9 +266,10 @@ export function useConfettiCursor() {
         if (ribbonPath) ribbonPath.setAttribute("d", d);
       }
 
-      if (particles.length > 0) {
+      if (particles.length > 0 || trail.length > 0) {
         ctx!.clearRect(0, 0, window.innerWidth, window.innerHeight);
         canvasDirty = true;
+
         for (let c = particles.length - 1; c >= 0; c--) {
           const pt = particles[c];
           pt.vy += pt.g;
@@ -246,6 +296,29 @@ export function useConfettiCursor() {
           }
           ctx!.restore();
         }
+
+        for (let tr = trail.length - 1; tr >= 0; tr--) {
+          const tp = trail[tr];
+          tp.x += tp.vx;
+          tp.y += tp.vy;
+          tp.vy *= 0.98;
+          tp.life -= tp.decay;
+          if (tp.life <= 0) {
+            trail.splice(tr, 1);
+            continue;
+          }
+          const rad = tp.size * tp.life;
+          ctx!.fillStyle = tp.color;
+          ctx!.globalAlpha = tp.life * 0.16;
+          ctx!.beginPath();
+          ctx!.arc(tp.x, tp.y, rad * 2, 0, Math.PI * 2);
+          ctx!.fill();
+          ctx!.globalAlpha = tp.life * 0.9;
+          ctx!.beginPath();
+          ctx!.arc(tp.x, tp.y, rad, 0, Math.PI * 2);
+          ctx!.fill();
+        }
+
         ctx!.globalAlpha = 1;
       } else if (canvasDirty) {
         ctx!.clearRect(0, 0, window.innerWidth, window.innerHeight);

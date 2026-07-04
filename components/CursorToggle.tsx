@@ -48,16 +48,16 @@ export function CursorToggle() {
       <span className="cursor-toggle-icon" aria-hidden="true">
         {enabled ? (
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-            <ellipse cx="12" cy="9" rx="5" ry="6.5" />
-            <path d="M12 15v2M10 19h4" />
+            <path d="M3 3l18 18M9.5 5A5 5 0 0116 9M7 7l10 10M5 12a7 7 0 0012 4" />
           </svg>
         ) : (
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-            <path d="M3 3l18 18M9.5 5A5 5 0 0116 9M7 7l10 10M5 12a7 7 0 0012 4" />
+            <ellipse cx="12" cy="9" rx="5" ry="6.5" />
+            <path d="M12 15v2M10 19h4" />
           </svg>
         )}
       </span>
-      <span className="cursor-toggle-label">{enabled ? "Шарик" : "Курсор"}</span>
+      <span className="cursor-toggle-label">{enabled ? "Курсор" : "Шарик"}</span>
     </button>
   );
 }

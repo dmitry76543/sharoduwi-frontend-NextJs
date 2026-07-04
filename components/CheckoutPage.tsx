@@ -69,6 +69,7 @@ function CheckoutContent() {
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
   const [city, setCity] = useState(() => resolveCheckoutCityName(ctxCity));
   const [address, setAddress] = useState("");
   const [comment, setComment] = useState("");
@@ -79,9 +80,6 @@ function CheckoutContent() {
   useEffect(() => {
     setCity(resolveCheckoutCityName(ctxCity));
   }, [ctxCity?.slug, ctxCity?.name]);
-
-  const deliveryAreaLabel =
-    ctxCity?.seo.areaLabel ?? "Жуковском и Раменском районе";
 
   const { total, rows } = useMemo(() => {
     let total = 0;
@@ -107,6 +105,7 @@ function CheckoutContent() {
     const validationError = validateCheckoutForm({
       name,
       phone,
+      email,
       city,
       address,
       comment,
@@ -136,6 +135,7 @@ function CheckoutContent() {
           customer: {
             name: name.trim(),
             phone: normalizePhone(phone),
+            email: email.trim(),
             city: city.trim(),
             address: address.trim(),
             comment: comment.trim(),
@@ -270,6 +270,19 @@ function CheckoutContent() {
                 </label>
 
                 <label className="checkout-field">
+                  <span>E-mail — пришлём подтверждение</span>
+                  <input
+                    type="email"
+                    name="email"
+                    autoComplete="email"
+                    inputMode="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="example@mail.ru"
+                  />
+                </label>
+
+                <label className="checkout-field">
                   <span>Город</span>
                   <input
                     type="text"
@@ -387,7 +400,7 @@ function CheckoutContent() {
                   <b>{fmt(total)} ₽</b>
                 </div>
                 <p className="checkout-note">
-                  Доставка в {deliveryAreaLabel} — уточним при звонке.
+                  Точную стоимость доставки уточним при звонке.
                 </p>
               </aside>
             </div>
