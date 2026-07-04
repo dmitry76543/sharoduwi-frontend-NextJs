@@ -66,7 +66,7 @@ export async function middleware(request: NextRequest) {
     !isCitySlug(firstSegment) &&
     !isAppRootSegment(firstSegment)
   ) {
-    return redirectTo(request, "/", 302);
+    return redirectTo(request, "/", 307);
   }
 
   const cookieCity = request.cookies.get(CITY_COOKIE)?.value;
