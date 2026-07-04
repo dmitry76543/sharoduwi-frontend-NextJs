@@ -54,9 +54,17 @@ export function useHeaderScroll() {
   useEffect(() => {
     const header = document.getElementById("header");
     if (!header) return;
-    const onScroll = () => header.classList.toggle("scrolled", window.scrollY > 30);
+    const onScroll = () => {
+      const scrolled = window.scrollY > 30;
+      header.classList.toggle("scrolled", scrolled);
+      document.body.classList.toggle("site-scrolled-down", scrolled);
+    };
+    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      document.body.classList.remove("site-scrolled-down");
+    };
   }, []);
 }
 
