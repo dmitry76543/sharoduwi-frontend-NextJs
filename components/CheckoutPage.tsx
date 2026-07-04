@@ -1,8 +1,10 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { CityLink } from "@/components/CityLink";
 import { AppProvider, useApp } from "@/context/AppContext";
+import { MaybeCityProvider, useCity } from "@/context/CityContext";
 import {
   useEscapeKey,
   useHeaderScroll,
@@ -16,6 +18,7 @@ import type { CartItem } from "@/lib/cart";
 import { COLORS } from "@/lib/data";
 import { balloonSVG, fmt } from "@/lib/balloons";
 import { normalizePhone, validateCheckoutForm } from "@/lib/checkout";
+import { getDefaultCity, getCityBySlug, readStoredCitySlug, type CityPublic } from "@/lib/cities";
 import { PhoneInput } from "@/components/PhoneInput";
 import { trackOrderSent } from "@/lib/metrika/track";
 import { getProductSlug } from "@/lib/product-slug";
@@ -46,6 +49,13 @@ function SiteEffects() {
   return null;
 }
 
+function resolveCheckoutCityName(cityFromContext: CityPublic | null): string {
+  if (cityFromContext?.name) return cityFromContext.name;
+  const stored = readStoredCitySlug();
+  if (stored) return getCityBySlug(stored)!.name;
+  return getDefaultCity().name;
+}
+
 function CheckoutContent() {
   const {
     cart,
@@ -55,15 +65,23 @@ function CheckoutContent() {
     decrementCart,
     removeFromCart,
   } = useApp();
+  const { city: ctxCity, linkCitySlug } = useCity();
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const [city, setCity] = useState("Жуковский");
+  const [city, setCity] = useState(() => resolveCheckoutCityName(ctxCity));
   const [address, setAddress] = useState("");
   const [comment, setComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [orderId, setOrderId] = useState<string | null>(null);
+
+  useEffect(() => {
+    setCity(resolveCheckoutCityName(ctxCity));
+  }, [ctxCity?.slug, ctxCity?.name]);
+
+  const deliveryAreaLabel =
+    ctxCity?.seo.areaLabel ?? "Жуковском и Раменском районе";
 
   const { total, rows } = useMemo(() => {
     let total = 0;
@@ -122,6 +140,7 @@ function CheckoutContent() {
             address: address.trim(),
             comment: comment.trim(),
           },
+          citySlug: ctxCity?.slug ?? linkCitySlug ?? undefined,
           items,
           subtotal: total,
         }),
@@ -144,7 +163,8 @@ function CheckoutContent() {
           price: p.price,
           collection: p.collection,
           quantity: qty,
-        }))
+        })),
+        city.trim()
       );
       setOrderId(id);
       clearCart();
@@ -174,12 +194,12 @@ function CheckoutContent() {
                 подтверждения.
               </p>
               <div className="checkout-success-actions">
-                <Link href="/catalog" className="btn btn-primary">
+                <CityLink href="/catalog" className="btn btn-primary">
                   В каталог
-                </Link>
-                <Link href="/" className="btn btn-ghost">
+                </CityLink>
+                <CityLink href="/" className="btn btn-ghost">
                   На главную
-                </Link>
+                </CityLink>
               </div>
             </div>
           </div>
@@ -204,7 +224,7 @@ function CheckoutContent() {
       <section className="sec category-page checkout-page">
         <div className="wrap">
           <nav className="category-breadcrumb reveal" aria-label="Навигация">
-            <Link href="/">Главная</Link>
+            <CityLink href="/">Главная</CityLink>
             <span aria-hidden="true">/</span>
             <span>Оформить заказ</span>
           </nav>
@@ -214,9 +234,9 @@ function CheckoutContent() {
               <div className="e-bln">🛒</div>
               <h1>Корзина пуста</h1>
               <p>Добавьте товары из каталога, чтобы оформить заказ.</p>
-              <Link href="/catalog" className="btn btn-primary">
+              <CityLink href="/catalog" className="btn btn-primary">
                 Перейти в каталог
-              </Link>
+              </CityLink>
             </div>
           ) : (
             <div className="checkout-layout">
@@ -257,7 +277,7 @@ function CheckoutContent() {
                     autoComplete="address-level2"
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
-                    placeholder="Жуковский"
+                    placeholder={getDefaultCity().name}
                   />
                 </label>
 
@@ -309,7 +329,7 @@ function CheckoutContent() {
                 <ul className="checkout-items">
                   {rows.map(({ p, qty, id }) => (
                     <li className="checkout-item" key={id}>
-                      <Link href={`/products/${getProductSlug(p)}`} className="checkout-item-main">
+                      <CityLink href={`/products/${getProductSlug(p)}`} className="checkout-item-main">
                         <div className="checkout-item-vis">
                           {p.img ? (
                             <img src={p.img} alt={p.name} loading="lazy" decoding="async" />
@@ -327,7 +347,7 @@ function CheckoutContent() {
                             {fmt(p.price)} ₽ × {qty}
                           </span>
                         </div>
-                      </Link>
+                      </CityLink>
                       <div className="checkout-item-actions">
                         <div className="ci-qty">
                           <button
@@ -366,7 +386,9 @@ function CheckoutContent() {
                   <span>Итого:</span>
                   <b>{fmt(total)} ₽</b>
                 </div>
-                <p className="checkout-note">Доставка по Жуковскому и Раменскому району — уточним при звонке.</p>
+                <p className="checkout-note">
+                  Доставка в {deliveryAreaLabel} — уточним при звонке.
+                </p>
               </aside>
             </div>
           )}
@@ -394,8 +416,10 @@ export function CheckoutPage({
       : undefined;
 
   return (
-    <AppProvider initialCatalog={initialCatalog}>
-      <CheckoutContent />
-    </AppProvider>
+    <MaybeCityProvider>
+      <AppProvider initialCatalog={initialCatalog}>
+        <CheckoutContent />
+      </AppProvider>
+    </MaybeCityProvider>
   );
 }

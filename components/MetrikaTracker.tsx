@@ -8,6 +8,7 @@ import {
   trackAlmostOrder,
   trackSessionPage,
 } from "@/lib/metrika/session";
+import { syncMetrikaCityFromPath } from "@/lib/metrika/city";
 import { trackCatalogSection, trackOutboundLink, trackPagePath } from "@/lib/metrika/track";
 
 export function MetrikaTracker() {
@@ -20,6 +21,7 @@ export function MetrikaTracker() {
 
   useEffect(() => {
     const prevPath = prevPathRef.current;
+    syncMetrikaCityFromPath(pathname);
     trackAlmostOrder(prevPath, pathname);
     trackSessionPage(pathname);
     trackPagePath(pathname);

@@ -3,6 +3,9 @@
 import { useCallback, useEffect, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useApp } from "@/context/AppContext";
+import { useCity } from "@/context/CityContext";
+import { CitySwitcher } from "@/components/CitySwitcher";
+import { CityLink } from "@/components/CityLink";
 import { HowToOrderLink } from "@/components/HowToOrderLink";
 
 const LOGO = ["Ш", "А", "Р", "О", "Д", "У", "В", "Ы"];
@@ -19,6 +22,7 @@ export function Header() {
     setActiveTag,
     setActiveCollection,
   } = useApp();
+  const { href, isHome } = useCity();
 
   const pathname = usePathname();
   const router = useRouter();
@@ -96,12 +100,12 @@ export function Header() {
     if (next) {
       setActiveTag("Все");
       setActiveCollection(null);
-      if (pathname !== "/catalog") {
-        router.push("/catalog?fav=1#shop");
+      if (pathname !== href("/catalog")) {
+        router.push(`${href("/catalog")}?fav=1#shop`);
         return;
       }
-    } else if (pathname === "/catalog") {
-      router.replace("/catalog", { scroll: false });
+    } else if (pathname === href("/catalog")) {
+      router.replace(href("/catalog"), { scroll: false });
     }
     setFavOnly(next);
     gotoShop();
@@ -110,19 +114,20 @@ export function Header() {
   return (
     <header className="header" id="header">
       <div className="header-inner">
-        <a href="/" className="logo" aria-label="ШАРОДУВЫ">
+        <CityLink href="/" className="logo" aria-label="ШАРОДУВЫ">
           {LOGO.map((l) => (
             <span key={l}>{l}</span>
           ))}
-        </a>
+        </CityLink>
         <nav className="nav">
-          <a href="/catalog">Каталог</a>
-          <a href="#delivery">Доставка</a>
-          <a href="#reviews">Отзывы</a>
+          <CityLink href="/catalog">Каталог</CityLink>
+          <a href={isHome ? "#delivery" : `${href("/")}#delivery`}>Доставка</a>
+          <a href={isHome ? "#reviews" : `${href("/")}#reviews`}>Отзывы</a>
           <HowToOrderLink>Как заказать</HowToOrderLink>
-          <a href="#contacts">Контакты</a>
+          <a href={isHome ? "#contacts" : `${href("/")}#contacts`}>Контакты</a>
         </nav>
         <div className="head-actions">
+          <CitySwitcher compact />
           <a className="head-phone" href="tel:+79267086374" aria-label="Позвонить">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3 19.5 19.5 0 01-6-6 19.8 19.8 0 01-3-8.6A2 2 0 014.1 2h3a2 2 0 012 1.7c.1.9.3 1.8.6 2.6a2 2 0 01-.5 2.1L8.1 9.9a16 16 0 006 6l1.5-1.1a2 2 0 012.1-.5c.8.3 1.7.5 2.6.6a2 2 0 011.7 2z" />

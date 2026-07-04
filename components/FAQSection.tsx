@@ -1,6 +1,6 @@
 import { FAQ_ITEMS } from "@/lib/data";
 
-export function FAQSection() {
+export function FAQSection({ items = FAQ_ITEMS }: { items?: { q: string; a: string }[] }) {
   return (
     <section className="sec" id="faq">
       <div className="wrap">
@@ -11,7 +11,7 @@ export function FAQSection() {
           <h2>Частые вопросы</h2>
         </div>
         <div className="faq reveal">
-          {FAQ_ITEMS.map((item) => (
+          {items.map((item) => (
             <details key={item.q}>
               <summary>
                 <span className="q-ic">

@@ -3,6 +3,8 @@
 import { useCallback } from "react";
 import Link from "next/link";
 import { AppProvider, useApp } from "@/context/AppContext";
+import { MaybeCityProvider } from "@/context/CityContext";
+import { CityLink } from "@/components/CityLink";
 import {
   useEscapeKey,
   useHeaderScroll,
@@ -55,7 +57,7 @@ function CatalogContent() {
       <section className="sec category-page">
         <div className="wrap">
           <nav className="category-breadcrumb reveal" aria-label="Навигация">
-            <Link href="/">Главная</Link>
+            <CityLink href="/">Главная</CityLink>
             <span aria-hidden="true">/</span>
             <span>Каталог</span>
           </nav>
@@ -87,8 +89,10 @@ export function CatalogPage({
       : undefined;
 
   return (
-    <AppProvider initialCatalog={initialCatalog}>
-      <CatalogContent />
-    </AppProvider>
+    <MaybeCityProvider>
+      <AppProvider initialCatalog={initialCatalog}>
+        <CatalogContent />
+      </AppProvider>
+    </MaybeCityProvider>
   );
 }

@@ -7,7 +7,8 @@
     "build": "next build && node scripts/prepare-standalone.mjs",
     "start": "node scripts/start-server.mjs",
     "lint": "eslint",
-    "probe:advantshop": "node scripts/probe-advantshop.mjs"
+    "probe:advantshop": "node scripts/probe-advantshop.mjs",
+    "seo:check": "node scripts/seo-webmaster-check.mjs"
   },
   "dependencies": {
     "@fontsource/onest": "^5.2.11",

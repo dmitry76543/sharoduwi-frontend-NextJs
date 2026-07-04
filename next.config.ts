@@ -1,5 +1,10 @@
 import type { NextConfig } from "next";
 
+import {
+  getLegacyNextRedirects,
+  getLegacyNextRewrites,
+} from "./lib/cities/legacy-routes";
+
 const nextConfig: NextConfig = {
   output: "standalone",
   eslint: {
@@ -15,6 +20,14 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "**.on-advantshop.net" },
       { protocol: "https", hostname: "**.advantshop.net" },
     ],
+  },
+  async redirects() {
+    return getLegacyNextRedirects();
+  },
+  async rewrites() {
+    return {
+      beforeFiles: getLegacyNextRewrites(),
+    };
   },
 };
 

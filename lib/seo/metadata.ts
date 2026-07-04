@@ -6,6 +6,7 @@ import {
   SITE_NAME,
   SITE_URL,
 } from "@/lib/seo/site";
+import { buildYandexVerificationMetadata } from "@/lib/seo/webmaster";
 
 export function absoluteUrl(path: string): string {
   if (/^https?:\/\//i.test(path)) return path;
@@ -90,6 +91,7 @@ export function buildRootMetadata(): Metadata {
     alternates: {
       canonical,
     },
+    verification: buildYandexVerificationMetadata(),
     openGraph: {
       type: "website",
       locale: "ru_RU",

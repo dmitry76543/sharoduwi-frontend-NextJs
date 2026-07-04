@@ -1,44 +1,51 @@
+"use client";
+
 import { HowToOrderLink } from "@/components/HowToOrderLink";
+import { CityLink } from "@/components/CityLink";
+import { useCity } from "@/context/CityContext";
 
 const LOGO = ["Ш", "А", "Р", "О", "Д", "У", "В", "Ы"];
 
 export function Footer() {
   const year = new Date().getFullYear();
+  const { city, href, isHome } = useCity();
+  const areaLabel = city?.seo.areaLabel ?? "Жуковском и Раменском районе";
+  const copyrightCity = city?.name ?? "Жуковском";
 
   return (
     <footer className="footer" id="contacts">
       <div className="wrap">
         <div className="footer-grid">
           <div>
-            <a href="/" className="logo">
+            <CityLink href="/" className="logo">
               {LOGO.map((l) => (
                 <span key={l}>{l}</span>
               ))}
-            </a>
+            </CityLink>
             <p className="f-about">
-              Гелиевые и воздушные шары, фольгированные цифры и праздничные композиции в Жуковском и Раменском районе с 2005 года.
+              Гелиевые и воздушные шары, фольгированные цифры и праздничные композиции в {areaLabel} с 2005 года.
             </p>
           </div>
           <div>
             <h4>Информация</h4>
             <ul>
               <li>
-                <a href="#collections">Коллекции</a>
+                <a href={isHome ? "#collections" : `${href("/")}#collections`}>Коллекции</a>
               </li>
               <li>
-                <a href="/catalog">Каталог</a>
+                <CityLink href="/catalog">Каталог</CityLink>
               </li>
               <li>
                 <HowToOrderLink>Как заказать</HowToOrderLink>
               </li>
               <li>
-                <a href="/about">О компании</a>
+                <CityLink href="/about">О компании</CityLink>
               </li>
               <li>
-                <a href="/reviews">Отзывы</a>
+                <CityLink href="/reviews">Отзывы</CityLink>
               </li>
               <li>
-                <a href="/blog">Полезное</a>
+                <CityLink href="/blog">Полезное</CityLink>
               </li>
             </ul>
           </div>
@@ -46,19 +53,22 @@ export function Footer() {
             <h4>Доставка</h4>
             <ul>
               <li>
-                <a href="/delivery/zhukovsky">По Жуковскому</a>
+                <CityLink href="/delivery">Доставка{city ? ` в ${city.namePrepositional}` : ""}</CityLink>
               </li>
               <li>
-                <a href="/delivery/ramenskoe">По Раменскому району</a>
+                <CityLink href="/zhukovskiy/delivery">По Жуковскому</CityLink>
               </li>
               <li>
-                <a href="/about#stores">Самовывоз из магазина</a>
+                <CityLink href="/ramenskoe/delivery">По Раменскому району</CityLink>
               </li>
               <li>
-                <a href="/#how">Оформление и оплата</a>
+                <CityLink href="/about#stores">Самовывоз из магазина</CityLink>
               </li>
               <li>
-                <a href="#guarantee">Гарантия на полёт</a>
+                <a href={isHome ? "#how" : `${href("/")}#how`}>Оформление и оплата</a>
+              </li>
+              <li>
+                <a href={isHome ? "#guarantee" : `${href("/")}#guarantee`}>Гарантия на полёт</a>
               </li>
             </ul>
           </div>
@@ -107,7 +117,7 @@ export function Footer() {
         </div>
         <div className="footer-bottom">
           <span>
-            © {year} ШАРОДУВЫ · Гелиевые и воздушные шары в Жуковском
+            © {year} ШАРОДУВЫ · Гелиевые и воздушные шары в {copyrightCity}
           </span>
           <span>Сделано с любовью 🎈</span>
         </div>

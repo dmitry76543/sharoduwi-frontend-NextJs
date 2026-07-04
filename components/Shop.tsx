@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { CityLink } from "@/components/CityLink";
 import { useMemo } from "react";
 import { useApp } from "@/context/AppContext";
 import { TAGS, getCollectionBySlug } from "@/lib/data";
@@ -106,12 +107,12 @@ export function Shop({ pageCollection, heading, description, previewLimit }: Sho
         )}
         {isCategoryPage && (
           <div className="shop-collection-filter reveal">
-            <Link href="/catalog" className="chip">
+            <CityLink href="/catalog" className="chip">
               ← Полный каталог
-            </Link>
-            <Link href="/#collections" className="chip">
+            </CityLink>
+            <CityLink href="/#collections" className="chip">
               Все коллекции
-            </Link>
+            </CityLink>
           </div>
         )}
         {!isPreview && !favOnly && (
@@ -175,12 +176,12 @@ export function Shop({ pageCollection, heading, description, previewLimit }: Sho
         </div>
         {hasMore && (
           <div className="more-wrap reveal">
-            <Link href="/catalog" className="more-btn shop-more-btn">
+            <CityLink href="/catalog" className="more-btn shop-more-btn">
               <span>Больше шаров</span>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M5 12h14M13 6l6 6-6 6" />
               </svg>
-            </Link>
+            </CityLink>
           </div>
         )}
       </div>

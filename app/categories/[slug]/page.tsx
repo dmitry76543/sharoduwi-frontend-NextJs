@@ -6,6 +6,7 @@ import { JsonLd } from "@/components/JsonLd";
 import { COLLECTIONS, getCollectionBySlug } from "@/lib/data";
 import { getCollectionImageSrc } from "@/lib/collection-images";
 import { isValidCollectionSlug, type CollectionSlug } from "@/lib/products";
+import { buildRootRegionalDuplicateMetadata } from "@/lib/cities";
 import { buildPageMetadata } from "@/lib/seo/metadata";
 import {
   buildBreadcrumbSchema,
@@ -35,10 +36,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     });
   }
 
-  return buildPageMetadata({
+  return buildRootRegionalDuplicateMetadata({
     title: `${collection.name} в Жуковском`,
     description: `${collection.name}: ${collection.sub}. Гелиевые и воздушные шары с доставкой по Жуковскому и Раменскому району.`,
-    path: `/categories/${collection.slug}`,
+    restPath: `/categories/${collection.slug}`,
     image: getCollectionImageSrc(collection.slug),
   });
 }

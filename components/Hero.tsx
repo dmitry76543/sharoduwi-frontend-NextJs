@@ -2,18 +2,24 @@
 
 import { useEffect, useMemo, useRef } from "react";
 import { useApp } from "@/context/AppContext";
+import { useCity } from "@/context/CityContext";
 import { HERO_MINI } from "@/lib/data";
 import { COLORS } from "@/lib/data";
+import { getCityHeroStats } from "@/lib/cities";
 import { balloonSVG, fmt } from "@/lib/balloons";
 import { findHeroFeaturedProduct, HERO_FEATURED_NAME } from "@/lib/hero-featured";
 
 export function Hero() {
   const { addToCart, openContact, products } = useApp();
+  const { city } = useCity();
   const miniRef = useRef<HTMLDivElement>(null);
   const featured = useMemo(() => findHeroFeaturedProduct(products), [products]);
   const title = featured?.name ?? HERO_FEATURED_NAME;
   const price = featured?.price;
   const oldPrice = featured?.old;
+  const heroLead = city?.seo.heroLead ??
+    "Гелиевые и воздушные шары: фольгированные цифры, эксклюзивные яркие композиции, любимые герои, необычные формы. Привозим точно ко времени. Фото или видео перед доставкой.";
+  const heroStats = getCityHeroStats(city);
 
   useEffect(() => {
     const el = miniRef.current;
@@ -43,7 +49,7 @@ export function Hero() {
               </span>
             </h1>
             <p className="lead reveal" data-d="2">
-              Гелиевые и воздушные шары: фольгированные цифры, эксклюзивные яркие композиции, любимые герои, необычные формы. Привозим точно ко времени. Фото или видео перед доставкой.
+              {heroLead}
             </p>
             <div className="hero-cta reveal" data-d="3">
               <button className="btn btn-primary" id="heroContact" type="button" onClick={openContact}>
@@ -65,7 +71,7 @@ export function Hero() {
               </div>
               <div className="st">
                 <b data-count="2">0</b>
-                <span>магазина в городе</span>
+                <span>{heroStats.storesLabel}</span>
               </div>
               <div className="st">
                 <b data-count="5000" data-suffix="+">

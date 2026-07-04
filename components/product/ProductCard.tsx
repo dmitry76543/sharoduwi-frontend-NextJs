@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useApp } from "@/context/AppContext";
+import { useCity } from "@/context/CityContext";
 import type { Product } from "@/lib/data";
 import { COLORS } from "@/lib/data";
 import { getProductSlug } from "@/lib/product-slug";
@@ -68,7 +69,8 @@ interface ProductCardProps {
 
 export function ProductCard({ product, index = 0 }: ProductCardProps) {
   const { isFav, toggleFav } = useApp();
-  const href = `/products/${getProductSlug(product)}`;
+  const { href: cityHref } = useCity();
+  const href = cityHref(`/products/${getProductSlug(product)}`);
   const tag =
     product.tag === "hit" ? (
       <span className="tag hit">Хит</span>

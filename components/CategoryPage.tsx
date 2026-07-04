@@ -2,7 +2,9 @@
 
 import { useCallback } from "react";
 import Link from "next/link";
+import { CityLink } from "@/components/CityLink";
 import { AppProvider, useApp } from "@/context/AppContext";
+import { MaybeCityProvider } from "@/context/CityContext";
 import {
   useEscapeKey,
   useHeaderScroll,
@@ -59,9 +61,9 @@ function CategoryContent({ slug }: { slug: CollectionSlug }) {
       <section className="sec category-page">
         <div className="wrap">
           <nav className="category-breadcrumb reveal" aria-label="Навигация">
-            <Link href="/">Главная</Link>
+            <CityLink href="/">Главная</CityLink>
             <span aria-hidden="true">/</span>
-            <Link href="/#collections">Коллекции</Link>
+            <CityLink href="/#collections">Коллекции</CityLink>
             <span aria-hidden="true">/</span>
             <span>{collection.name}</span>
           </nav>
@@ -96,8 +98,10 @@ export function CategoryPage({
       : undefined;
 
   return (
-    <AppProvider catalogCollection={slug} initialCatalog={initialCatalog}>
-      <CategoryContent slug={slug} />
-    </AppProvider>
+    <MaybeCityProvider>
+      <AppProvider catalogCollection={slug} initialCatalog={initialCatalog}>
+        <CategoryContent slug={slug} />
+      </AppProvider>
+    </MaybeCityProvider>
   );
 }

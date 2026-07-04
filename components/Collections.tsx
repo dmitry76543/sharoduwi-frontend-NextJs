@@ -5,6 +5,7 @@ import { useState } from "react";
 import { COLLECTIONS, COL_VISIBLE, COLORS } from "@/lib/data";
 import { getCollectionImageSrc } from "@/lib/collection-images";
 import { hexa } from "@/lib/balloons";
+import { CityLink } from "@/components/CityLink";
 
 export function Collections() {
   const [expanded, setExpanded] = useState(false);
@@ -39,7 +40,7 @@ export function Collections() {
               `linear-gradient(150deg,${hexa(COLORS[c.colors[0]], 0.3)},${hexa(COLORS[c.colors[c.colors.length - 1]], 0.16)})`;
             const imgSrc = c.img ?? getCollectionImageSrc(c.slug);
             return (
-              <Link
+              <CityLink
                 href={`/categories/${c.slug}`}
                 key={c.slug}
                 className={`col-card${idx >= COL_VISIBLE ? " is-extra" : ""}`}
@@ -58,7 +59,7 @@ export function Collections() {
                     </svg>
                   </span>
                 </div>
-              </Link>
+              </CityLink>
             );
           })}
         </div>

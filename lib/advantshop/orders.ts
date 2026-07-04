@@ -39,6 +39,8 @@ export type SubmitStorefrontOrderInput = {
   customer: CheckoutFormData;
   items: CartItem[];
   deliveryFee: number;
+  /** Slug региона с сайта (zhukovskiy, ramenskoe, …) */
+  citySlug?: string;
 };
 
 export type SubmitStorefrontOrderResult = {
@@ -69,12 +71,27 @@ async function resolveArtNo(item: CartItem): Promise<string> {
   throw new Error(`Не найден артикул AdvantShop для «${item.name}». Обновите корзину.`);
 }
 
+function buildCustomerComment(input: SubmitStorefrontOrderInput): string | undefined {
+  const parts: string[] = [];
+  if (input.customer.comment?.trim()) {
+    parts.push(input.customer.comment.trim());
+  }
+  if (input.customer.city?.trim()) {
+    parts.push(`Населённый пункт: ${input.customer.city.trim()}`);
+  }
+  if (input.citySlug?.trim()) {
+    parts.push(`Регион сайта (slug): ${input.citySlug.trim()}`);
+  }
+  return parts.length > 0 ? parts.join("\n\n") : undefined;
+}
+
 function buildOrderPayload(
   input: SubmitStorefrontOrderInput,
   orderItems: AdvantShopOrderItem[]
 ): AdvantShopOrderPayload {
   const { firstName, lastName } = splitCustomerName(input.customer.name);
   const phone = formatAdvantShopPhone(input.customer.phone);
+  const customerComment = buildCustomerComment(input);
 
   return {
     OrderCustomer: {
@@ -84,13 +101,13 @@ function buildOrderPayload(
       Country: "Россия",
       City: input.customer.city?.trim() || "Жуковский",
       Street: input.customer.address?.trim() || "Самовывоз / уточнить при звонке",
-      Apartment: input.customer.comment?.trim() || undefined,
     },
     Number: input.orderId.replace(/^SH-/, ""),
-    OrderSource:
-      process.env.ADVANTSHOP_ORDER_SOURCE?.trim() || "sharoduwi.ru",
+    OrderSource: input.citySlug
+      ? `${process.env.ADVANTSHOP_ORDER_SOURCE?.trim() || "sharoduwi.ru"} · ${input.citySlug}`
+      : process.env.ADVANTSHOP_ORDER_SOURCE?.trim() || "sharoduwi.ru",
     Currency: "RUB",
-    CustomerComment: input.customer.comment?.trim() || undefined,
+    CustomerComment: customerComment,
     ShippingName: "Доставка по согласованию",
     ShippingCost: input.deliveryFee,
     CheckOrderItemExist: true,

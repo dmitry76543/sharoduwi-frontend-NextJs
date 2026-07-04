@@ -1,4 +1,6 @@
 import type { BlogPost } from "@/lib/blog";
+import type { CityPublic } from "@/lib/cities/types";
+import { cityPath } from "@/lib/cities/paths";
 import type { Product, ProductDetails } from "@/lib/data";
 import type { CollectionSlug } from "@/lib/products";
 import { getProductSlug } from "@/lib/product-slug";
@@ -46,37 +48,50 @@ export function buildOrganizationSchema() {
   };
 }
 
-export function buildLocalBusinessSchema() {
+export function buildLocalBusinessSchema(city?: CityPublic | null) {
+  const pageUrl = city ? cityPath(city.slug, "/") : SITE_URL;
+  const locality = city?.name ?? "Жуковский";
+  const description = city
+    ? `Магазин гелиевых и воздушных шаров и праздничных композиций в ${city.namePrepositional} с доставкой по ${city.district}.`
+    : "Магазин гелиевых и воздушных шаров и праздничных композиций в Жуковском с доставкой по Раменскому району.";
+
   return {
     "@type": "LocalBusiness",
-    "@id": `${SITE_URL}/#localbusiness`,
-    name: SITE_NAME,
-    description:
-      "Магазин гелиевых и воздушных шаров и праздничных композиций в Жуковском с доставкой по Раменскому району.",
-    url: SITE_URL,
+    "@id": `${SITE_URL}${city ? cityPath(city.slug, "/") : ""}#localbusiness`,
+    name: city ? `${SITE_NAME} — ${city.name}` : SITE_NAME,
+    description,
+    url: absoluteUrl(pageUrl),
     telephone: SITE_PHONE,
     image: resolveImageUrl(),
     priceRange: "₽₽",
+    areaServed: {
+      "@type": "AdministrativeArea",
+      name: city?.district ?? "Жуковский и Раменский район",
+    },
     address: {
       "@type": "PostalAddress",
-      addressLocality: "Жуковский",
+      addressLocality: locality,
       addressRegion: "Московская область",
       addressCountry: "RU",
     },
-    department: SITE_LOCATIONS.map((location) => ({
-      "@type": "LocalBusiness",
-      name: location.name,
-      url: location.mapUrl,
-      telephone: SITE_PHONE,
-      address: {
-        "@type": "PostalAddress",
-        streetAddress: location.streetAddress,
-        addressLocality: location.addressLocality,
-        addressRegion: location.addressRegion,
-        postalCode: location.postalCode,
-        addressCountry: "RU",
-      },
-    })),
+    ...(city?.hasStores
+      ? {
+          department: SITE_LOCATIONS.map((location) => ({
+            "@type": "LocalBusiness",
+            name: location.name,
+            url: location.mapUrl,
+            telephone: SITE_PHONE,
+            address: {
+              "@type": "PostalAddress",
+              streetAddress: location.streetAddress,
+              addressLocality: location.addressLocality,
+              addressRegion: location.addressRegion,
+              postalCode: location.postalCode,
+              addressCountry: "RU",
+            },
+          })),
+        }
+      : {}),
   };
 }
 
@@ -91,10 +106,10 @@ export function buildWebSiteSchema() {
   };
 }
 
-export function buildFaqSchema(items: FaqItem[]) {
+export function buildFaqSchema(items: FaqItem[], pagePath = "/") {
   return {
     "@type": "FAQPage",
-    "@id": `${SITE_URL}/#faq`,
+    "@id": `${absoluteUrl(pagePath)}#faq`,
     mainEntity: items.map((item) => ({
       "@type": "Question",
       name: item.q,
@@ -106,24 +121,30 @@ export function buildFaqSchema(items: FaqItem[]) {
   };
 }
 
-export function buildBreadcrumbSchema(items: BreadcrumbItem[]) {
+export function buildBreadcrumbSchema(items: BreadcrumbItem[], city?: CityPublic | null) {
   return {
     "@type": "BreadcrumbList",
     itemListElement: items.map((item, index) => ({
       "@type": "ListItem",
       position: index + 1,
       name: item.name,
-      item: absoluteUrl(item.path),
+      item: absoluteUrl(city ? cityPath(city.slug, item.path.startsWith("/") ? item.path : `/${item.path}`) : item.path),
     })),
   };
 }
 
-export function buildProductSchema(product: ProductDetails) {
+export function buildProductSchema(product: ProductDetails, city?: CityPublic | null) {
   const slug = getProductSlug(product);
-  const productUrl = absoluteUrl(`/products/${slug}`);
+  const productPath = city
+    ? cityPath(city.slug, `/products/${slug}`)
+    : `/products/${slug}`;
+  const productUrl = absoluteUrl(productPath);
+  const areaText = city
+    ? city.namePrepositional
+    : "Жуковскому и Раменскому району";
   const description =
     stripHtml(product.briefDescription ?? product.description ?? "") ||
-    `${product.name} из коллекции «${product.collection}». Гелиевые и воздушные шары с доставкой по Жуковскому и Раменскому району.`;
+    `${product.name} из коллекции «${product.collection}». Гелиевые и воздушные шары с доставкой в ${areaText}.`;
   const images = (product.images.length ? product.images : product.img ? [product.img] : [])
     .map((src) => resolveImageUrl(src))
     .filter(Boolean);
@@ -153,19 +174,27 @@ export function buildProductSchema(product: ProductDetails) {
 export function buildCollectionItemListSchema(
   collectionName: string,
   collectionSlug: CollectionSlug,
-  products: Product[]
+  products: Product[],
+  city?: CityPublic | null
 ) {
+  const listPath = city
+    ? cityPath(city.slug, `/categories/${collectionSlug}`)
+    : `/categories/${collectionSlug}`;
+
   return {
     "@type": "ItemList",
     name: collectionName,
-    url: absoluteUrl(`/categories/${collectionSlug}`),
+    url: absoluteUrl(listPath),
     numberOfItems: products.length,
     itemListElement: products.slice(0, 24).map((product, index) => {
       const slug = getProductSlug(product);
+      const itemPath = city
+        ? cityPath(city.slug, `/products/${slug}`)
+        : `/products/${slug}`;
       return {
         "@type": "ListItem",
         position: index + 1,
-        url: absoluteUrl(`/products/${slug}`),
+        url: absoluteUrl(itemPath),
         name: product.name,
       };
     }),
@@ -178,7 +207,7 @@ export type ReviewItem = {
   text: string;
 };
 
-export function buildReviewsPageSchema(reviews: ReviewItem[]) {
+export function buildReviewsPageSchema(reviews: ReviewItem[], pagePath = "/reviews") {
   const reviewCount = reviews.length;
   const ratingValue =
     reviewCount > 0
@@ -187,9 +216,9 @@ export function buildReviewsPageSchema(reviews: ReviewItem[]) {
 
   return {
     "@type": "LocalBusiness",
-    "@id": `${SITE_URL}/reviews#reviews`,
+    "@id": `${absoluteUrl(pagePath)}#reviews`,
     name: SITE_NAME,
-    url: absoluteUrl("/reviews"),
+    url: absoluteUrl(pagePath),
     aggregateRating: {
       "@type": "AggregateRating",
       ratingValue,
@@ -243,18 +272,23 @@ export function buildBlogListSchema(posts: BlogPost[]) {
   };
 }
 
-export function buildCatalogItemListSchema(products: Product[]) {
+export function buildCatalogItemListSchema(products: Product[], city?: CityPublic | null) {
+  const catalogPath = city ? cityPath(city.slug, "/catalog") : "/catalog";
+
   return {
     "@type": "ItemList",
     name: "Каталог гелиевых и воздушных шаров",
-    url: absoluteUrl("/catalog"),
+    url: absoluteUrl(catalogPath),
     numberOfItems: products.length,
     itemListElement: products.slice(0, 24).map((product, index) => {
       const slug = getProductSlug(product);
+      const itemPath = city
+        ? cityPath(city.slug, `/products/${slug}`)
+        : `/products/${slug}`;
       return {
         "@type": "ListItem",
         position: index + 1,
-        url: absoluteUrl(`/products/${slug}`),
+        url: absoluteUrl(itemPath),
         name: product.name,
       };
     }),

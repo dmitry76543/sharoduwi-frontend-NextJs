@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useApp } from "@/context/AppContext";
+import { CitySwitcher } from "@/components/CitySwitcher";
+import { CityLink } from "@/components/CityLink";
 import { HowToOrderLink } from "@/components/HowToOrderLink";
 import { SiteSectionLink } from "@/components/SiteSectionLink";
 
@@ -18,24 +20,27 @@ export function MobMenu() {
       inert={mobOpen ? undefined : true}
     >
       <div className="mm-head">
-        <a href="/" className="logo" onClick={closeMob}>
+        <CityLink href="/" className="logo" onClick={closeMob}>
           {LOGO.map((l) => (
             <span key={l}>{l}</span>
           ))}
-        </a>
+        </CityLink>
         <button className="close-btn" id="closeMob" type="button" onClick={closeMob}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
             <path d="M18 6L6 18M6 6l12 12" />
           </svg>
         </button>
       </div>
+      <div className="mm-city">
+        <CitySwitcher />
+      </div>
       <nav>
         <SiteSectionLink sectionId="collections" onNavigate={closeMob}>
           Коллекции
         </SiteSectionLink>
-        <Link href="/catalog" onClick={closeMob}>
+        <CityLink href="/catalog" onClick={closeMob}>
           Каталог
-        </Link>
+        </CityLink>
         <SiteSectionLink sectionId="delivery" scrollOnAnyPage onNavigate={closeMob}>
           Доставка
         </SiteSectionLink>
@@ -46,6 +51,9 @@ export function MobMenu() {
         <SiteSectionLink sectionId="contacts" scrollOnAnyPage onNavigate={closeMob}>
           Контакты
         </SiteSectionLink>
+        <Link href="/cities" onClick={closeMob}>
+          Место доставки
+        </Link>
       </nav>
     </div>
   );

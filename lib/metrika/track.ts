@@ -1,3 +1,5 @@
+import { parseCityFromPathname } from "@/lib/cities/paths";
+
 import { trackEcommerceAdd, trackEcommercePurchase } from "@/lib/metrika/ecommerce";
 import { METRIKA_GOALS } from "@/lib/metrika/goals";
 import { reachGoal } from "@/lib/metrika/reach-goal";
@@ -47,12 +49,18 @@ export function trackCheckoutButtonClick(total: number, items: number) {
   reachGoal(METRIKA_GOALS.CLICK_CHECKOUT_BUTTON, { total, items });
 }
 
-export function trackOrderSent(orderId: string, total: number, items: OrderItem[]) {
+export function trackOrderSent(
+  orderId: string,
+  total: number,
+  items: OrderItem[],
+  deliveryCity?: string
+) {
   markOrderSent();
   reachGoal(METRIKA_GOALS.ORDER_SENT, {
     order_id: orderId,
     total,
     items: items.length,
+    ...(deliveryCity ? { delivery_city: deliveryCity } : {}),
   });
   trackEcommercePurchase(
     orderId,
@@ -92,46 +100,49 @@ export function trackClickMax(href: string) {
 }
 
 export function trackPagePath(pathname: string) {
-  if (pathname.startsWith("/checkout")) {
+  const { restPath } = parseCityFromPathname(pathname);
+  const pathParams = { path: pathname, page: restPath };
+
+  if (restPath.startsWith("/checkout")) {
     markCheckoutVisited();
-    reachGoal(METRIKA_GOALS.VISIT_CHECKOUT);
+    reachGoal(METRIKA_GOALS.VISIT_CHECKOUT, pathParams);
     return;
   }
 
-  if (pathname.startsWith("/products/")) {
+  if (restPath.startsWith("/products/")) {
     markProductViewed();
-    reachGoal(METRIKA_GOALS.VISIT_PRODUCT, { path: pathname });
+    reachGoal(METRIKA_GOALS.VISIT_PRODUCT, pathParams);
     return;
   }
 
-  if (pathname === "/catalog") {
-    reachGoal(METRIKA_GOALS.VISIT_CATALOG);
+  if (restPath === "/catalog") {
+    reachGoal(METRIKA_GOALS.VISIT_CATALOG, pathParams);
     return;
   }
 
-  if (pathname.startsWith("/delivery/")) {
+  if (restPath.startsWith("/delivery")) {
     markDeliveryVisited();
-    reachGoal(METRIKA_GOALS.VISIT_DELIVERY, { path: pathname });
+    reachGoal(METRIKA_GOALS.VISIT_DELIVERY, pathParams);
     return;
   }
 
-  if (pathname === "/reviews") {
-    reachGoal(METRIKA_GOALS.VISIT_REVIEWS);
+  if (restPath === "/reviews") {
+    reachGoal(METRIKA_GOALS.VISIT_REVIEWS, pathParams);
     return;
   }
 
-  if (pathname === "/about") {
-    reachGoal(METRIKA_GOALS.VISIT_ABOUT);
+  if (restPath === "/about") {
+    reachGoal(METRIKA_GOALS.VISIT_ABOUT, pathParams);
     return;
   }
 
-  if (pathname === "/blog" || pathname.startsWith("/blog/")) {
-    reachGoal(METRIKA_GOALS.VISIT_BLOG, { path: pathname });
+  if (restPath === "/blog" || restPath.startsWith("/blog/")) {
+    reachGoal(METRIKA_GOALS.VISIT_BLOG, pathParams);
     return;
   }
 
-  if (pathname.startsWith("/categories/")) {
-    reachGoal(METRIKA_GOALS.VISIT_COLLECTION, { path: pathname });
+  if (restPath.startsWith("/categories/")) {
+    reachGoal(METRIKA_GOALS.VISIT_COLLECTION, pathParams);
   }
 }
 

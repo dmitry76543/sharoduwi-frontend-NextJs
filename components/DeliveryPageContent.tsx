@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { DeliveryAreaDetails } from "@/components/DeliveryAreaDetails";
+import { CityLink } from "@/components/CityLink";
 import { COLLECTIONS } from "@/lib/data";
 import {
   DELIVERY_DETAILS_BY_SLUG,
@@ -24,7 +25,7 @@ export function DeliveryPageContent({ config }: { config: DeliveryAreaConfig }) 
       <section className="sec info-page">
         <div className="wrap">
           <nav className="category-breadcrumb reveal" aria-label="Навигация">
-            <Link href="/">Главная</Link>
+            <CityLink href="/">Главная</CityLink>
             <span aria-hidden="true">/</span>
             <span>Доставка</span>
             <span aria-hidden="true">/</span>
@@ -132,18 +133,18 @@ export function DeliveryPageContent({ config }: { config: DeliveryAreaConfig }) 
           <div className="info-chips reveal">
             {featuredCollections.map((collection) =>
               collection ? (
-                <Link
+                <CityLink
                   key={collection.slug}
                   href={`/categories/${collection.slug}`}
                   className="chip"
                 >
                   {collection.name}
-                </Link>
+                </CityLink>
               ) : null
             )}
-            <Link href="/catalog" className="chip active">
+            <CityLink href="/catalog" className="chip active">
               Весь каталог
-            </Link>
+            </CityLink>
           </div>
         </div>
       </section>
@@ -168,16 +169,30 @@ export function DeliveryPageContent({ config }: { config: DeliveryAreaConfig }) 
             <p>
               Также возим по соседним направлениям —{" "}
               {config.slug === "zhukovsky" ? (
-                <Link href="/delivery/ramenskoe">доставка в Раменское и по Раменскому району</Link>
+                <>
+                  <Link href="/ramenskoe/delivery">Раменское и район</Link>
+                  {" · "}
+                  <Link href="/lyubertsy/delivery">Люберцы и округ</Link>
+                </>
+              ) : config.slug === "lyubertsy" ? (
+                <>
+                  <Link href="/zhukovskiy/delivery">Жуковский</Link>
+                  {" · "}
+                  <Link href="/ramenskoe/delivery">Раменское и район</Link>
+                </>
               ) : (
-                <Link href="/delivery/zhukovsky">доставка по Жуковскому</Link>
+                <>
+                  <Link href="/zhukovskiy/delivery">Жуковский</Link>
+                  {" · "}
+                  <Link href="/lyubertsy/delivery">Люберцы и округ</Link>
+                </>
               )}
               .
             </p>
             <div className="info-cta-actions">
-              <Link href="/catalog" className="btn btn-primary">
+              <CityLink href="/catalog" className="btn btn-primary">
                 Выбрать шары
-              </Link>
+                </CityLink>
               <a href="tel:+79267086374" className="btn btn-ghost">
                 Позвонить
               </a>

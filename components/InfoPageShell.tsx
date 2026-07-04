@@ -2,6 +2,7 @@
 
 import { useCallback } from "react";
 import { AppProvider, useApp } from "@/context/AppContext";
+import { MaybeCityProvider } from "@/context/CityContext";
 import {
   useEscapeKey,
   useHeaderScroll,
@@ -58,8 +59,10 @@ function InfoPageLayout({ children }: { children: React.ReactNode }) {
 
 export function InfoPageShell({ children }: { children: React.ReactNode }) {
   return (
-    <AppProvider>
-      <InfoPageLayout>{children}</InfoPageLayout>
-    </AppProvider>
+    <MaybeCityProvider>
+      <AppProvider>
+        <InfoPageLayout>{children}</InfoPageLayout>
+      </AppProvider>
+    </MaybeCityProvider>
   );
 }

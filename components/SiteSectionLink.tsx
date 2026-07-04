@@ -4,6 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { MouseEvent, ReactNode } from "react";
 
+import { useCity } from "@/context/CityContext";
+
 export function scrollToSiteSection(sectionId: string, behavior: ScrollBehavior = "smooth") {
   document.getElementById(sectionId)?.scrollIntoView({ behavior, block: "start" });
 }
@@ -27,7 +29,9 @@ export function SiteSectionLink({
   onNavigate,
 }: SiteSectionLinkProps) {
   const pathname = usePathname();
-  const target = href ?? (scrollOnAnyPage ? `#${sectionId}` : `/#${sectionId}`);
+  const { href: cityHref, isHome } = useCity();
+  const homeHref = cityHref("/");
+  const target = href ?? (scrollOnAnyPage ? `#${sectionId}` : `${homeHref}#${sectionId}`);
 
   const onClick = (e: MouseEvent<HTMLAnchorElement>) => {
     onNavigate?.();
@@ -38,7 +42,7 @@ export function SiteSectionLink({
       return;
     }
 
-    if (pathname === "/") {
+    if (isHome) {
       e.preventDefault();
       scrollToSiteSection(sectionId);
     }

@@ -2,6 +2,7 @@
 
 import { useCallback } from "react";
 import { AppProvider, useApp } from "@/context/AppContext";
+import { MaybeCityProvider } from "@/context/CityContext";
 import {
   useCountUp,
   useEscapeKey,
@@ -55,9 +56,14 @@ function SiteEffects() {
   return null;
 }
 
-export default function SitePage() {
+export default function SitePage({
+  faqItems,
+}: {
+  faqItems?: { q: string; a: string }[];
+} = {}) {
   return (
-    <AppProvider>
+    <MaybeCityProvider>
+      <AppProvider>
       <SiteEffects />
       <ScrollProgress />
       <Background />
@@ -72,13 +78,14 @@ export default function SitePage() {
       <WhySection />
       <GuaranteeSection />
       <ReviewsSection />
-      <FAQSection />
+      <FAQSection items={faqItems} />
       <FinalCTA />
       <Footer />
       <CartDrawer />
       <MobMenu />
       <Toast />
       <FabContacts />
-    </AppProvider>
+      </AppProvider>
+    </MaybeCityProvider>
   );
 }

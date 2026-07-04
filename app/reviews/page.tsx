@@ -4,18 +4,18 @@ import { InfoPageShell } from "@/components/InfoPageShell";
 import { JsonLd } from "@/components/JsonLd";
 import { ReviewsPageContent } from "@/components/ReviewsPageContent";
 import { REVIEWS } from "@/lib/data";
-import { buildPageMetadata } from "@/lib/seo/metadata";
+import { buildRootRegionalDuplicateMetadata } from "@/lib/cities";
 import {
   buildBreadcrumbSchema,
   buildReviewsPageSchema,
   toJsonLdGraph,
 } from "@/lib/seo/schema";
 
-export const metadata: Metadata = buildPageMetadata({
+export const metadata: Metadata = buildRootRegionalDuplicateMetadata({
   title: "Отзывы о гелиевых и воздушных шарах",
   description:
     "Отзывы о магазине ШАРОДУВЫ в Жуковском: гелиевые и воздушные шары, доставка, обслуживание. Реальные отзывы с Яндекс.Карт — ул. Чкалова и ТЦ «Фермер».",
-  path: "/reviews",
+  restPath: "/reviews",
 });
 
 export default function ReviewsPage() {

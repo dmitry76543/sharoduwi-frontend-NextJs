@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 import { CatalogPage } from "@/components/CatalogPage";
 import { JsonLd } from "@/components/JsonLd";
-import { buildPageMetadata } from "@/lib/seo/metadata";
+import { buildRootRegionalDuplicateMetadata } from "@/lib/cities";
 import {
   buildBreadcrumbSchema,
   buildCatalogItemListSchema,
@@ -12,11 +12,11 @@ import { getCatalogProducts, getCatalogSource } from "@/lib/products-service";
 
 export const revalidate = 300;
 
-export const metadata: Metadata = buildPageMetadata({
+export const metadata: Metadata = buildRootRegionalDuplicateMetadata({
   title: "Каталог гелиевых и воздушных шаров",
   description:
     "Полный каталог гелиевых и воздушных шаров, композиций и наборов в Жуковском и Раменском районе. Цены, фото и доставка к торжеству.",
-  path: "/catalog",
+  restPath: "/catalog",
 });
 
 export default async function CatalogRoutePage() {

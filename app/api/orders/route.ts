@@ -17,6 +17,7 @@ type CreateOrderRequest = {
   customer: CheckoutFormData;
   items: CartItem[];
   subtotal?: number;
+  citySlug?: string;
 };
 
 export async function POST(request: Request) {
@@ -66,6 +67,7 @@ export async function POST(request: Request) {
       customer,
       items: body.items,
       deliveryFee,
+      citySlug: body.citySlug?.trim() || undefined,
     });
 
     return NextResponse.json({

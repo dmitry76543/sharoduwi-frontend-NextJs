@@ -3,8 +3,9 @@ import { notFound } from "next/navigation";
 
 import { JsonLd } from "@/components/JsonLd";
 import { ProductPageShell } from "@/components/ProductPageShell";
-import { getProductSlug } from "@/lib/product-slug";
+import { buildRootRegionalDuplicateMetadata } from "@/lib/cities";
 import { buildPageMetadata } from "@/lib/seo/metadata";
+import { getProductSlug } from "@/lib/product-slug";
 import {
   buildBreadcrumbSchema,
   buildProductSchema,
@@ -43,10 +44,10 @@ export async function generateMetadata({
 
   const image = product.images[0] ?? product.img;
 
-  return buildPageMetadata({
+  return buildRootRegionalDuplicateMetadata({
     title: product.name,
     description,
-    path: `/products/${getProductSlug(product)}`,
+    restPath: `/products/${getProductSlug(product)}`,
     image,
   });
 }

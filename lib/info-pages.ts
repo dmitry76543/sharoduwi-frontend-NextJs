@@ -190,9 +190,68 @@ export const DELIVERY_RAMENSKOE_DETAILS: DeliveryAreaDetails = {
   ...DELIVERY_STANDARD_EXTRAS,
 };
 
+export const DELIVERY_LYUBERTSY_DETAILS: DeliveryAreaDetails = {
+  highlights: DELIVERY_STANDARD_HIGHLIGHTS,
+  pricingTitle: "Стоимость доставки в Люберцах и Люберецком округе",
+  pricingIntro: "Стоимость доставки — 40 ₽ за 1 км от г. Жуковский.",
+  pricingRows: [
+    {
+      location: "г. Люберцы",
+      condition: "заказ от 1 500 ₽",
+      price: "600 ₽",
+    },
+    {
+      location: "г. Люберцы",
+      condition: "заказ до 1 500 ₽",
+      price: "800 ₽",
+    },
+    {
+      location: "г. Дзержинский",
+      condition: "заказ от 1 500 ₽",
+      price: "550 ₽",
+    },
+    {
+      location: "г. Дзержинский",
+      condition: "заказ до 1 500 ₽",
+      price: "750 ₽",
+    },
+    {
+      location: "п. Томилино, Малаховка, Красково, Жилино",
+      condition: "заказ от 1 500 ₽",
+      price: "500 ₽",
+    },
+    {
+      location: "п. Томилино, Малаховка, Красково, Жилино",
+      condition: "заказ до 1 500 ₽",
+      price: "700 ₽",
+    },
+    {
+      location: "п. Октябрьский, Марусино, Егорово, Чкалово",
+      condition: "заказ от 1 500 ₽",
+      price: "500 ₽",
+    },
+    {
+      location: "п. Октябрьский, Марусино, Егорово, Чкалово",
+      condition: "заказ до 1 500 ₽",
+      price: "700 ₽",
+    },
+    {
+      location: "Другие населённые пункты Люберецкого округа",
+      condition: "минимальный заказ",
+      price: "от 2 500 ₽",
+    },
+  ],
+  pricingFooterNote:
+    "В других населённых пунктах Люберецкого округа минимальная сумма заказа — 2 500 ₽.",
+  pricingOtherNote:
+    "Стоимость доставки в конкретный адрес Люберецкого округа уточняйте у менеджеров.",
+  ...DELIVERY_STANDARD_EXTRAS,
+};
+
 export const DELIVERY_DETAILS_BY_SLUG: Record<string, DeliveryAreaDetails> = {
   zhukovsky: DELIVERY_ZHUKOVSKY_DETAILS,
   ramenskoe: DELIVERY_RAMENSKOE_DETAILS,
+  lyubertsy: DELIVERY_LYUBERTSY_DETAILS,
 };
 
 /** @deprecated Use DeliveryAreaDetails */
@@ -241,6 +300,28 @@ export const DELIVERY_RAMENSKOE: DeliveryAreaConfig = {
     "Раменский городской округ",
     "Посёлки и дачные посёлки района",
     "Частные дома и коттеджи",
+  ],
+  pickupNote:
+    "Самовывоз возможен в Жуковском: ул. Чкалова, 6 или ТЦ «Фермер» на ул. Мясищева — удобно, если забираете заказ по пути.",
+  mapUrl: "https://yandex.ru/maps/org/sharoduvy/1796536309/",
+  mapLabel: "ШАРОДУВЫ на Яндекс.Картах — ТЦ «Фермер»",
+};
+
+export const DELIVERY_LYUBERTSY: DeliveryAreaConfig = {
+  slug: "lyubertsy",
+  path: "/delivery/lyubertsy",
+  cityLabel: "Люберцы и Люберецкий округ",
+  deliveryInLabel: "Люберцы и Люберецком округе",
+  title: "Доставка гелиевых и воздушных шаров в Люберцы и Люберецкий округ",
+  metaDescription:
+    "Доставка гелиевых и воздушных шаров в Люберцы, Дзержинский, Томилино, Малаховку и по Люберецкому округу — от 500 ₽. Сборка в Жуковском, 40 ₽/км. Предоплата 100%.",
+  lead:
+    "Привозим шары из Жуковского в Люберцы и по всему Люберецкому округу — Томилино, Малаховку, Красково, Дзержинский и соседние посёлки. Согласуем состав и время заранее.",
+  zones: [
+    "г. Люберцы и г. Дзержинский",
+    "п. Томилино, Малаховка, Красково",
+    "Жилино, Октябрьский, Марусино",
+    "Посёлки и деревни Люберецкого округа",
   ],
   pickupNote:
     "Самовывоз возможен в Жуковском: ул. Чкалова, 6 или ТЦ «Фермер» на ул. Мясищева — удобно, если забираете заказ по пути.",

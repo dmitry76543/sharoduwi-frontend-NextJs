@@ -2,6 +2,7 @@
 
 import { useCallback } from "react";
 import { AppProvider, useApp } from "@/context/AppContext";
+import { MaybeCityProvider } from "@/context/CityContext";
 import {
   useEscapeKey,
   useHeaderScroll,
@@ -82,8 +83,10 @@ export function ProductPageShell({
       : undefined;
 
   return (
-    <AppProvider initialCatalog={initialCatalog}>
-      <ProductPageView product={product} relatedProducts={relatedProducts} />
-    </AppProvider>
+    <MaybeCityProvider>
+      <AppProvider initialCatalog={initialCatalog}>
+        <ProductPageView product={product} relatedProducts={relatedProducts} />
+      </AppProvider>
+    </MaybeCityProvider>
   );
 }

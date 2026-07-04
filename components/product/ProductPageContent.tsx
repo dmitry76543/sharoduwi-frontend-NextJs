@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { HowToOrderLink } from "@/components/HowToOrderLink";
+import { CityLink } from "@/components/CityLink";
 import type { Product, ProductDetails } from "@/lib/data";
 import { fmt } from "@/lib/balloons";
 import { ProductActions } from "@/components/product/ProductActions";
@@ -39,11 +40,11 @@ export function ProductPageContent({
     <section className="sec product-page">
       <div className="wrap">
         <nav className="category-breadcrumb reveal" aria-label="Навигация">
-          <Link href="/">Главная</Link>
+          <CityLink href="/">Главная</CityLink>
           <span aria-hidden="true">/</span>
-          <Link href="/catalog">Каталог</Link>
+          <CityLink href="/catalog">Каталог</CityLink>
           <span aria-hidden="true">/</span>
-          <Link href={`/categories/${product.collectionSlug}`}>{product.collection}</Link>
+          <CityLink href={`/categories/${product.collectionSlug}`}>{product.collection}</CityLink>
           <span aria-hidden="true">/</span>
           <span>{product.name}</span>
         </nav>
@@ -56,9 +57,9 @@ export function ProductPageContent({
           />
 
           <div className="product-info">
-            <Link href={`/categories/${product.collectionSlug}`} className="card-cat">
+            <CityLink href={`/categories/${product.collectionSlug}`} className="card-cat">
               {product.collection}
-            </Link>
+            </CityLink>
             <h1>{product.name}</h1>
             {tag}
             <div className="product-price-row">
