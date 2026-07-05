@@ -258,10 +258,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   border:1px solid var(--pink-soft);box-shadow:var(--shadow-soft)}
 .eyebrow b{color:var(--sky)}
 .hero h1{font-size:clamp(40px,6vw,74px);font-weight:900;margin:22px 0 0}
-.hero h1 .hl{color:var(--pink);position:relative}
-@media (min-width:721px){
-  .hero h1 .hl{white-space:nowrap}
-}
+.hero h1 .hl{color:var(--pink);position:relative;white-space:nowrap;display:inline-block}
 .hero h1 .hl::after{content:"";position:absolute;left:-2px;right:-2px;bottom:6px;height:26%;
   background:var(--sun-soft);z-index:-1;border-radius:8px;transform:rotate(-1deg)}
 .hero p.lead{font-size:clamp(17px,2vw,20px);color:var(--ink-2);max-width:30ch;margin-top:22px;font-weight:500}
