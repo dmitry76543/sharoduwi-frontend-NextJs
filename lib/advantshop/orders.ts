@@ -29,6 +29,7 @@ type AdvantShopOrderPayload = {
   Currency: string;
   CustomerComment?: string;
   ShippingName: string;
+  PaymentName?: string;
   ShippingCost: number;
   CheckOrderItemExist: boolean;
   CheckOrderItemAvailable: boolean;
@@ -113,6 +114,7 @@ function buildOrderPayload(
     Currency: "RUB",
     CustomerComment: customerComment,
     ShippingName: "Доставка по согласованию",
+    PaymentName: "Согласование при звонке",
     ShippingCost: input.deliveryFee,
     CheckOrderItemExist: true,
     CheckOrderItemAvailable: false,

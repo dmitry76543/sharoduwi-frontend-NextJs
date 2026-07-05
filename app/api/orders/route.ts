@@ -75,7 +75,7 @@ export async function POST(request: Request) {
     let emailSent = false;
     if (customer.email) {
       try {
-        await sendOrderConfirmationEmail({
+        emailSent = await sendOrderConfirmationEmail({
           orderId,
           advantshopOrderNumber: advantshop.advantshopOrderNumber,
           customer,
@@ -83,8 +83,13 @@ export async function POST(request: Request) {
           subtotal,
           deliveryFee,
           total,
+          citySlug: body.citySlug?.trim() || undefined,
         });
-        emailSent = true;
+        if (!emailSent) {
+          console.warn(
+            `Order ${orderId}: confirmation email not sent (SMTP not configured on server)`
+          );
+        }
       } catch (emailError) {
         console.error("Order confirmation email error:", emailError);
       }

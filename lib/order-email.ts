@@ -1,8 +1,15 @@
+import fs from "node:fs";
+
 import nodemailer from "nodemailer";
 
 import type { CartItem } from "@/lib/cart";
 import type { CheckoutFormData } from "@/lib/checkout";
-import { SITE_NAME, SITE_PHONE, SITE_URL } from "@/lib/seo/site";
+import {
+  buildOrderConfirmationEmail,
+  ORDER_EMAIL_LOGO_CID,
+  ORDER_EMAIL_LOGO_PATH,
+} from "@/lib/order-email-template";
+import { SITE_NAME } from "@/lib/seo/site";
 
 export function isOrderEmailConfigured(): boolean {
   return Boolean(
@@ -19,70 +26,43 @@ function createTransport() {
     process.env.SMTP_SECURE?.trim() === "true" ||
     (process.env.SMTP_SECURE?.trim() !== "false" && port === 465);
 
+  if (port === 25) {
+    console.warn(
+      "SMTP_PORT=25 is often blocked on cloud hosts; use 465 (SSL) or 587 (STARTTLS) for Yandex/Mail.ru"
+    );
+  }
+
   return nodemailer.createTransport({
     host,
     port,
     secure,
+    requireTLS: !secure && port === 587,
     auth: {
       user: process.env.SMTP_USER!.trim(),
       pass: process.env.SMTP_PASS!.trim(),
     },
+    connectionTimeout: 15_000,
+    greetingTimeout: 15_000,
+    socketTimeout: 30_000,
+    tls: {
+      minVersion: "TLSv1.2",
+    },
   });
 }
 
-function formatMoney(value: number): string {
-  return `${value.toLocaleString("ru-RU")} ₽`;
-}
+function orderEmailLogoAttachment():
+  | { filename: string; path: string; cid: string }
+  | undefined {
+  if (!fs.existsSync(ORDER_EMAIL_LOGO_PATH)) {
+    console.warn(`Order email logo not found: ${ORDER_EMAIL_LOGO_PATH}`);
+    return undefined;
+  }
 
-function buildOrderEmailText(input: {
-  orderId: string;
-  advantshopOrderNumber?: string;
-  customer: CheckoutFormData;
-  items: CartItem[];
-  subtotal: number;
-  deliveryFee: number;
-  total: number;
-}): string {
-  const itemLines = input.items.map(
-    (item) =>
-      `• ${item.name} × ${item.quantity} — ${formatMoney(item.price * item.quantity)}`
-  );
-
-  return [
-    `Здравствуйте, ${input.customer.name.trim()}!`,
-    "",
-    `Спасибо за заказ в ${SITE_NAME}.`,
-    "",
-    `Номер заказа: ${input.orderId}`,
-    input.advantshopOrderNumber
-      ? `Номер в магазине: ${input.advantshopOrderNumber}`
-      : "",
-    "",
-    "Состав заказа:",
-    ...itemLines,
-    "",
-    `Сумма товаров: ${formatMoney(input.subtotal)}`,
-    input.deliveryFee > 0
-      ? `Доставка: ${formatMoney(input.deliveryFee)}`
-      : "Доставка: точную стоимость уточним при звонке",
-    `Итого: ${formatMoney(input.total)}`,
-    "",
-    `Телефон: ${input.customer.phone}`,
-    input.customer.city?.trim()
-      ? `Населённый пункт: ${input.customer.city.trim()}`
-      : "",
-    input.customer.address?.trim() ? `Адрес: ${input.customer.address.trim()}` : "",
-    input.customer.comment?.trim()
-      ? `Комментарий: ${input.customer.comment.trim()}`
-      : "",
-    "",
-    "Мы свяжемся с вами в ближайшее время для подтверждения и уточнения доставки.",
-    "",
-    `Телефон магазина: ${SITE_PHONE}`,
-    SITE_URL,
-  ]
-    .filter(Boolean)
-    .join("\n");
+  return {
+    filename: "logo_mail.png",
+    path: ORDER_EMAIL_LOGO_PATH,
+    cid: ORDER_EMAIL_LOGO_CID,
+  };
 }
 
 export async function sendOrderConfirmationEmail(input: {
@@ -93,22 +73,27 @@ export async function sendOrderConfirmationEmail(input: {
   subtotal: number;
   deliveryFee: number;
   total: number;
-}): Promise<void> {
+  citySlug?: string;
+}): Promise<boolean> {
   const to = input.customer.email?.trim();
-  if (!to) return;
+  if (!to) return false;
 
   if (!isOrderEmailConfigured()) {
     console.warn(
-      "Order confirmation email skipped: configure SMTP_HOST, SMTP_USER and SMTP_PASS"
+      "Order confirmation email skipped: set SMTP_HOST, SMTP_USER and SMTP_PASS in server environment (Amvera → Переменные окружения)"
     );
-    return;
+    return false;
   }
 
   const from =
     process.env.ORDER_EMAIL_FROM?.trim() || process.env.SMTP_USER!.trim();
   const replyTo = process.env.ORDER_EMAIL_REPLY_TO?.trim() || from;
-  const subject = `Заказ ${input.orderId} принят — ${SITE_NAME}`;
-  const text = buildOrderEmailText(input);
+  const orderNumber =
+    input.advantshopOrderNumber?.trim() ||
+    input.orderId.replace(/^SH-/, "");
+  const subject = `Заказ ${orderNumber} принят — ${SITE_NAME}`;
+  const { html, text } = buildOrderConfirmationEmail(input);
+  const logo = orderEmailLogoAttachment();
 
   const transport = createTransport();
   await transport.sendMail({
@@ -118,5 +103,8 @@ export async function sendOrderConfirmationEmail(input: {
     bcc: process.env.ORDER_NOTIFY_EMAIL?.trim() || undefined,
     subject,
     text,
+    html,
+    attachments: logo ? [logo] : undefined,
   });
+  return true;
 }

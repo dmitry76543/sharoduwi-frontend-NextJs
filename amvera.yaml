@@ -1,6 +1,15 @@
 # Amvera — Docker + Next.js standalone (не npm run dev!)
 # В UI Amvera: Конфигурация → команда запуска должна быть пустой или из этого файла.
 # Переменные окружения — в панели (см. .env.example)
+#
+# Обязательно для писем покупателю после заказа:
+#   SMTP_HOST=smtp.yandex.ru
+#   SMTP_PORT=465          (не 25 — на Amvera он обычно заблокирован)
+#   SMTP_SECURE=true
+#   SMTP_USER=sharoduwi@yandex.ru
+#   SMTP_PASS=<пароль приложения Яндекс ID>
+#   ORDER_EMAIL_FROM=sharoduwi@yandex.ru
+#   ORDER_EMAIL_REPLY_TO=sharoduwi@yandex.ru
 
 meta:
   environment: docker
