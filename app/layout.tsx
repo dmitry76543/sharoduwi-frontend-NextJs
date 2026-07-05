@@ -1,3 +1,4 @@
+import type { Viewport } from "next";
 import { JsonLd } from "@/components/JsonLd";
 import { MetrikaTracker } from "@/components/MetrikaTracker";
 import { YandexMetrika } from "@/components/YandexMetrika";
@@ -12,6 +13,12 @@ import "./fonts.css";
 import "./globals.css";
 
 export const metadata = buildRootMetadata();
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
 
 export default function RootLayout({
   children,
