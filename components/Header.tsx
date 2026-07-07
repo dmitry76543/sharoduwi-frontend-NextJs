@@ -7,13 +7,26 @@ import { useCity } from "@/context/CityContext";
 import { CitySwitcher } from "@/components/CitySwitcher";
 import { CityLink } from "@/components/CityLink";
 import { HowToOrderLink } from "@/components/HowToOrderLink";
+import {
+  consumeSearchFocusPending,
+  markSearchFocusPending,
+} from "@/lib/search-storage";
 
 const LOGO = ["Ш", "А", "Р", "О", "Д", "У", "В", "Ы"];
+const SEARCH_NAVIGATE_DEBOUNCE_MS = 500;
 
 function buildCatalogSearchUrl(catalogPath: string, query: string): string {
   const trimmed = query.trim();
   if (!trimmed) return catalogPath;
   return `${catalogPath}?q=${encodeURIComponent(trimmed)}#shop`;
+}
+
+function focusHeaderSearchInput() {
+  const input = document.getElementById("headSearchInput") as HTMLInputElement | null;
+  if (!input) return;
+  input.focus();
+  const end = input.value.length;
+  input.setSelectionRange(end, end);
 }
 
 export function Header() {
@@ -35,20 +48,45 @@ export function Header() {
   const router = useRouter();
   const searchRef = useRef<HTMLDivElement>(null);
   const searchStartedRef = useRef(false);
+  const navigateTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
 
   const catalogPath = href("/catalog");
   const isCatalogPage = pathname === catalogPath;
 
+  const clearNavigateTimer = useCallback(() => {
+    if (!navigateTimerRef.current) return;
+    clearTimeout(navigateTimerRef.current);
+    navigateTimerRef.current = null;
+  }, []);
+
   useEffect(() => {
     searchStartedRef.current = false;
-  }, [pathname]);
+    clearNavigateTimer();
+  }, [pathname, clearNavigateTimer]);
 
   useEffect(() => {
     if (searchOpen) {
-      document.getElementById("headSearchInput")?.focus();
+      focusHeaderSearchInput();
     }
   }, [searchOpen]);
+
+  useEffect(() => {
+    if (!isCatalogPage || !consumeSearchFocusPending()) return;
+
+    setSearchOpen(true);
+    const focus = () => focusHeaderSearchInput();
+    focus();
+    const timer = window.setTimeout(focus, 80);
+    const retry = window.setTimeout(focus, 250);
+
+    return () => {
+      window.clearTimeout(timer);
+      window.clearTimeout(retry);
+    };
+  }, [isCatalogPage, pathname]);
+
+  useEffect(() => clearNavigateTimer, [clearNavigateTimer]);
 
   const scrollToShop = useCallback(() => {
     document
@@ -56,9 +94,22 @@ export function Header() {
       ?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, []);
 
-  const goToSearchResults = useCallback(
-    (query: string, navigate = true) => {
+  const navigateToCatalogSearch = useCallback(
+    (query: string) => {
       const trimmed = query.trim();
+      if (!trimmed) return;
+
+      markSearchFocusPending();
+      router.push(buildCatalogSearchUrl(catalogPath, trimmed));
+    },
+    [catalogPath, router]
+  );
+
+  const goToSearchResults = useCallback(
+    (query: string) => {
+      const trimmed = query.trim();
+      clearNavigateTimer();
+
       if (!trimmed) {
         if (isCatalogPage) {
           router.replace(catalogPath, { scroll: false });
@@ -67,8 +118,7 @@ export function Header() {
       }
 
       if (!isCatalogPage) {
-        if (!navigate) return;
-        router.push(buildCatalogSearchUrl(catalogPath, trimmed));
+        navigateToCatalogSearch(trimmed);
         return;
       }
 
@@ -77,13 +127,23 @@ export function Header() {
       });
       scrollToShop();
     },
-    [catalogPath, isCatalogPage, router, scrollToShop]
+    [
+      catalogPath,
+      clearNavigateTimer,
+      isCatalogPage,
+      navigateToCatalogSearch,
+      router,
+      scrollToShop,
+    ]
   );
 
   const handleSearchInput = useCallback(
     (value: string) => {
       setSearchQuery(value);
       const trimmed = value.trim();
+
+      clearNavigateTimer();
+
       if (!trimmed) {
         searchStartedRef.current = false;
         if (isCatalogPage) {
@@ -92,22 +152,31 @@ export function Header() {
         return;
       }
 
-      if (!isCatalogPage) {
-        const method = searchStartedRef.current ? "replace" : "push";
-        searchStartedRef.current = true;
-        router[method](buildCatalogSearchUrl(catalogPath, trimmed));
+      if (isCatalogPage) {
+        router.replace(buildCatalogSearchUrl(catalogPath, trimmed), {
+          scroll: false,
+        });
+        if (!searchStartedRef.current) {
+          searchStartedRef.current = true;
+          scrollToShop();
+        }
         return;
       }
 
-      router.replace(buildCatalogSearchUrl(catalogPath, trimmed), {
-        scroll: false,
-      });
-      if (!searchStartedRef.current) {
-        searchStartedRef.current = true;
-        scrollToShop();
-      }
+      navigateTimerRef.current = setTimeout(() => {
+        navigateTimerRef.current = null;
+        navigateToCatalogSearch(trimmed);
+      }, SEARCH_NAVIGATE_DEBOUNCE_MS);
     },
-    [catalogPath, isCatalogPage, router, scrollToShop, setSearchQuery]
+    [
+      catalogPath,
+      clearNavigateTimer,
+      isCatalogPage,
+      navigateToCatalogSearch,
+      router,
+      scrollToShop,
+      setSearchQuery,
+    ]
   );
 
   useEffect(() => {
@@ -202,9 +271,9 @@ export function Header() {
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   goToSearchResults(searchQuery);
-                  e.currentTarget.blur();
                 }
                 if (e.key === "Escape") {
+                  clearNavigateTimer();
                   setSearchQuery("");
                   setSearchOpen(false);
                 }

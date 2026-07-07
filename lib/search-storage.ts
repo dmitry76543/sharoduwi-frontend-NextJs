@@ -1,4 +1,5 @@
 const SEARCH_QUERY_KEY = "sharoduwi-catalog-search";
+const SEARCH_FOCUS_KEY = "sharoduwi-catalog-search-focus";
 
 export function readStoredSearchQuery(): string {
   if (typeof window === "undefined") return "";
@@ -27,4 +28,25 @@ export function readInitialSearchQuery(): string {
   const fromUrl = new URLSearchParams(window.location.search).get("q");
   if (fromUrl != null) return fromUrl;
   return readStoredSearchQuery();
+}
+
+/** После перехода на каталог вернуть фокус в поле поиска в шапке. */
+export function markSearchFocusPending(): void {
+  if (typeof window === "undefined") return;
+  try {
+    sessionStorage.setItem(SEARCH_FOCUS_KEY, "1");
+  } catch {
+    // ignore
+  }
+}
+
+export function consumeSearchFocusPending(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    if (sessionStorage.getItem(SEARCH_FOCUS_KEY) !== "1") return false;
+    sessionStorage.removeItem(SEARCH_FOCUS_KEY);
+    return true;
+  } catch {
+    return false;
+  }
 }
