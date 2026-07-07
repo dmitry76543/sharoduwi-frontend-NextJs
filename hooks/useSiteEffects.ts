@@ -148,6 +148,33 @@ export function useEscapeKey(onEscape: () => void) {
   }, [onEscape]);
 }
 
+/** Прокрутка к #shop на странице каталога после перехода из шапки */
+export function useCatalogHashScroll() {
+  const pathname = usePathname();
+
+  useEffect(() => {
+    const isCatalog =
+      pathname === "/catalog" || pathname.endsWith("/catalog");
+    if (!isCatalog) return;
+
+    const scrollToShop = () => {
+      if (window.location.hash !== "#shop") return;
+      document
+        .getElementById("shop")
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    };
+
+    scrollToShop();
+    const timer = window.setTimeout(scrollToShop, 120);
+    const retry = window.setTimeout(scrollToShop, 400);
+
+    return () => {
+      window.clearTimeout(timer);
+      window.clearTimeout(retry);
+    };
+  }, [pathname]);
+}
+
 /** Прокрутка к якорю после перехода на главную (например /#how) */
 export function useHashScroll() {
   const pathname = usePathname();

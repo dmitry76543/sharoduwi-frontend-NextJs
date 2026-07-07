@@ -5,7 +5,7 @@ import { CityLink } from "@/components/CityLink";
 import { useMemo } from "react";
 import { useApp } from "@/context/AppContext";
 import { TAGS, getCollectionBySlug } from "@/lib/data";
-import type { CollectionSlug } from "@/lib/products";
+import { productMatchesSearch, type CollectionSlug } from "@/lib/products";
 import { ProductCard } from "@/components/product/ProductCard";
 
 interface ShopProps {
@@ -41,16 +41,11 @@ export function Shop({ pageCollection, heading, description, previewLimit }: Sho
   const isPreview = previewLimit != null && !isCategoryPage;
 
   const list = useMemo(() => {
-    const q = searchQuery.toLowerCase().trim();
     return products.filter((p) => {
       const okTag = activeTag === "Все" || p.tags.includes(activeTag);
       const okCollection =
         !collectionFilter || p.collectionSlug === collectionFilter;
-      const okQ =
-        !q ||
-        p.name.toLowerCase().includes(q) ||
-        p.collection.toLowerCase().includes(q) ||
-        p.tags.some((tag) => tag.toLowerCase().includes(q));
+      const okQ = productMatchesSearch(p, searchQuery);
       const okFav = !favOnly || isFav(p.id);
       return okTag && okCollection && okQ && okFav;
     });
@@ -137,7 +132,7 @@ export function Shop({ pageCollection, heading, description, previewLimit }: Sho
             <input
               type="text"
               id="search"
-              placeholder="Найти шарик…"
+              placeholder="Название или артикул…"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />

@@ -1,5 +1,6 @@
 import { METRIKA_GOALS } from "@/lib/metrika/goals";
 import { reachGoal } from "@/lib/metrika/reach-goal";
+import { parseCityFromPathname } from "@/lib/cities/paths";
 
 const STORAGE_KEY = "sharoduwi_metrika_session";
 const QUALIFIED_MS = 60_000;
@@ -125,7 +126,9 @@ export function markDeliveryVisited() {
 }
 
 export function trackAlmostOrder(prevPath: string | null, nextPath: string) {
-  if (prevPath !== "/checkout" || nextPath === "/checkout") return;
+  const prevRest = prevPath ? parseCityFromPathname(prevPath).restPath : null;
+  const nextRest = parseCityFromPathname(nextPath).restPath;
+  if (prevRest !== "/checkout" || nextRest === "/checkout") return;
   const state = readState();
   if (state.orderSent) return;
   fireOnce(state, "almost_order", METRIKA_GOALS.ALMOST_ORDER);

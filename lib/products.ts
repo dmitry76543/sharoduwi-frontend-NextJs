@@ -2,9 +2,29 @@ import {
   COLLECTIONS,
   TAGS,
   type CollectionSlug,
+  type Product,
   type ProductTag,
   type TagFilter,
 } from "@/lib/data";
+
+function normalizeArtNo(value: string): string {
+  return value.replace(/\s+/g, "").toLowerCase().replace(/а/g, "a");
+}
+
+export function productMatchesSearch(product: Product, query: string): boolean {
+  const q = query.toLowerCase().trim();
+  if (!q) return true;
+
+  if (product.name.toLowerCase().includes(q)) return true;
+  if (product.collection.toLowerCase().includes(q)) return true;
+  if (product.tags.some((tag) => tag.toLowerCase().includes(q))) return true;
+  if (product.artNo) {
+    const normQ = normalizeArtNo(q);
+    if (normalizeArtNo(product.artNo).includes(normQ)) return true;
+  }
+
+  return false;
+}
 
 export const COLLECTION_SLUGS = COLLECTIONS.map((collection) => collection.slug);
 

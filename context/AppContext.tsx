@@ -20,6 +20,10 @@ import {
 import type { CollectionSlug, TagFilter } from "@/lib/products";
 import { persistCart, readStoredCart } from "@/lib/cart-storage";
 import { persistFav, readStoredFav, type FavMap } from "@/lib/fav-storage";
+import {
+  persistSearchQuery,
+  readInitialSearchQuery,
+} from "@/lib/search-storage";
 import { trackAddToCart, trackFabOpen } from "@/lib/metrika/track";
 
 type Cart = Record<number, number>;
@@ -108,7 +112,7 @@ export function AppProvider({
   const [activeCollection, setActiveCollection] = useState<CollectionSlug | null>(
     catalogCollection ?? null
   );
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQueryState] = useState(() => readInitialSearchQuery());
   const [cartOpen, setCartOpen] = useState(false);
   const [mobOpen, setMobOpen] = useState(false);
   const [fabOpen, setFabOpenState] = useState(false);
@@ -327,6 +331,11 @@ export function AppProvider({
     }
   }, []);
 
+  const setSearchQuery = useCallback((q: string) => {
+    setSearchQueryState(q);
+    persistSearchQuery(q);
+  }, []);
+
   const value = useMemo<AppContextValue>(
     () => ({
       cart,
@@ -386,6 +395,7 @@ export function AppProvider({
       products,
       catalogSource,
       catalogLoading,
+      setSearchQuery,
       handleSetActiveTag,
       handleSetActiveCollection,
       handleSetFavOnly,

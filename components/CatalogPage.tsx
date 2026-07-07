@@ -8,6 +8,7 @@ import { CityLink } from "@/components/CityLink";
 import {
   useEscapeKey,
   useHeaderScroll,
+  useCatalogHashScroll,
   useScrollProgressFallback,
   useScrollReveal,
 } from "@/hooks/useSiteEffects";
@@ -36,6 +37,7 @@ function SiteEffects() {
   }, [closeAll, closeMob]);
 
   useScrollReveal();
+  useCatalogHashScroll();
   useHeaderScroll();
   useScrollProgressFallback();
   useConfettiCursor();

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useApp } from "@/context/AppContext";
 import { useCity } from "@/context/CityContext";
@@ -10,11 +10,18 @@ import { HowToOrderLink } from "@/components/HowToOrderLink";
 
 const LOGO = ["Ш", "А", "Р", "О", "Д", "У", "В", "Ы"];
 
+function buildCatalogSearchUrl(catalogPath: string, query: string): string {
+  const trimmed = query.trim();
+  if (!trimmed) return catalogPath;
+  return `${catalogPath}?q=${encodeURIComponent(trimmed)}#shop`;
+}
+
 export function Header() {
   const {
     cartCount,
     favCount,
     favOnly,
+    searchQuery,
     setFavOnly,
     setSearchQuery,
     openCart,
@@ -27,88 +34,108 @@ export function Header() {
   const pathname = usePathname();
   const router = useRouter();
   const searchRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const scrolledOnce = useRef(false);
+  const searchStartedRef = useRef(false);
+  const [searchOpen, setSearchOpen] = useState(false);
 
-  const gotoShop = useCallback(() => {
-    document.getElementById("shop")?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }, []);
+  const catalogPath = href("/catalog");
+  const isCatalogPage = pathname === catalogPath;
 
   useEffect(() => {
-    const box = searchRef.current;
-    const input = inputRef.current;
-    if (!box || !input) return;
+    searchStartedRef.current = false;
+  }, [pathname]);
 
-    const openBox = () => {
-      box.classList.add("open");
-      input.focus();
-    };
-    const closeBox = () => box.classList.remove("open");
+  useEffect(() => {
+    if (searchOpen) {
+      document.getElementById("headSearchInput")?.focus();
+    }
+  }, [searchOpen]);
 
-    const btn = box.querySelector(".hs-btn");
-    if (!btn) return;
+  const scrollToShop = useCallback(() => {
+    document
+      .getElementById("shop")
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, []);
 
-    const onBtnClick = (e: Event) => {
-      e.stopPropagation();
-      if (box.classList.contains("open")) {
-        if (input.value.trim()) gotoShop();
-        else closeBox();
-      } else {
-        openBox();
+  const goToSearchResults = useCallback(
+    (query: string, navigate = true) => {
+      const trimmed = query.trim();
+      if (!trimmed) {
+        if (isCatalogPage) {
+          router.replace(catalogPath, { scroll: false });
+        }
+        return;
       }
-    };
 
-    const onInput = () => {
-      setSearchQuery(input.value);
-      if (input.value.trim() && !scrolledOnce.current) {
-        scrolledOnce.current = true;
-        gotoShop();
+      if (!isCatalogPage) {
+        if (!navigate) return;
+        router.push(buildCatalogSearchUrl(catalogPath, trimmed));
+        return;
       }
-      if (!input.value.trim()) scrolledOnce.current = false;
-    };
 
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Enter") {
-        gotoShop();
-        input.blur();
-      }
-      if (e.key === "Escape") {
-        input.value = "";
-        setSearchQuery("");
-        closeBox();
-      }
-    };
+      router.replace(buildCatalogSearchUrl(catalogPath, trimmed), {
+        scroll: false,
+      });
+      scrollToShop();
+    },
+    [catalogPath, isCatalogPage, router, scrollToShop]
+  );
 
+  const handleSearchInput = useCallback(
+    (value: string) => {
+      setSearchQuery(value);
+      const trimmed = value.trim();
+      if (!trimmed) {
+        searchStartedRef.current = false;
+        if (isCatalogPage) {
+          router.replace(catalogPath, { scroll: false });
+        }
+        return;
+      }
+
+      if (!isCatalogPage) {
+        const method = searchStartedRef.current ? "replace" : "push";
+        searchStartedRef.current = true;
+        router[method](buildCatalogSearchUrl(catalogPath, trimmed));
+        return;
+      }
+
+      router.replace(buildCatalogSearchUrl(catalogPath, trimmed), {
+        scroll: false,
+      });
+      if (!searchStartedRef.current) {
+        searchStartedRef.current = true;
+        scrollToShop();
+      }
+    },
+    [catalogPath, isCatalogPage, router, scrollToShop, setSearchQuery]
+  );
+
+  useEffect(() => {
     const onDocClick = (e: MouseEvent) => {
-      if (box.classList.contains("open") && !box.contains(e.target as Node)) closeBox();
+      const box = searchRef.current;
+      if (searchOpen && box && !box.contains(e.target as Node)) {
+        setSearchOpen(false);
+      }
     };
 
-    btn.addEventListener("click", onBtnClick);
-    input.addEventListener("input", onInput);
-    input.addEventListener("keydown", onKeyDown);
     document.addEventListener("click", onDocClick);
-    return () => {
-      btn.removeEventListener("click", onBtnClick);
-      input.removeEventListener("input", onInput);
-      input.removeEventListener("keydown", onKeyDown);
-      document.removeEventListener("click", onDocClick);
-    };
-  }, [gotoShop, setSearchQuery]);
+    return () => document.removeEventListener("click", onDocClick);
+  }, [searchOpen]);
 
   const onFavClick = () => {
     const next = !favOnly;
     if (next) {
       setActiveTag("Все");
       setActiveCollection(null);
-      if (pathname !== href("/catalog")) {
-        router.push(`${href("/catalog")}?fav=1#shop`);
+      if (!isCatalogPage) {
+        router.push(`${catalogPath}?fav=1#shop`);
         return;
       }
-    } else if (pathname === href("/catalog")) {
-      router.replace(href("/catalog"), { scroll: false });
+    } else if (isCatalogPage) {
+      router.replace(catalogPath, { scroll: false });
     }
     setFavOnly(next);
-    gotoShop();
+    scrollToShop();
   };
 
   return (
@@ -135,20 +162,53 @@ export function Header() {
             </svg>
             <span>+7 926 708-63-74</span>
           </a>
-          <div className="head-search" id="headSearch" ref={searchRef}>
-            <button className="hs-btn" id="hsBtn" aria-label="Поиск по каталогу" type="button">
+          <div
+            className={`head-search${searchOpen ? " open" : ""}`}
+            id="headSearch"
+            ref={searchRef}
+          >
+            <button
+              className="hs-btn"
+              id="hsBtn"
+              aria-label="Поиск по каталогу"
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (searchOpen) {
+                  if (searchQuery.trim()) {
+                    goToSearchResults(searchQuery);
+                  } else {
+                    setSearchOpen(false);
+                  }
+                } else {
+                  setSearchOpen(true);
+                }
+              }}
+            >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="11" cy="11" r="7" />
                 <path d="M21 21l-4.3-4.3" />
               </svg>
             </button>
             <input
-              ref={inputRef}
               type="text"
               id="headSearchInput"
-              placeholder="Найти шар по каталогу…"
+              placeholder="Название или артикул…"
               aria-label="Поиск по каталогу"
               autoComplete="off"
+              value={searchQuery}
+              onFocus={() => setSearchOpen(true)}
+              onChange={(e) => handleSearchInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  goToSearchResults(searchQuery);
+                  e.currentTarget.blur();
+                }
+                if (e.key === "Escape") {
+                  setSearchQuery("");
+                  setSearchOpen(false);
+                }
+              }}
             />
           </div>
           <button
