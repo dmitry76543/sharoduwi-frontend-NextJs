@@ -14,7 +14,7 @@ import {
   supportsStaffPush,
 } from "./alarm-sounds";
 
-const VAPID_PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || "";
+const BUILD_TIME_VAPID_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || "";
 
 function urlBase64ToUint8Array(base64String: string): Uint8Array {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
@@ -33,6 +33,8 @@ export default function StaffAlertPage() {
   const [alarmOn, setAlarmOn] = useState(false);
   const [selectedSound, setSelectedSound] = useState<AlarmSoundId>(0);
   const [isWindows, setIsWindows] = useState(false);
+  const [vapidPublicKey, setVapidPublicKey] = useState(BUILD_TIME_VAPID_KEY);
+  const [vapidReady, setVapidReady] = useState(Boolean(BUILD_TIME_VAPID_KEY));
 
   const audioCtxRef = useRef<AudioContext | null>(null);
   const alarmTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -42,6 +44,43 @@ export default function StaffAlertPage() {
   useEffect(() => {
     setSelectedSound(readStoredAlarmSound());
     setIsWindows(isWindowsDesktop());
+  }, []);
+
+  useEffect(() => {
+    if (BUILD_TIME_VAPID_KEY) return;
+
+    let cancelled = false;
+
+    fetch("/api/staff-alert/config", { credentials: "same-origin" })
+      .then(async (response) => {
+        const json = (await response.json()) as {
+          ok?: boolean;
+          publicKey?: string;
+          error?: string;
+        };
+
+        if (cancelled) return;
+
+        if (response.ok && json.publicKey) {
+          setVapidPublicKey(json.publicKey);
+          setVapidReady(true);
+          return;
+        }
+
+        setMessage(
+          json.error ||
+            "Не удалось получить VAPID-ключ с сервера. Проверьте переменные окружения на хостинге."
+        );
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setMessage("Не удалось загрузить настройки push-уведомлений.");
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   useEffect(() => {
@@ -137,9 +176,11 @@ export default function StaffAlertPage() {
       setStatus("loading");
       setMessage("");
 
-      if (!VAPID_PUBLIC_KEY) {
+      if (!vapidPublicKey) {
         throw new Error(
-          "Не задан NEXT_PUBLIC_VAPID_PUBLIC_KEY. Сгенерируйте ключи: npm run vapid"
+          vapidReady
+            ? "Публичный VAPID-ключ пустой. Добавьте VAPID_PUBLIC_KEY на сервере."
+            : "Загружаем VAPID-ключ с сервера… Подождите секунду и нажмите снова."
         );
       }
 
@@ -152,7 +193,7 @@ export default function StaffAlertPage() {
       const sub = await reg.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(
-          VAPID_PUBLIC_KEY
+          vapidPublicKey
         ) as BufferSource,
       });
 
@@ -178,7 +219,7 @@ export default function StaffAlertPage() {
       setStatus("error");
       setMessage(error instanceof Error ? error.message : "Ошибка подписки");
     }
-  }, []);
+  }, [vapidPublicKey, vapidReady]);
 
   const simulateOrder = useCallback(async () => {
     setMessage("Отправляю тестовый сигнал на все устройства…");

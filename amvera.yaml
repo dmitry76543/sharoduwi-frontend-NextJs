@@ -10,6 +10,12 @@
 #   SMTP_PASS=<пароль приложения Яндекс ID>
 #   ORDER_EMAIL_FROM=sharoduwi@yandex.ru
 #   ORDER_EMAIL_REPLY_TO=sharoduwi@yandex.ru
+#
+# Staff Alert (/staff-alert):
+#   STAFF_ALERT_PASSWORD=<пароль>
+#   VAPID_PUBLIC_KEY=<из npm run vapid>
+#   VAPID_PRIVATE_KEY=<из npm run vapid>
+#   VAPID_SUBJECT=mailto:admin@sharoduwi.ru
 
 meta:
   environment: docker

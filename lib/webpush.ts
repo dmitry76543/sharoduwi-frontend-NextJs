@@ -1,10 +1,17 @@
 import webpush from "web-push";
 
-const PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
-const PRIVATE_KEY = process.env.VAPID_PRIVATE_KEY;
-const SUBJECT = process.env.VAPID_SUBJECT || "mailto:admin@sharoduwi.ru";
+import {
+  getVapidPrivateKey,
+  getVapidPublicKey,
+  getVapidSubject,
+  isVapidConfigured,
+} from "@/lib/staff-alert/vapid";
 
-if (PUBLIC_KEY && PRIVATE_KEY) {
+const PUBLIC_KEY = getVapidPublicKey();
+const PRIVATE_KEY = getVapidPrivateKey();
+const SUBJECT = getVapidSubject();
+
+if (isVapidConfigured()) {
   webpush.setVapidDetails(SUBJECT, PUBLIC_KEY, PRIVATE_KEY);
 }
 
