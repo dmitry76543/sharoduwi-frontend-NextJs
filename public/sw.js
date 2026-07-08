@@ -3,6 +3,24 @@
 self.addEventListener("install", () => self.skipWaiting());
 self.addEventListener("activate", (event) => event.waitUntil(self.clients.claim()));
 
+// Счётчик непросмотренных заказов для бейджа на иконке приложения.
+let orderBadgeCount = 0;
+
+function setAppBadge(count) {
+  if (self.navigator && "setAppBadge" in self.navigator) {
+    return self.navigator.setAppBadge(count).catch(() => {});
+  }
+  return Promise.resolve();
+}
+
+function clearAppBadge() {
+  orderBadgeCount = 0;
+  if (self.navigator && "clearAppBadge" in self.navigator) {
+    return self.navigator.clearAppBadge().catch(() => {});
+  }
+  return Promise.resolve();
+}
+
 function notifyOpenStaffAlertClients() {
   return self.clients
     .matchAll({ type: "window", includeUncontrolled: true })
@@ -14,6 +32,12 @@ function notifyOpenStaffAlertClients() {
       });
     });
 }
+
+self.addEventListener("message", (event) => {
+  if (event.data?.type === "CLEAR_BADGE") {
+    event.waitUntil(clearAppBadge());
+  }
+});
 
 self.addEventListener("push", (event) => {
   let data = {};
@@ -39,10 +63,13 @@ self.addEventListener("push", (event) => {
     },
   };
 
+  orderBadgeCount += 1;
+
   event.waitUntil(
     Promise.all([
       self.registration.showNotification(title, options),
       notifyOpenStaffAlertClients(),
+      setAppBadge(orderBadgeCount),
     ])
   );
 });

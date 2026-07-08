@@ -9,6 +9,7 @@
   "orientation": "any",
   "background_color": "#a855f7",
   "theme_color": "#a855f7",
+  "permissions": ["notifications", "badging"],
   "icons": [
     {
       "src": "/icons/staff-alert/icon-192.png",

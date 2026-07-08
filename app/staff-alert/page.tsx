@@ -79,13 +79,26 @@ export default function StaffAlertPage() {
     );
   }, [clearAlarmTimer, clearPreviewTimer, playSelectedCycle]);
 
+  const clearOrderBadge = useCallback(() => {
+    if ("clearAppBadge" in navigator) {
+      void (navigator as Navigator & { clearAppBadge?: () => Promise<void> })
+        .clearAppBadge?.()
+        .catch(() => {});
+    }
+    navigator.serviceWorker?.controller?.postMessage({ type: "CLEAR_BADGE" });
+    void navigator.serviceWorker?.ready.then((reg) => {
+      reg.active?.postMessage({ type: "CLEAR_BADGE" });
+    });
+  }, []);
+
   const stopAlarm = useCallback(() => {
     setAlarmOn(false);
     setOrderBannerOn(false);
     clearAlarmTimer();
     clearPreviewTimer();
+    clearOrderBadge();
     if ("vibrate" in navigator) navigator.vibrate(0);
-  }, [clearAlarmTimer, clearPreviewTimer]);
+  }, [clearAlarmTimer, clearOrderBadge, clearPreviewTimer]);
 
   const startOrderAlarm = useCallback(() => {
     setOrderBannerOn(true);
@@ -203,6 +216,9 @@ export default function StaffAlertPage() {
     registerStaffServiceWorker().catch((error) => {
       setMessage(`Не удалось зарегистрировать service worker: ${error.message}`);
     });
+
+    // На входе в приложение сбрасываем бейдж, чтобы не мигал/не висел счётчик.
+    clearOrderBadge();
 
     void syncExistingSubscription();
 
