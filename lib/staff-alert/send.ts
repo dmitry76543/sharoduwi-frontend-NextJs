@@ -41,7 +41,19 @@ export async function sendStaffAlert(
       webpush.sendNotification(sub, notification, {
         TTL: 60,
         urgency: "high",
-      })
+        // Для iPhone/ iOS при заблокированном экране: включаем системный звук.
+        // Пользователь всё равно должен разрешить звук в настройках уведомлений.
+        apns: {
+          headers: {
+            "apns-priority": "10",
+          },
+          payload: {
+            aps: {
+              sound: "default",
+            },
+          },
+        },
+      } as any)
     )
   );
 
