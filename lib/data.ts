@@ -16,7 +16,6 @@ export type ColorKey = keyof typeof COLORS;
 export const TAGS = [
   "Все",
   "Цифры",
-  "Композиции",
   "Латексные",
   "Детям",
   "Романтика",
@@ -118,16 +117,16 @@ export interface ProductDetails extends Product {
 
 export const PRODUCTS: Product[] = [
   { id: 1, name: "Фольгированная цифра «Гелий»", collectionSlug: "set-s-tsifroi", collection: "Сет с цифрой", tags: ["Цифры"], price: 590, colors: ["pink"], tag: "hit" },
-  { id: 2, name: "Набор «С Днём Рождения»", collectionSlug: "nabory-sharov-bazovye", collection: "Наборы шаров базовые", tags: ["Композиции"], price: 2490, old: 2900, colors: ["pink", "sun", "sky"], tag: "hit" },
-  { id: 3, name: "Облако из 15 шаров", collectionSlug: "oblaka-iz-5-sharov-bez-gruzov", collection: "Облака из 5 шаров без грузов", tags: ["Композиции"], price: 1890, old: 2300, colors: ["pink", "sky", "mint", "lav"] },
-  { id: 4, name: "Композиция «Единорог»", collectionSlug: "dlya-devochek-1", collection: "Для девочек", tags: ["Детям", "Композиции"], price: 2990, colors: ["lav", "pink", "mint"], tag: "new" },
+  { id: 2, name: "Набор «С Днём Рождения»", collectionSlug: "nabory-sharov-bazovye", collection: "Наборы шаров базовые", tags: [], price: 2490, old: 2900, colors: ["pink", "sun", "sky"], tag: "hit" },
+  { id: 3, name: "Облако из 15 шаров", collectionSlug: "oblaka-iz-5-sharov-bez-gruzov", collection: "Облака из 5 шаров без грузов", tags: [], price: 1890, old: 2300, colors: ["pink", "sky", "mint", "lav"] },
+  { id: 4, name: "Композиция «Единорог»", collectionSlug: "dlya-devochek-1", collection: "Для девочек", tags: ["Детям"], price: 2990, colors: ["lav", "pink", "mint"], tag: "new" },
   { id: 5, name: "Сердца «Я люблю тебя»", collectionSlug: "dlya-vliublennykh", collection: "Для влюблённых", tags: ["Романтика"], price: 1690, colors: ["pink", "red"] },
   { id: 6, name: "Набор «Выписка: Мальчик»", collectionSlug: "dlya-novorozhdennykh", collection: "Для новорождённых", tags: ["Выписка"], price: 2290, colors: ["sky", "white", "mint"] },
   { id: 7, name: "Набор «Выписка: Девочка»", collectionSlug: "dlya-novorozhdennykh", collection: "Для новорождённых", tags: ["Выписка"], price: 2290, colors: ["pink", "white", "lav"] },
   { id: 8, name: "Цифра + россыпь звёзд", collectionSlug: "set-s-tsifroi", collection: "Сет с цифрой", tags: ["Цифры"], price: 1290, colors: ["sun", "pink"] },
-  { id: 9, name: "Букет «Радуга»", collectionSlug: "nabory-sharov-bazovye", collection: "Наборы шаров базовые", tags: ["Композиции"], price: 2190, colors: ["pink", "sun", "mint", "sky", "lav"], tag: "hit" },
-  { id: 10, name: "Шары с конфетти (5 шт)", collectionSlug: "oblaka-iz-5-sharov-bez-gruzov", collection: "Облака из 5 шаров без грузов", tags: ["Композиции"], price: 990, colors: ["pink", "sun", "mint"] },
-  { id: 11, name: "Композиция «Космос»", collectionSlug: "dlya-malchikov-1", collection: "Для мальчиков", tags: ["Детям", "Композиции"], price: 3290, colors: ["lav", "sky", "pink"], tag: "new" },
+  { id: 9, name: "Букет «Радуга»", collectionSlug: "nabory-sharov-bazovye", collection: "Наборы шаров базовые", tags: [], price: 2190, colors: ["pink", "sun", "mint", "sky", "lav"], tag: "hit" },
+  { id: 10, name: "Шары с конфетти (5 шт)", collectionSlug: "oblaka-iz-5-sharov-bez-gruzov", collection: "Облака из 5 шаров без грузов", tags: [], price: 990, colors: ["pink", "sun", "mint"] },
+  { id: 11, name: "Композиция «Космос»", collectionSlug: "dlya-malchikov-1", collection: "Для мальчиков", tags: ["Детям"], price: 3290, colors: ["lav", "sky", "pink"], tag: "new" },
   { id: 12, name: "Гигант-сердце 90 см", collectionSlug: "dlya-vliublennykh", collection: "Для влюблённых", tags: ["Романтика"], price: 1490, colors: ["pink"] },
 ];
 

@@ -85,7 +85,6 @@ export function inferTagsFromCollection(collectionSlug: CollectionSlug): Product
 
 const TAG_KEYWORDS: Record<ProductTag, string[]> = {
   Цифры: ["цифр", "числ", "number"],
-  Композиции: ["композиц", "набор", "букет", "фонтан"],
   Латексные: ["латекс", "облако", "гелий", "шар"],
   Детям: ["дет", "мальчик", "девоч", "годик", "единорог", "космос"],
   Романтика: ["романт", "любл", "сердц"],
