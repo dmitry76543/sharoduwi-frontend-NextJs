@@ -1,5 +1,5 @@
 import type { CollectionSlug } from "@/lib/products";
-import { COLLECTIONS } from "@/lib/data";
+import { COLLECTIONS, COLLECTION_MULTI_CATEGORY_PATHS, getCollectionBySlug } from "@/lib/data";
 
 function readEnv(name: string): string | undefined {
   const raw = process.env[name]?.trim();
@@ -114,6 +114,19 @@ function getDefaultCategoryUrlMap(): Partial<Record<CollectionSlug, string>> {
   return Object.fromEntries(
     COLLECTIONS.map((collection) => [collection.slug, collection.categoryPath])
   ) as Partial<Record<CollectionSlug, string>>;
+}
+
+/** urlPath категорий AdvantShop для загрузки товаров коллекции */
+export function getCollectionCategoryPaths(slug: CollectionSlug): string[] {
+  const multi = COLLECTION_MULTI_CATEGORY_PATHS[slug];
+  if (multi?.length) return multi;
+
+  const envMap = getCategoryUrlMap();
+  const fromEnv = envMap[slug];
+  if (fromEnv) return [fromEnv];
+
+  const collection = getCollectionBySlug(slug);
+  return collection ? [collection.categoryPath] : [];
 }
 
 /** Map collection slugs to AdvantShop category URL paths */

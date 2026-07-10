@@ -85,6 +85,22 @@ export const COLLECTIONS: Collection[] = [
   { slug: "pirotekhnika", categoryPath: "pirotekhnika", href: `${COLLECTIONS_BASE}/pirotekhnika`, name: "Пиротехника", sub: "финальный залп", colors: ["coral", "sun", "red"] },
 ];
 
+/** Подкатегории AdvantShop для коллекций с несколькими источниками товаров */
+export const COLLECTION_MULTI_CATEGORY_PATHS: Partial<
+  Record<CollectionSlug, string[]>
+> = {
+  pirotekhnika: [
+    "batarei-saliutov",
+    "bengalskie-svechi",
+    "dymy",
+    "petardy",
+    "rimskie-svechi",
+    "rakety",
+    "festivalnye-shary",
+    "fontany",
+  ],
+};
+
 export function getCollectionBySlug(slug: string): Collection | undefined {
   return COLLECTIONS.find((collection) => collection.slug === slug);
 }

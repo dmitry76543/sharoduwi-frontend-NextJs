@@ -1,7 +1,8 @@
 import type { CollectionSlug } from "@/lib/products";
 import type { Product, ProductDetails } from "@/lib/data";
+import { COLLECTIONS } from "@/lib/data";
 import { advantshopClientFetch, advantshopFetch } from "./client";
-import { getCategoryUrlMap } from "./config";
+import { getCollectionCategoryPaths } from "./config";
 import { mapCatalogProduct, mapProductDetails } from "./mapper";
 import type {
   AdvantShopCatalogResponse,
@@ -90,55 +91,55 @@ async function mapCatalogItems(
   );
 }
 
-export async function fetchAdvantShopProducts(options?: {
-  collection?: CollectionSlug;
-  sort?: string;
-}): Promise<Product[]> {
-  const categoryMap = getCategoryUrlMap();
-  const sort = SORT_MAP[options?.sort ?? "default"] ?? "NoSorting";
+async function fetchProductsForCollection(
+  collectionSlug: CollectionSlug,
+  sort: string
+): Promise<Product[]> {
+  const paths = getCollectionCategoryPaths(collectionSlug);
+  if (!paths.length) return [];
 
-  if (options?.collection) {
-    const categoryUrl = categoryMap[options.collection];
-    if (!categoryUrl) return [];
+  const itemsById = new Map<
+    number,
+    NonNullable<AdvantShopCatalogResponse["products"]>[number]
+  >();
 
+  for (const url of paths) {
     try {
-      const items = await fetchAllCatalogProducts({
-        url: categoryUrl,
-        sorting: sort,
-      });
-      return mapCatalogItems(items, options.collection);
+      const items = await fetchAllCatalogProducts({ url, sorting: sort });
+      for (const item of items) {
+        itemsById.set(item.productId, item);
+      }
     } catch (error) {
       if (isMissingCategoryError(error)) {
         console.warn(
-          `AdvantShop category not found for "${options.collection}" (url: ${categoryUrl})`
+          `AdvantShop category not found for "${collectionSlug}" (url: ${url})`
         );
-        return [];
+        continue;
       }
       throw error;
     }
   }
 
-  const slugs = Object.keys(categoryMap) as CollectionSlug[];
+  if (!itemsById.size) return [];
+
+  return mapCatalogItems(Array.from(itemsById.values()), collectionSlug);
+}
+
+export async function fetchAdvantShopProducts(options?: {
+  collection?: CollectionSlug;
+  sort?: string;
+}): Promise<Product[]> {
+  const sort = SORT_MAP[options?.sort ?? "default"] ?? "NoSorting";
+
+  if (options?.collection) {
+    return fetchProductsForCollection(options.collection, sort);
+  }
+
+  const slugs = COLLECTIONS.map((collection) => collection.slug);
   if (!slugs.length) return [];
 
   const results = await Promise.all(
-    slugs.map(async (slug) => {
-      const url = categoryMap[slug];
-      if (!url) return [] as Product[];
-
-      try {
-        const items = await fetchAllCatalogProducts({ url, sorting: sort });
-        return mapCatalogItems(items, slug);
-      } catch (error) {
-        if (isMissingCategoryError(error)) {
-          console.warn(
-            `AdvantShop category not found for "${slug}" (url: ${url})`
-          );
-          return [] as Product[];
-        }
-        throw error;
-      }
-    })
+    slugs.map((slug) => fetchProductsForCollection(slug, sort))
   );
 
   const merged = new Map<number, Product>();
