@@ -26,7 +26,7 @@ export const REGIONAL_ROUTE_META: Record<
   "/delivery": { priority: 0.8, changeFrequency: "monthly" },
 };
 
-/** Число product-sitemap файлов (города делятся на батчи) */
+/** Число product-sitemap файлов (города делятся на батчи, в каждом — все товары) */
 export const PRODUCT_SITEMAP_BATCHES = 4;
 
 export const SITEMAP_IDS = [
@@ -108,7 +108,7 @@ export async function buildProductSitemapEntries(
   const urls: MetadataRoute.Sitemap = [];
 
   for (const citySlug of citySlugs) {
-    for (const product of products.slice(0, 200)) {
+    for (const product of products) {
       urls.push(
         sitemapEntry(
           cityPath(citySlug, `/products/${getProductSlug(product)}`),

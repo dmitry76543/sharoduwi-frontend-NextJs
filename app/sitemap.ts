@@ -4,19 +4,36 @@ import {
   buildGlobalSitemapEntries,
   buildProductSitemapEntries,
   buildRegionalSitemapEntries,
-  PRODUCT_SITEMAP_BATCHES,
+  SITEMAP_IDS,
 } from "@/lib/sitemap/entries";
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+export async function generateSitemaps() {
+  return SITEMAP_IDS.map((id) => ({ id }));
+}
+
+function productBatchIndex(sitemapId: string): number | null {
+  if (!sitemapId.startsWith("products-")) return null;
+  const batchIndex = Number(sitemapId.slice("products-".length));
+  return Number.isFinite(batchIndex) ? batchIndex : null;
+}
+
+export default async function sitemap(props: {
+  id: Promise<string>;
+}): Promise<MetadataRoute.Sitemap> {
+  const sitemapId = await props.id;
   const now = new Date();
-  const urls: MetadataRoute.Sitemap = [
-    ...(await buildGlobalSitemapEntries(now)),
-    ...buildRegionalSitemapEntries(now),
-  ];
 
-  for (let batch = 0; batch < PRODUCT_SITEMAP_BATCHES; batch += 1) {
-    urls.push(...(await buildProductSitemapEntries(batch, now)));
+  switch (sitemapId) {
+    case "global":
+      return buildGlobalSitemapEntries(now);
+    case "regions":
+      return buildRegionalSitemapEntries(now);
+    default: {
+      const batchIndex = productBatchIndex(sitemapId);
+      if (batchIndex !== null) {
+        return buildProductSitemapEntries(batchIndex, now);
+      }
+      return [];
+    }
   }
-
-  return urls;
 }
