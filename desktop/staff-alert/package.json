@@ -1,0 +1,50 @@
+{
+  "name": "sharoduwi-staff-alert-desktop",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ШАРОДУВЫ Staff Alert — приложение в трее Windows",
+  "main": "main.js",
+  "author": "ШАРОДУВЫ",
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win nsis",
+    "dist:dir": "electron-builder --win --dir"
+  },
+  "build": {
+    "appId": "ru.sharoduwi.staffalert",
+    "productName": "ШАРОДУВЫ Staff Alert",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "alarm.html",
+      "setup.html",
+      "assets/**/*"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "assets/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "ШАРОДУВЫ Staff Alert"
+    }
+  },
+  "devDependencies": {
+    "electron": "^33.2.1",
+    "electron-builder": "^25.1.8"
+  }
+}

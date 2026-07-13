@@ -4,6 +4,7 @@ import type { PushSubscription } from "web-push";
 import { isStaffAlertAuthenticated } from "@/lib/staff-alert/auth";
 import {
   getSubscriptionSound,
+  hasSubscription,
   removeSubscription,
   updateSubscriptionSound,
   upsertSubscription,
@@ -55,6 +56,13 @@ function parseSubscription(value: unknown): PushSubscription | null {
 export async function GET(request: NextRequest) {
   if (!(await isStaffAlertAuthenticated(request))) return unauthorized();
 
+  const checkEndpoint = request.nextUrl.searchParams.get("check");
+  if (checkEndpoint) {
+    const exists = await hasSubscription(checkEndpoint);
+    const soundId = exists ? await getSubscriptionSound(checkEndpoint) : null;
+    return NextResponse.json({ ok: true, exists, soundId });
+  }
+
   const endpoint = request.nextUrl.searchParams.get("sound");
   if (!endpoint) {
     return NextResponse.json(
@@ -63,8 +71,9 @@ export async function GET(request: NextRequest) {
     );
   }
 
+  const exists = await hasSubscription(endpoint);
   const soundId = await getSubscriptionSound(endpoint);
-  return NextResponse.json({ ok: true, soundId });
+  return NextResponse.json({ ok: true, exists, soundId });
 }
 
 export async function POST(request: NextRequest) {

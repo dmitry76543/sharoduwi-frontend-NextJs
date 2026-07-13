@@ -130,6 +130,26 @@ button:active {
   box-shadow: none;
 }
 
+.staff-alert-big-button--stale {
+  color: #7f1d1d;
+  background: #fef08a;
+  border: 2px solid #fff;
+}
+
+.staff-alert-stale-banner {
+  width: 100%;
+  max-width: 420px;
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.35;
+  color: #7f1d1d;
+  background: #fef08a;
+  border: 2px solid #fff;
+}
+
 .staff-alert-sound-picker--locked {
   opacity: 0.72;
 }

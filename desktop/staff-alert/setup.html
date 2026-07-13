@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Настройка — ШАРОДУВЫ Staff Alert</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: Segoe UI, system-ui, sans-serif;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: linear-gradient(135deg, #ff6ec7, #a855f7 45%, #ffd93d);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+      }
+      .card {
+        width: 100%;
+        max-width: 400px;
+        background: rgba(255, 255, 255, 0.14);
+        border: 1px solid rgba(255, 255, 255, 0.35);
+        border-radius: 20px;
+        padding: 22px;
+        backdrop-filter: blur(10px);
+      }
+      h1 {
+        margin: 0 0 8px;
+        font-size: 24px;
+      }
+      p {
+        margin: 0 0 16px;
+        opacity: 0.95;
+        line-height: 1.4;
+      }
+      label {
+        display: block;
+        font-weight: 700;
+        margin: 12px 0 6px;
+      }
+      input[type="url"],
+      input[type="password"] {
+        width: 100%;
+        box-sizing: border-box;
+        border: none;
+        border-radius: 12px;
+        padding: 12px 14px;
+        font-size: 15px;
+      }
+      .row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 14px;
+      }
+      button {
+        width: 100%;
+        margin-top: 14px;
+        border: none;
+        border-radius: 999px;
+        padding: 14px 16px;
+        font-size: 16px;
+        font-weight: 800;
+        cursor: pointer;
+      }
+      .primary {
+        background: #fff;
+        color: #a21caf;
+      }
+      .secondary {
+        background: rgba(0, 0, 0, 0.2);
+        color: #fff;
+        border: 2px solid #fff;
+      }
+      .msg {
+        margin-top: 12px;
+        padding: 10px 12px;
+        border-radius: 12px;
+        background: rgba(0, 0, 0, 0.22);
+        font-size: 14px;
+        min-height: 1.2em;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>🎈 Staff Alert</h1>
+      <p>
+        Приложение в трее опрашивает сайт и включает громкий сигнал при новом
+        заказе — даже если окно закрыто.
+      </p>
+
+      <label for="siteUrl">Адрес сайта</label>
+      <input id="siteUrl" type="url" value="https://sharoduwi.ru" />
+
+      <label for="password">Пароль Staff Alert</label>
+      <input
+        id="password"
+        type="password"
+        placeholder="тот же, что на /staff-alert"
+      />
+
+      <div class="row">
+        <input id="autoLaunch" type="checkbox" checked />
+        <label for="autoLaunch" style="margin: 0">Запускать с Windows</label>
+      </div>
+
+      <button class="primary" id="saveBtn" type="button">Сохранить</button>
+      <button class="secondary" id="testBtn" type="button">
+        Проверить соединение
+      </button>
+      <div class="msg" id="msg"></div>
+    </div>
+
+    <script>
+      const msg = document.getElementById("msg");
+
+      async function load() {
+        const config = await window.staffAlertDesktop.getConfig();
+        document.getElementById("siteUrl").value =
+          config.siteUrl || "https://sharoduwi.ru";
+        document.getElementById("password").value = config.password || "";
+        document.getElementById("autoLaunch").checked =
+          config.autoLaunch !== false;
+      }
+
+      document.getElementById("saveBtn").onclick = async () => {
+        try {
+          await window.staffAlertDesktop.saveConfig({
+            siteUrl: document.getElementById("siteUrl").value.trim(),
+            password: document.getElementById("password").value.trim(),
+            autoLaunch: document.getElementById("autoLaunch").checked,
+          });
+          msg.textContent =
+            "Сохранено. Приложение слушает заказы в трее (иконка у часов).";
+        } catch (error) {
+          msg.textContent = error.message || "Ошибка сохранения";
+        }
+      };
+
+      document.getElementById("testBtn").onclick = async () => {
+        try {
+          await window.staffAlertDesktop.saveConfig({
+            siteUrl: document.getElementById("siteUrl").value.trim(),
+            password: document.getElementById("password").value.trim(),
+            autoLaunch: document.getElementById("autoLaunch").checked,
+          });
+          const json = await window.staffAlertDesktop.testConnection();
+          msg.textContent = json.alert
+            ? `Связь есть. Последний заказ: ${json.alert.orderId}`
+            : "Связь есть. Пока заказов не было.";
+        } catch (error) {
+          msg.textContent = error.message || "Нет связи";
+        }
+      };
+
+      load();
+    </script>
+  </body>
+</html>

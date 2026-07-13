@@ -25,16 +25,30 @@ export async function isStaffAlertAuthenticated(
   request: Request
 ): Promise<boolean> {
   const cookieHeader = request.headers.get("cookie");
-  if (!cookieHeader) return false;
+  if (cookieHeader) {
+    const token = cookieHeader
+      .split(";")
+      .map((part) => part.trim())
+      .find((part) => part.startsWith(`${STAFF_ALERT_COOKIE}=`))
+      ?.slice(STAFF_ALERT_COOKIE.length + 1);
 
-  const token = cookieHeader
-    .split(";")
-    .map((part) => part.trim())
-    .find((part) => part.startsWith(`${STAFF_ALERT_COOKIE}=`))
-    ?.slice(STAFF_ALERT_COOKIE.length + 1);
+    if (token && (await isValidStaffAlertSession(decodeURIComponent(token)))) {
+      return true;
+    }
+  }
 
-  if (!token) return false;
-  return isValidStaffAlertSession(decodeURIComponent(token));
+  // Desktop / API: Bearer или X-Staff-Alert-Password = STAFF_ALERT_PASSWORD
+  const auth = request.headers.get("authorization") || "";
+  const bearer = auth.match(/^Bearer\s+(.+)$/i)?.[1]?.trim();
+  const headerPassword = (
+    request.headers.get("x-staff-alert-password") || ""
+  ).trim();
+  const password = bearer || headerPassword;
+  if (password && verifyStaffAlertPassword(password)) {
+    return true;
+  }
+
+  return false;
 }
 
 export function getStaffAlertSessionCookieOptions() {

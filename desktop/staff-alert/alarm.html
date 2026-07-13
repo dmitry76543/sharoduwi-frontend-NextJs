@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Сигнал — ШАРОДУВЫ</title>
+    <style>
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        background: #7f1d1d;
+        color: #fff;
+        font-family: Segoe UI, system-ui, sans-serif;
+        text-align: center;
+        padding: 20px;
+      }
+      h1 {
+        margin: 0;
+        font-size: 28px;
+        animation: blink 0.9s ease-in-out infinite;
+      }
+      @keyframes blink {
+        0%,
+        100% {
+          background: #dc2626;
+          color: #fff;
+        }
+        50% {
+          background: #fef08a;
+          color: #7f1d1d;
+        }
+      }
+      h1 {
+        width: 100%;
+        max-width: 360px;
+        padding: 14px;
+        border-radius: 14px;
+        border: 3px solid #fff;
+      }
+      button {
+        border: none;
+        border-radius: 999px;
+        padding: 16px 22px;
+        font-size: 18px;
+        font-weight: 900;
+        background: #fff;
+        color: #7f1d1d;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Новый заказ на сайте!</h1>
+    <p>ШАРОДУВЫ Staff Alert</p>
+    <button id="stop" type="button">🛑 ОСТАНОВИТЬ СИГНАЛ</button>
+
+    <script>
+      let ctx = null;
+      let timer = null;
+
+      function ensureCtx() {
+        if (!ctx) {
+          const Ctor = window.AudioContext || window.webkitAudioContext;
+          ctx = new Ctor();
+        }
+        void ctx.resume();
+        return ctx;
+      }
+
+      function beep(freq, durationMs, type, delayMs = 0) {
+        const audio = ensureCtx();
+        const startAt = audio.currentTime + delayMs / 1000;
+        const endAt = startAt + durationMs / 1000;
+        const osc = audio.createOscillator();
+        const sub = audio.createOscillator();
+        const gain = audio.createGain();
+        osc.type = type;
+        sub.type = type;
+        osc.frequency.value = freq;
+        sub.frequency.value = freq * 0.5;
+        gain.gain.setValueAtTime(0.0001, startAt);
+        gain.gain.exponentialRampToValueAtTime(1, startAt + 0.015);
+        gain.gain.setValueAtTime(1, endAt - 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, endAt);
+        osc.connect(gain);
+        sub.connect(gain);
+        gain.connect(audio.destination);
+        osc.start(startAt);
+        sub.start(startAt);
+        osc.stop(endAt);
+        sub.stop(endAt);
+      }
+
+      function playCycle() {
+        beep(920, 380, "sawtooth");
+        beep(680, 380, "sawtooth", 400);
+        beep(920, 380, "sawtooth", 800);
+      }
+
+      function startAlarm() {
+        stopAlarm(false);
+        ensureCtx();
+        playCycle();
+        timer = setInterval(playCycle, 1400);
+      }
+
+      function stopAlarm(notify = true) {
+        if (timer) {
+          clearInterval(timer);
+          timer = null;
+        }
+        if (notify) window.staffAlertDesktop.notifyStopped();
+      }
+
+      document.getElementById("stop").onclick = () => stopAlarm(true);
+
+      window.staffAlertDesktop.onAlarmStart(() => startAlarm());
+      window.staffAlertDesktop.onAlarmStop(() => stopAlarm(false));
+    </script>
+  </body>
+</html>

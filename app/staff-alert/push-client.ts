@@ -176,6 +176,38 @@ export async function loadSoundFromServer(
   return null;
 }
 
+export type ServerSubscriptionStatus = {
+  exists: boolean;
+  soundId: AlarmSoundId | null;
+};
+
+/** Проверка: есть ли подписка на сервере (после 410 она могла быть удалена). */
+export async function checkSubscriptionOnServer(
+  endpoint: string
+): Promise<ServerSubscriptionStatus> {
+  const response = await fetch(
+    `/api/subscribe?check=${encodeURIComponent(endpoint)}`,
+    { credentials: "same-origin" }
+  );
+
+  if (!response.ok) {
+    return { exists: false, soundId: null };
+  }
+
+  const json = (await response.json()) as {
+    exists?: boolean;
+    soundId?: number | null;
+  };
+
+  return {
+    exists: Boolean(json.exists),
+    soundId:
+      typeof json.soundId === "number" && isAlarmSoundId(json.soundId)
+        ? json.soundId
+        : null,
+  };
+}
+
 export async function removeSubscriptionOnServer(endpoint: string): Promise<void> {
   const response = await fetch("/api/subscribe", {
     method: "DELETE",

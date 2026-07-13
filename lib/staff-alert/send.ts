@@ -1,5 +1,6 @@
 import { webpush } from "@/lib/webpush";
 import { getSubscriptions, removeSubscription } from "@/lib/subscriptions";
+import { recordLastStaffAlert } from "@/lib/staff-alert/last-alert";
 import { isVapidConfigured } from "@/lib/staff-alert/vapid";
 
 export type StaffAlertPayload = {
@@ -64,6 +65,12 @@ function describePushFailure(failure: PushFailure): string {
 export async function sendStaffAlert(
   payload: StaffAlertPayload = {}
 ): Promise<StaffAlertResult> {
+  const title = payload.title || "🚨 Новый заказ в ШАРОДУВЫ!";
+  const body = payload.body || "Скорее оформляем — клиент ждёт свои шары 🎈";
+  const orderId = payload.orderId || String(Date.now());
+
+  await recordLastStaffAlert({ orderId, title, body });
+
   if (!isVapidConfigured()) {
     return {
       ok: false,
@@ -80,25 +87,28 @@ export async function sendStaffAlert(
 
   if (subscriptions.length === 0) {
     return {
-      ok: false,
+      ok: true,
       sent: 0,
       failed: 0,
       removed: 0,
       total: 0,
-      error: "Нет ни одной подписки. Сотрудники ещё не подписались.",
+      errors: [
+        "Нет web-push подписок в браузере. Desktop-приложение в трее получит сигнал через опрос.",
+      ],
     };
   }
 
   const notification = JSON.stringify({
-    title: payload.title || "🚨 Новый заказ в ШАРОДУВЫ!",
-    body: payload.body || "Скорее оформляем — клиент ждёт свои шары 🎈",
-    orderId: payload.orderId || String(Date.now()),
+    title,
+    body,
+    orderId,
   });
 
   const results = await Promise.allSettled(
     subscriptions.map((sub) =>
       webpush.sendNotification(sub, notification, {
-        TTL: 60,
+        // Несколько часов: сообщение ждёт, пока ПК/браузер выйдут из сна/сети.
+        TTL: 60 * 60 * 4,
         urgency: "high",
       })
     )

@@ -81,6 +81,11 @@ export async function getSubscriptionSound(
   return isAlarmSoundId(found.soundId) ? found.soundId : null;
 }
 
+export async function hasSubscription(endpoint: string): Promise<boolean> {
+  const subs = await readAll();
+  return subs.some((item) => item.endpoint === endpoint);
+}
+
 export async function getSubscriptions(): Promise<StoredPushSubscription[]> {
   return readAll();
 }

@@ -9,7 +9,9 @@
     "lint": "eslint",
     "probe:advantshop": "node scripts/probe-advantshop.mjs",
     "seo:check": "node scripts/seo-webmaster-check.mjs",
-    "vapid": "node scripts/generate-vapid.mjs"
+    "vapid": "node scripts/generate-vapid.mjs",
+    "desktop:staff-alert": "npm --prefix desktop/staff-alert start",
+    "desktop:staff-alert:dist": "npm --prefix desktop/staff-alert run dist"
   },
   "dependencies": {
     "@fontsource/onest": "^5.2.11",

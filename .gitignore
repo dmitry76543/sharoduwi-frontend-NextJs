@@ -43,3 +43,8 @@ next-env.d.ts
 
 # Staff Alert PWA — push subscriptions (per-server)
 /data/subscriptions.json
+/data/last-staff-alert.json
+
+# Desktop tray app
+/desktop/staff-alert/node_modules/
+/desktop/staff-alert/dist/

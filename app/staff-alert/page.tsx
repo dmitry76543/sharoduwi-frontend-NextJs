@@ -16,10 +16,10 @@ import {
   supportsStaffPush,
 } from "./alarm-sounds";
 import {
+  checkSubscriptionOnServer,
   createPushSubscription,
   fetchVapidPublicKey,
   getLocalPushSubscription,
-  loadSoundFromServer,
   registerStaffServiceWorker,
   removeSubscriptionOnServer,
   saveSoundOnServer,
@@ -42,6 +42,7 @@ export default function StaffAlertPage() {
   const [vapidPublicKey, setVapidPublicKey] = useState(BUILD_TIME_VAPID_KEY);
   const [vapidReady, setVapidReady] = useState(Boolean(BUILD_TIME_VAPID_KEY));
   const [pushEndpoint, setPushEndpoint] = useState<string | null>(null);
+  const [subscriptionStale, setSubscriptionStale] = useState(false);
 
   const audioCtxRef = useRef<AudioContext | null>(null);
   const alarmTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -124,14 +125,20 @@ export default function StaffAlertPage() {
       try {
         await saveSoundOnServer(pushEndpoint, soundId);
         setSoundSaved(true);
+        setSubscriptionStale(false);
         setMessage(`Сигнал «${ALARM_SOUNDS[soundId].name}» сохранён на этом устройстве.`);
       } catch (error) {
+        const text = error instanceof Error ? error.message : "Сервер недоступен";
+        if (text.includes("Подписка не найдена") || text.includes("404")) {
+          setSubscriptionStale(true);
+          setSoundSaved(false);
+          setMessage(
+            "Подписка на сервере устарела — обновите. Нажмите «Подписаться» снова."
+          );
+          return;
+        }
         setSoundSaved(true);
-        setMessage(
-          `Сигнал сохранён локально. ${
-            error instanceof Error ? error.message : "Сервер недоступен"
-          }`
-        );
+        setMessage(`Сигнал сохранён локально. ${text}`);
       }
 
       if (preview) {
@@ -153,21 +160,35 @@ export default function StaffAlertPage() {
       setStatus("idle");
       setPushEndpoint(null);
       setSoundSaved(false);
+      setSubscriptionStale(false);
       return;
     }
 
-    setStatus("subscribed");
     setPushEndpoint(local.endpoint);
 
     const stored = readStoredAlarmSound();
     selectedSoundRef.current = stored;
     setSelectedSound(stored);
 
-    const remoteSound = await loadSoundFromServer(local.endpoint);
-    if (remoteSound !== null) {
-      selectedSoundRef.current = remoteSound;
-      setSelectedSound(remoteSound);
-      storeAlarmSound(remoteSound);
+    const remote = await checkSubscriptionOnServer(local.endpoint);
+    if (!remote.exists) {
+      // Локально подписка есть, на сервере уже удалена (410 и т.п.).
+      setStatus("idle");
+      setSubscriptionStale(true);
+      setSoundSaved(false);
+      setMessage(
+        "Подписка на сервере устарела — обновите. Нажмите «Подписаться на сигналы» снова."
+      );
+      return;
+    }
+
+    setStatus("subscribed");
+    setSubscriptionStale(false);
+
+    if (remote.soundId !== null) {
+      selectedSoundRef.current = remote.soundId;
+      setSelectedSound(remote.soundId);
+      storeAlarmSound(remote.soundId);
       setSoundSaved(true);
     } else {
       setSoundSaved(false);
@@ -261,6 +282,11 @@ export default function StaffAlertPage() {
         throw new Error("Разрешение на уведомления не выдано.");
       }
 
+      // Если сервер уже удалил запись — пересоздаём локальную подписку заново.
+      if (subscriptionStale) {
+        await unsubscribeLocally();
+      }
+
       const subscription = await createPushSubscription(publicKey);
       const soundId = selectedSoundRef.current;
       const total = await saveSubscriptionOnServer(subscription, soundId);
@@ -268,6 +294,7 @@ export default function StaffAlertPage() {
       setStatus("subscribed");
       setPushEndpoint(subscription.endpoint);
       setSoundSaved(true);
+      setSubscriptionStale(false);
       setMessage(
         `Готово! Устройств подписано: ${total}. Теперь выберите и сохраните сигнал ниже. ${
           isWindowsDesktop()
@@ -279,7 +306,7 @@ export default function StaffAlertPage() {
       setStatus("error");
       setMessage(error instanceof Error ? error.message : "Ошибка подписки");
     }
-  }, [vapidPublicKey]);
+  }, [subscriptionStale, vapidPublicKey]);
 
   const unsubscribe = useCallback(async () => {
     try {
@@ -299,6 +326,7 @@ export default function StaffAlertPage() {
       setStatus("idle");
       setPushEndpoint(null);
       setSoundSaved(false);
+      setSubscriptionStale(false);
       setMessage("Вы отписались от сигналов на этом устройстве.");
     } catch (error) {
       setStatus("subscribed");
@@ -349,6 +377,9 @@ export default function StaffAlertPage() {
           json.removed && json.removed > 0
             ? ` Удалено устаревших подписок: ${json.removed}.`
             : "";
+        if (json.removed && json.removed > 0) {
+          setSubscriptionStale(true);
+        }
         setMessage(
           `Сигнал отправлен! Доставлено устройств: ${json.sent} из ${json.total}.${failedPart}${removedPart}`
         );
@@ -356,9 +387,16 @@ export default function StaffAlertPage() {
         const details = json.errors?.length
           ? ` ${json.errors.join(" ")}`
           : "";
-        setMessage(
-          (json.error || "Не удалось отправить сигнал.") + details
-        );
+        const text = (json.error || "Не удалось отправить сигнал.") + details;
+        if (
+          text.includes("устарела") ||
+          text.includes("410") ||
+          text.includes("404") ||
+          (json.removed && json.removed > 0)
+        ) {
+          setSubscriptionStale(true);
+        }
+        setMessage(text);
       }
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Ошибка отправки");
@@ -383,17 +421,25 @@ export default function StaffAlertPage() {
       <h1 className="staff-alert-title">ШАРОДУВЫ</h1>
       <p className="staff-alert-subtitle">Сигнал о новых заказах для сотрудников</p>
 
+      {subscriptionStale && (
+        <p className="staff-alert-stale-banner" role="alert">
+          Подписка на сервере устарела — обновите. Нажмите кнопку ниже.
+        </p>
+      )}
+
       <button
         type="button"
         onClick={toggleSubscription}
         disabled={isBusy || status === "unsupported" || (!vapidReady && !BUILD_TIME_VAPID_KEY)}
-        className={`staff-alert-big-button${isSubscribed ? " staff-alert-big-button--subscribed" : ""}`}
+        className={`staff-alert-big-button${isSubscribed ? " staff-alert-big-button--subscribed" : ""}${subscriptionStale ? " staff-alert-big-button--stale" : ""}`}
       >
         {isSubscribed
           ? "🔕 Отписаться от сигналов"
           : isBusy
             ? "⏳ Подождите…"
-            : "🔊 Подписаться на сигналы"}
+            : subscriptionStale
+              ? "🔄 Обновить подписку"
+              : "🔊 Подписаться на сигналы"}
       </button>
 
       <section
