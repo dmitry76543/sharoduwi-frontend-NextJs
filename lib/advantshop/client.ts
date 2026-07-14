@@ -22,7 +22,8 @@ type AdvantShopApiEnvelope = {
 let cachedClientUserId: string | null = null;
 let clientUserIdPromise: Promise<string> | null = null;
 
-const DEFAULT_ADVANTSHOP_FETCH_TIMEOUT_MS = 22_000;
+const DEFAULT_ADVANTSHOP_FETCH_TIMEOUT_MS = 28_000;
+const DEFAULT_ADVANTSHOP_FETCH_ATTEMPTS = 2;
 
 function getAdvantShopFetchTimeoutMs(): number {
   const raw = process.env.ADVANTSHOP_FETCH_TIMEOUT_MS?.trim();
@@ -31,6 +32,15 @@ function getAdvantShopFetchTimeoutMs(): number {
   return Number.isFinite(parsed) && parsed > 0
     ? parsed
     : DEFAULT_ADVANTSHOP_FETCH_TIMEOUT_MS;
+}
+
+function getAdvantShopFetchAttempts(): number {
+  const raw = process.env.ADVANTSHOP_FETCH_ATTEMPTS?.trim();
+  if (!raw) return DEFAULT_ADVANTSHOP_FETCH_ATTEMPTS;
+  const parsed = Number(raw);
+  return Number.isFinite(parsed) && parsed >= 1
+    ? Math.min(Math.floor(parsed), 4)
+    : DEFAULT_ADVANTSHOP_FETCH_ATTEMPTS;
 }
 
 async function fetchWithTimeout(
@@ -58,7 +68,7 @@ async function fetchWithTimeout(
 async function fetchWithRetry(
   url: string,
   options: RequestInit,
-  attempts = 3
+  attempts = getAdvantShopFetchAttempts()
 ): Promise<Response> {
   let lastError: unknown;
 
@@ -71,7 +81,7 @@ async function fetchWithRetry(
       if (!retryable || attempt === attempts) {
         throw error;
       }
-      await new Promise((resolve) => setTimeout(resolve, attempt * 1000));
+      await new Promise((resolve) => setTimeout(resolve, attempt * 1200));
     }
   }
 

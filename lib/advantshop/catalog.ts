@@ -82,14 +82,35 @@ async function mapCatalogItems(
   items: NonNullable<AdvantShopCatalogResponse["products"]>,
   collectionSlug: CollectionSlug
 ): Promise<Product[]> {
-  return Promise.all(
-    items.map(async (item) => {
-      const properties = await fetchProductProperties(item.productId).catch(
-        () => [] as AdvantShopProperty[]
-      );
-      return mapCatalogProduct(item, collectionSlug, properties);
-    })
+  // Без отдельного GET properties на каждый товар: иначе полный каталог
+  // делает сотни запросов и регулярно укладывается в timeout AdvantShop.
+  // Теги берутся из коллекции / названия; свойства подгружаются на карточке товара.
+  return items.map((item) => mapCatalogProduct(item, collectionSlug));
+}
+
+/** Ограниченный параллелизм: полный каталог иначе валит shop.sharoduwi.ru. */
+async function mapWithConcurrency<T, R>(
+  items: T[],
+  concurrency: number,
+  mapper: (item: T) => Promise<R>
+): Promise<R[]> {
+  const results: R[] = new Array(items.length);
+  let nextIndex = 0;
+
+  async function worker() {
+    while (nextIndex < items.length) {
+      const index = nextIndex;
+      nextIndex += 1;
+      results[index] = await mapper(items[index]);
+    }
+  }
+
+  const workers = Array.from(
+    { length: Math.min(concurrency, Math.max(items.length, 1)) },
+    () => worker()
   );
+  await Promise.all(workers);
+  return results;
 }
 
 async function fetchProductsForCollection(
@@ -141,9 +162,14 @@ export async function fetchAdvantShopProducts(options?: {
   const slugs = COLLECTIONS.map((collection) => collection.slug);
   if (!slugs.length) return [];
 
-  const results = await Promise.all(
-    slugs.map((slug) => fetchProductsForCollection(slug, sort))
-  );
+  const results = await mapWithConcurrency(slugs, 3, async (slug) => {
+    try {
+      return await fetchProductsForCollection(slug, sort);
+    } catch (error) {
+      console.warn(`AdvantShop collection unavailable for "${slug}":`, error);
+      return [] as Product[];
+    }
+  });
 
   const merged = new Map<number, Product>();
   for (const list of results) {
