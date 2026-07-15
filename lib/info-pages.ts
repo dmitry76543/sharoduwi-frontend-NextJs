@@ -242,7 +242,17 @@ export const DELIVERY_MOSCOW_DETAILS: DeliveryAreaDetails = {
   pricingTitle: "Стоимость доставки в Москве",
   pricingRows: [
     {
-      location: "Москва",
+      location: "Жулебино",
+      condition: "заказ от 2 500 ₽",
+      price: "800 ₽",
+    },
+    {
+      location: "Косино",
+      condition: "заказ от 2 500 ₽",
+      price: "800 ₽",
+    },
+    {
+      location: "Некрасовка",
       condition: "заказ от 2 500 ₽",
       price: "800 ₽",
     },
