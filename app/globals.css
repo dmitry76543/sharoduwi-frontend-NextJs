@@ -1211,35 +1211,39 @@ a.col-card{color:inherit}
   .collections{grid-template-columns:1fr}
   .col-card{aspect-ratio:16/10}
   .header .logo{font-size:14px}
-  .mob-menu nav a{font-size:24px}
+  .mob-menu nav a{font-size:20px}
 }
 /* Ландшафт на телефонах (низкая высота) */
 @media (max-height:520px) and (orientation:landscape){
   .hero{padding:24px 0 40px}
   .hero-visual{height:300px;transform:scale(.7)}
   .modal{top:50%}
-  .mob-menu{overflow-y:auto}
+  .mob-menu nav a{font-size:18px;padding:8px 0}
 }
 
 
 /* Мобильное меню */
+body.mob-menu-open{overflow:hidden;touch-action:none;overscroll-behavior:none}
 .mob-menu{position:fixed;inset:0;z-index:103;background:var(--cream);transform:translateY(-100%);
   visibility:hidden;pointer-events:none;clip-path:inset(0 0 100% 0);
   transition:transform .5s var(--ease),visibility 0s linear .5s,clip-path 0s linear .5s;
-  display:flex;flex-direction:column;padding:30px 26px}
+  display:flex;flex-direction:column;padding:24px 26px calc(24px + env(safe-area-inset-bottom,0));
+  height:100%;height:100dvh;max-height:100dvh;overflow-x:hidden;overflow-y:auto;
+  -webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y}
 .mob-menu.open{transform:translateY(0);visibility:visible;pointer-events:auto;clip-path:none;
   transition:transform .5s var(--ease),visibility 0s linear 0s,clip-path 0s linear 0s}
-.mob-menu .mm-head{display:flex;justify-content:space-between;align-items:center;gap:12px;min-width:0;margin-bottom:30px}
+.mob-menu .mm-head{display:flex;justify-content:space-between;align-items:center;gap:12px;min-width:0;margin-bottom:18px;flex:none}
 .mob-menu .mm-head .logo{flex:1 1 auto;min-width:0;max-width:calc(100% - 54px);font-size:clamp(15px,4.8vw,22px);overflow:visible}
 .mob-menu .mm-head .close-btn{flex:0 0 auto}
-.mob-menu nav{display:flex;flex-direction:column;gap:4px}
-.mob-menu nav a{font-family:'Unbounded';font-size:28px;font-weight:700;padding:12px 0;border-bottom:1px solid var(--line)}
+.mob-menu nav{display:flex;flex-direction:column;gap:2px;flex:1 1 auto;min-height:0;padding-bottom:8px}
+.mob-menu nav a{font-family:'Unbounded';font-size:22px;font-weight:700;padding:10px 0;border-bottom:1px solid var(--line)}
 .mob-menu nav a:nth-child(1){color:var(--pink)}
 .mob-menu nav a:nth-child(2){color:var(--sky)}
 .mob-menu nav a:nth-child(3){color:var(--mint)}
 .mob-menu nav a:nth-child(4){color:var(--coral)}
 .mob-menu nav a:nth-child(5){color:var(--lav)}
 .mob-menu nav a:nth-child(6){color:var(--pink)}
+.mob-menu nav a:nth-child(7){color:var(--sky)}
 .mob-menu .btn{margin-top:auto;justify-content:center}
 
 /* Rising letters в заголовке hero (нативно, без GSAP) */
@@ -1352,10 +1356,6 @@ h1,h2,h3,h4,.display,.logo,.sec-tag,.brand-word,.hero-stats .st b,.hero-badge .p
 }
 .city-switcher-badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:999px;background:rgba(255,45,149,.12);color:var(--pink)}
 .city-switcher-all{display:block;padding:10px;font-size:13px;font-weight:700;color:var(--pink);text-align:center;border-top:1px solid var(--line);margin-top:4px;flex-shrink:0}
-.mm-city{margin-bottom:16px}
-.mm-city .city-switcher{width:100%}
-.mm-city .city-switcher-btn{width:100%;max-width:none;display:flex;justify-content:flex-start;padding:10px 14px;border-radius:14px;min-height:42px}
-.mm-city .city-switcher-btn-text{flex:1 1 auto;text-align:left}
 .cities-grid{margin:32px 0}
 .cities-grid h2{font-family:var(--font-unbounded),'Unbounded',sans-serif;font-size:22px;margin-bottom:16px}
 .cities-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
