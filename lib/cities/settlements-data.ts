@@ -56,6 +56,17 @@ export const SETTLEMENT_NAMES = [
   "Торбеево",
   "Хлыстово",
   "Часовня",
+  // Расширение зоны: Котельники, Лыткарино, юг Балашихи у Люберец
+  "Котельники",
+  "Лыткарино",
+  "Железнодорожный",
+  "Новое Павлино",
+  "Кучино",
+  "Саввино",
+  "Никольско-Архангельский",
+  "Красная Горка",
+  "Жулебино",
+  "Некрасовка",
   "Агашкино",
   "Аксёново",
   "Амирово",
@@ -270,6 +281,16 @@ export const SETTLEMENT_SLUG_OVERRIDES: Record<string, string> = {
   Октябрьский: "oktyabrskiy",
   Токарёво: "tokaryovo",
   Чкалово: "chkalovo",
+  Котельники: "kotelniki",
+  Лыткарино: "lytkarino",
+  Железнодорожный: "zheleznodorozhnyy",
+  "Новое Павлино": "novoe-pavlino",
+  Кучино: "kuchino",
+  Саввино: "savvino",
+  "Никольско-Архангельский": "nikolsko-arkhangelskiy",
+  "Красная Горка": "krasnaya-gorka",
+  Жулебино: "zhulebino",
+  Некрасовка: "nekrasovka",
 };
 
 export const SETTLEMENT_FORM_OVERRIDES: Record<
@@ -386,6 +407,56 @@ export const SETTLEMENT_FORM_OVERRIDES: Record<
     nameGenitive: "Малаховки",
     nameInstrumental: "Малаховке",
   },
+  Котельники: {
+    namePrepositional: "Котельниках",
+    nameGenitive: "Котельников",
+    nameInstrumental: "Котельникам",
+  },
+  Лыткарино: {
+    namePrepositional: "Лыткарино",
+    nameGenitive: "Лыткарино",
+    nameInstrumental: "Лыткарино",
+  },
+  Железнодорожный: {
+    namePrepositional: "Железнодорожном",
+    nameGenitive: "Железнодорожного",
+    nameInstrumental: "Железнодорожному",
+  },
+  "Новое Павлино": {
+    namePrepositional: "Новом Павлино",
+    nameGenitive: "Нового Павлино",
+    nameInstrumental: "Новому Павлино",
+  },
+  Кучино: {
+    namePrepositional: "Кучино",
+    nameGenitive: "Кучино",
+    nameInstrumental: "Кучино",
+  },
+  Саввино: {
+    namePrepositional: "Саввино",
+    nameGenitive: "Саввино",
+    nameInstrumental: "Саввино",
+  },
+  "Никольско-Архангельский": {
+    namePrepositional: "Никольско-Архангельском",
+    nameGenitive: "Никольско-Архангельского",
+    nameInstrumental: "Никольско-Архангельскому",
+  },
+  "Красная Горка": {
+    namePrepositional: "Красной Горке",
+    nameGenitive: "Красной Горки",
+    nameInstrumental: "Красной Горке",
+  },
+  Жулебино: {
+    namePrepositional: "Жулебино",
+    nameGenitive: "Жулебино",
+    nameInstrumental: "Жулебино",
+  },
+  Некрасовка: {
+    namePrepositional: "Некрасовке",
+    nameGenitive: "Некрасовки",
+    nameInstrumental: "Некрасовке",
+  },
 };
 
 export const SETTLEMENT_DISTRICT_OVERRIDES: Record<string, string> = {
@@ -418,11 +489,28 @@ export const SETTLEMENT_DISTRICT_OVERRIDES: Record<string, string> = {
   "Нижнее Мячково": "г.о. Люберцы",
   Бисерово: "г.о. Люберцы",
   Островцы: "г.о. Люберцы",
+  Котельники: "г.о. Котельники",
+  Лыткарино: "г.о. Лыткарино",
+  Железнодорожный: "г.о. Балашиха",
+  "Новое Павлино": "г.о. Балашиха",
+  Кучино: "г.о. Балашиха",
+  Саввино: "г.о. Балашиха",
+  "Никольско-Архангельский": "г.о. Балашиха",
+  "Красная Горка": "г.о. Люберцы",
+  Жулебино: "Москва, ЮВАО",
+  Некрасовка: "Москва, ЮВАО",
 };
 
 /** Населённый пункт относится к зоне доставки Люберецкого округа */
 export function isLyuberetskyDistrict(district: string): boolean {
-  return district.includes("Люберц") || district.includes("Дзержинск");
+  return (
+    district.includes("Люберц") ||
+    district.includes("Дзержинск") ||
+    district.includes("Котельник") ||
+    district.includes("Лыткарин") ||
+    district.includes("Балаших") ||
+    district.includes("ЮВАО")
+  );
 }
 
 export const PRIMARY_SETTLEMENT_NAMES = ["Жуковский", "Раменское", "Люберцы"] as const;

@@ -45,6 +45,14 @@ const GEO_CITY_ALIASES: Record<string, string> = {
   malakhovka: "Малаховка",
   malahovka: "Малаховка",
   kraskovo: "Красково",
+  kotelniki: "Котельники",
+  lytkarino: "Лыткарино",
+  zheleznodorozhnyy: "Железнодорожный",
+  zheleznodorozhny: "Железнодорожный",
+  kuchino: "Кучино",
+  savvino: "Саввино",
+  zhulebino: "Жулебино",
+  nekrasovka: "Некрасовка",
 };
 
 const citiesByNormalizedName = (() => {

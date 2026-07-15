@@ -56,6 +56,12 @@ function detectSettlementKind(name: string): SettlementKind {
 
 function districtDeliveryHint(district: string): string {
   if (district.includes("Люберц")) return "тарифы Люберецкого округа";
+  if (district.includes("Котельник")) return "тарифы Котельников";
+  if (district.includes("Лыткарин")) return "тарифы Лыткарино";
+  if (district.includes("Балаших")) return "тарифы юга Балашихи";
+  if (district.includes("ЮВАО") || district.includes("Москва")) {
+    return "тарифы ближайших районов Москвы у Люберец";
+  }
   if (district.includes("Бронниц")) return "тарифы Бронницкого округа";
   if (district.includes("Фрязино")) return "доставка по Фрязино";
   return "тарифы Раменского района";

@@ -4,7 +4,6 @@ import { CITY_ENHANCEMENTS, type CityEnhancement } from "@/lib/cities/city-enhan
 import { getSettlementEnhancement } from "@/lib/cities/settlement-content-generator";
 import {
   DEFAULT_SETTLEMENT_DISTRICT,
-  isLyuberetskyDistrict,
   PRIMARY_SETTLEMENT_NAMES,
   SETTLEMENT_DISTRICT_OVERRIDES,
   SETTLEMENT_NAMES,
@@ -51,7 +50,17 @@ function buildSettlementSeo(
 
 function resolveDetailsSlug(name: string, district: string): string {
   if (name === "Жуковский") return "zhukovsky";
-  if (isLyuberetskyDistrict(district)) return "lyubertsy";
+  if (
+    district.includes("Люберц") ||
+    district.includes("Дзержинск") ||
+    district.includes("Котельник") ||
+    district.includes("Лыткарин") ||
+    district.includes("Балаших") ||
+    district.includes("ЮВАО") ||
+    district.includes("Москва")
+  ) {
+    return "lyubertsy";
+  }
   return "ramenskoe";
 }
 
@@ -61,19 +70,13 @@ function buildSettlementDelivery(
   district: string
 ): CityConfig["delivery"] {
   const detailsSlug = resolveDetailsSlug(name, district);
-  const lyuberetsky = detailsSlug === "lyubertsy";
+  const areaLabel = buildAreaLabel(namePrepositional, district);
 
   return {
     detailsSlug,
-    deliveryInLabel: lyuberetsky
-      ? `${namePrepositional} и Люберецком округе`
-      : namePrepositional,
-    lead: lyuberetsky
-      ? `Доставляем гелиевые и воздушные шары в ${namePrepositional} из мастерской в Жуковском. Тарифы Люберецкого округа — на странице доставки, точную сумму подскажет менеджер.`
-      : `Доставляем гелиевые и воздушные шары в ${namePrepositional} из нашей мастерской в Жуковском. Стоимость и время уточняйте у менеджера.`,
-    zones: lyuberetsky
-      ? [name, "Люберецкий городской округ", "Жилые кварталы и частный сектор"]
-      : [name, "Жилые кварталы и частный сектор"],
+    deliveryInLabel: areaLabel,
+    lead: `Доставляем гелиевые и воздушные шары в ${namePrepositional} из мастерской в Жуковском. Стоимость и время уточняйте у менеджера — привезём точно к торжеству.`,
+    zones: [name, district, "Жилые кварталы и частный сектор"],
   };
 }
 
