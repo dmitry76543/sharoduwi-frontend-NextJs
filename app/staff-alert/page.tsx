@@ -520,10 +520,10 @@ export default function StaffAlertPage() {
               Скачайте и установите программу:{" "}
               <a
                 className="staff-alert-download-link"
-                href="/downloads/Sharoduwy-Staff-Alert-Setup-1.1.0.exe"
+                href="/downloads/Sharoduwy-Staff-Alert-Setup-1.1.1.exe"
                 download
               >
-                Sharoduwy-Staff-Alert-Setup-1.1.0.exe
+                Sharoduwy-Staff-Alert-Setup-1.1.1.exe
               </a>
             </li>
             <li>
@@ -545,7 +545,7 @@ export default function StaffAlertPage() {
             Установщик приложения в трее:{" "}
             <a
               className="staff-alert-download-link"
-              href="/downloads/Sharoduwy-Staff-Alert-Setup-1.1.0.exe"
+              href="/downloads/Sharoduwy-Staff-Alert-Setup-1.1.1.exe"
               download
             >
               скачать для Windows 10/11

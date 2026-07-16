@@ -7,9 +7,13 @@ const {
   Notification,
   shell,
   ipcMain,
+  screen,
 } = require("electron");
 const path = require("path");
 const fs = require("fs");
+
+const ALARM_WINDOW_WIDTH = 420;
+const ALARM_WINDOW_HEIGHT = 260;
 
 const POLL_MS = 12_000;
 const DEFAULT_SITE = "https://sharoduwi.ru";
@@ -98,15 +102,27 @@ function appWindowIcon() {
   return image;
 }
 
+function getAlarmWindowBounds() {
+  const display = screen.getPrimaryDisplay();
+  const area = display.workArea;
+  const width = ALARM_WINDOW_WIDTH;
+  const height = ALARM_WINDOW_HEIGHT;
+  // Выше центра, чтобы окно целиком было над панелью задач без прокрутки.
+  const x = Math.round(area.x + (area.width - width) / 2);
+  const y = Math.round(area.y + Math.max(48, area.height * 0.12));
+  return { x, y, width, height };
+}
+
 function ensureAlarmWindow() {
   if (alarmWindow && !alarmWindow.isDestroyed()) return alarmWindow;
 
+  const bounds = getAlarmWindowBounds();
   alarmWindow = new BrowserWindow({
-    width: 420,
-    height: 280,
+    ...bounds,
     show: false,
     skipTaskbar: true,
     resizable: false,
+    alwaysOnTop: true,
     icon: appWindowIcon(),
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
@@ -128,6 +144,7 @@ function showAlarmWindow(melodyId) {
   const id =
     typeof melodyId === "number" ? melodyId : Number(config.melodyId) || 0;
   const win = ensureAlarmWindow();
+  win.setBounds(getAlarmWindowBounds());
   win.show();
   win.focus();
   win.webContents.send("alarm-start", id);
