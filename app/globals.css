@@ -1306,9 +1306,6 @@ h1,h2,h3,h4,.display,.logo,.sec-tag,.brand-word,.hero-stats .st b,.hero-badge .p
 .footer h4{font-family:var(--font-unbounded),'Unbounded',sans-serif}
 
 /* ── Региональность / выбор города ── */
-.city-hub-banner{background:linear-gradient(90deg,rgba(255,45,149,.08),rgba(54,183,240,.08));border-bottom:1px solid var(--line);padding:10px 0;font-size:14px}
-.city-hub-banner p{margin:0;color:var(--muted)}
-.city-hub-banner a{color:var(--ink);font-weight:600;text-decoration:underline;text-underline-offset:3px}
 .city-switcher{position:relative;z-index:20}
 .city-switcher-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border:1px solid var(--line);border-radius:999px;background:#fff;font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;white-space:nowrap;max-width:100%}
 .city-switcher-btn-text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
