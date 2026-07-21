@@ -166,7 +166,7 @@ export function Shop({ pageCollection, heading, description, previewLimit }: Sho
               {favOnly
                 ? "В избранном пока пусто. Нажмите ♡ на товаре."
                 : isCategoryPage
-                  ? "В этой коллекции пока нет товаров."
+                  ? "Этот товар не найден."
                   : "Ничего не нашли. Попробуйте другой запрос."}
             </div>
           ) : (

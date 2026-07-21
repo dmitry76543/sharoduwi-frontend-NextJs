@@ -1090,6 +1090,10 @@ a.col-card{color:inherit}
   .collection-page-shell #shop .sec-head{margin-bottom:18px}
   .collection-page-shell #shop .sec-head h2{margin-top:0}
   .collection-page-shell #shop .sec-head .sec-tag{margin-bottom:8px}
+  .collection-page-shell .shop-collection-filter{margin:-8px 0 10px}
+  .collection-page-shell .shop-controls{gap:8px;margin-bottom:12px}
+  .collection-page-shell .shop-filters-stack{gap:6px}
+  .collection-page-shell #shop .products .empty{padding:20px 16px;font-size:16px}
   .cities-page-shell .sec{padding:16px 0}
   .cities-page-shell .info-page{padding-top:16px;padding-bottom:0}
   .cities-page-shell .category-breadcrumb{margin-bottom:0}

@@ -118,6 +118,8 @@ export function Hero() {
                           {fmt(price)} ₽{" "}
                           {oldPrice != null && oldPrice > price && <s>{fmt(oldPrice)} ₽</s>}
                         </>
+                      ) : !featured ? (
+                        "Шары на подлёте!"
                       ) : (
                         "уточняйте цену"
                       )}
