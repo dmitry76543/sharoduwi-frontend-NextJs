@@ -203,7 +203,7 @@ export function AppProvider({
 
     if (hasWarmData) {
       let idleId: number | undefined;
-      let timeoutId: ReturnType<typeof setTimeout> | undefined;
+      let timeoutId: number | undefined;
 
       if (typeof window.requestIdleCallback === "function") {
         idleId = window.requestIdleCallback(() => runFetch(), { timeout: 4000 });
