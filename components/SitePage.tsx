@@ -68,7 +68,7 @@ export default function SitePage({
       <ScrollProgress />
       <Background />
       <ConfettiCursor />
-      <TopBar />
+      <TopBar home />
       <Header />
       <a id="top" />
       <Hero />

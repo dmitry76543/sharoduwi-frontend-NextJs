@@ -33,9 +33,9 @@ const BADGES = [
   },
 ];
 
-export function TopBar() {
+export function TopBar({ home = false }: { home?: boolean }) {
   return (
-    <div className="topbar">
+    <div className={`topbar${home ? " topbar--home" : ""}`}>
       <div className="topbar-row">
         {BADGES.map((b) => (
           <span className="tb-badge" key={b.text}>

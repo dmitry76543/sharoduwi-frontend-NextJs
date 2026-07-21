@@ -139,7 +139,7 @@ export function AppProvider({
     if (typeof window !== "undefined" && readClientCatalogCache(cacheKey)) {
       return false;
     }
-    return true;
+    return false;
   });
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const burstRef = useRef<((x: number, y: number, count?: number) => void) | null>(null);
@@ -170,38 +170,55 @@ export function AppProvider({
     const cached = readClientCatalogCache(cacheKey);
     const hasWarmData = Boolean(initialCatalog?.products.length || cached?.products.length);
 
-    if (!hasWarmData) {
-      setCatalogLoading(true);
-    }
-
     const catalogUrl = catalogCollection
       ? `/api/catalog?collection=${encodeURIComponent(catalogCollection)}`
       : "/api/catalog";
 
-    fetch(catalogUrl)
-      .then((response) => response.json())
-      .then((data: { products?: Product[]; source?: CatalogSource }) => {
-        if (cancelled) return;
-        if (Array.isArray(data.products)) {
-          const list = data.products.length
-            ? data.products
-            : getStaticFallback(catalogCollection);
-          const source: CatalogSource =
-            data.source === "advantshop" ? "advantshop" : "static";
-          setProducts(list);
-          setCatalogSource(source);
-          writeClientCatalogCache(cacheKey, list, source);
-        }
-      })
-      .catch((error) => {
-        console.error("Catalog fetch failed:", error);
-        if (!cancelled && !hasWarmData) {
-          setProducts(getStaticFallback(catalogCollection));
-        }
-      })
-      .finally(() => {
-        if (!cancelled) setCatalogLoading(false);
-      });
+    const runFetch = () => {
+      fetch(catalogUrl)
+        .then((response) => response.json())
+        .then((data: { products?: Product[]; source?: CatalogSource }) => {
+          if (cancelled) return;
+          if (Array.isArray(data.products)) {
+            const list = data.products.length
+              ? data.products
+              : getStaticFallback(catalogCollection);
+            const source: CatalogSource =
+              data.source === "advantshop" ? "advantshop" : "static";
+            setProducts(list);
+            setCatalogSource(source);
+            writeClientCatalogCache(cacheKey, list, source);
+          }
+        })
+        .catch((error) => {
+          console.error("Catalog fetch failed:", error);
+          if (!cancelled && !hasWarmData) {
+            setProducts(getStaticFallback(catalogCollection));
+          }
+        })
+        .finally(() => {
+          if (!cancelled) setCatalogLoading(false);
+        });
+    };
+
+    if (hasWarmData) {
+      let idleId: number | undefined;
+      let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
+      if (typeof window.requestIdleCallback === "function") {
+        idleId = window.requestIdleCallback(() => runFetch(), { timeout: 4000 });
+      } else {
+        timeoutId = window.setTimeout(runFetch, 2000);
+      }
+
+      return () => {
+        cancelled = true;
+        if (idleId != null) window.cancelIdleCallback(idleId);
+        if (timeoutId != null) window.clearTimeout(timeoutId);
+      };
+    }
+
+    runFetch();
 
     return () => {
       cancelled = true;

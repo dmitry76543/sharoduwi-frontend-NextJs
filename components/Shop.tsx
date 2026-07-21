@@ -164,8 +164,8 @@ export function Shop({ pageCollection, heading, description, previewLimit }: Sho
         </div>
         )}
         <div className="products" id="products">
-          {catalogLoading ? (
-            <div className="empty">Загружаем каталог…</div>
+          {catalogLoading && !visibleList.length ? (
+            <div className="empty">Шары на подлёте...</div>
           ) : !visibleList.length ? (
             <div className="empty">
               🎈{" "}

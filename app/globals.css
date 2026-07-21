@@ -80,6 +80,13 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   radial-gradient(900px 700px at 50% 110%, var(--sun-soft) 0%, transparent 55%),
   var(--cream);
 }
+.bg--lite{background:var(--cream)}
+.bg--lite::before{display:none}
+@media (max-width:860px){
+  .catalog-page-shell .bg::before{animation:none;opacity:.35}
+  .catalog-page-shell .bg-grain,
+  .catalog-page-shell .bg-balloons{display:none !important}
+}
 .bg::before{content:"";position:absolute;inset:-25%;pointer-events:none;filter:blur(60px);opacity:.55;
   background:
     radial-gradient(38% 38% at 28% 32%, rgba(255,45,149,.22), transparent 70%),
@@ -1054,6 +1061,7 @@ a.col-card{color:inherit}
 }
 /* Планшеты (портрет) */
 @media (max-width:860px){
+  .topbar:not(.topbar--home){display:none}
   .products{grid-template-columns:repeat(2,1fr)}
   .nav{display:none}
   .btn-order{display:none}

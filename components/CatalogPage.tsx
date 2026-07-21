@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback } from "react";
-import Link from "next/link";
 import { AppProvider, useApp } from "@/context/AppContext";
 import { MaybeCityProvider } from "@/context/CityContext";
 import { CityLink } from "@/components/CityLink";
@@ -9,12 +8,8 @@ import {
   useEscapeKey,
   useHeaderScroll,
   useCatalogHashScroll,
-  useScrollProgressFallback,
-  useScrollReveal,
 } from "@/hooks/useSiteEffects";
-import {
-  useConfettiCursor,
-} from "@/hooks/useConfettiCursor";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import type { Product } from "@/lib/data";
 import type { CatalogSource } from "@/lib/client-catalog-cache";
 import { Background } from "@/components/Background";
@@ -26,8 +21,6 @@ import { CartDrawer } from "@/components/CartDrawer";
 import { MobMenu } from "@/components/MobMenu";
 import { Toast } from "@/components/Toast";
 import { FabContacts } from "@/components/FabContacts";
-import { ScrollProgress } from "@/components/ScrollProgress";
-import { ConfettiCursor } from "@/components/ConfettiCursor";
 
 function SiteEffects() {
   const { closeAll, closeMob } = useApp();
@@ -36,23 +29,20 @@ function SiteEffects() {
     closeMob();
   }, [closeAll, closeMob]);
 
-  useScrollReveal();
   useCatalogHashScroll();
   useHeaderScroll();
-  useScrollProgressFallback();
-  useConfettiCursor();
   useEscapeKey(onEscape);
 
   return null;
 }
 
 function CatalogContent() {
+  const isMobile = useMediaQuery("(max-width: 860px)");
+
   return (
-    <>
+    <div className="catalog-page-shell">
       <SiteEffects />
-      <ScrollProgress />
-      <Background />
-      <ConfettiCursor />
+      <Background lite={isMobile} />
       <TopBar />
       <Header />
       <a id="top" />
@@ -74,7 +64,7 @@ function CatalogContent() {
       <MobMenu />
       <Toast />
       <FabContacts />
-    </>
+    </div>
   );
 }
 
