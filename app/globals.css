@@ -386,9 +386,15 @@ a.col-card{color:inherit}
    ============================================================ */
 .shop-controls{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;flex-wrap:wrap;margin-bottom:34px}
 .shop-filters-stack{display:flex;flex-direction:column;gap:12px;flex:1 1 280px;min-width:0}
-.collections--catalog{margin:4px 0 8px;width:100%}
+.collections--catalog{margin:4px 0 8px;width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .collections--catalog .col-card.is-extra{display:flex}
 .col-card--catalog.active{outline:3px solid var(--pink);outline-offset:2px}
+@media (min-width:861px){
+  .collections--catalog{grid-template-columns:repeat(5,1fr);gap:16px}
+  .collections--catalog .col-card{aspect-ratio:4/5;padding:24px;border-radius:var(--r-lg)}
+  .collections--catalog .col-card .col-info h3{font-size:21px}
+  .collections--catalog .col-card .col-info span{display:inline-flex}
+}
 .catalog-page-shell .reveal{opacity:1;transform:none;transition:none}
 .catalog-page-shell .category-page{padding-top:16px;padding-bottom:0}
 .catalog-page-shell #shop.sec{padding-top:28px}
@@ -1068,7 +1074,6 @@ a.col-card{color:inherit}
 @media (max-width:860px){
   .topbar:not(.topbar--home){display:none}
   .catalog-page-shell #shop.sec{padding-top:16px}
-  .collections--catalog{grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:12px}
   .collections--catalog .col-card{aspect-ratio:1/1;padding:10px;border-radius:18px;animation:none}
   .collections--catalog .col-card .col-info h3{font-size:12px;line-height:1.25}
   .collections--catalog .col-card .col-info span{display:none}
@@ -1230,7 +1235,8 @@ a.col-card{color:inherit}
 /* Очень узкие экраны */
 @media (max-width:360px){
   .products{grid-template-columns:1fr;gap:16px}
-  .collections{grid-template-columns:1fr}
+  .collections:not(.collections--catalog){grid-template-columns:1fr}
+  .collections--catalog{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
   .col-card{aspect-ratio:16/10}
   .header .logo{font-size:14px}
   .mob-menu nav a{font-size:20px}
