@@ -3,7 +3,8 @@
 import { CityLink } from "@/components/CityLink";
 import { useMemo } from "react";
 import { useApp } from "@/context/AppContext";
-import { COLLECTIONS, TAGS, getCollectionBySlug } from "@/lib/data";
+import { CatalogCollectionGrid } from "@/components/CatalogCollectionGrid";
+import { TAGS, getCollectionBySlug } from "@/lib/data";
 import { productMatchesSearch, productMatchesTag, type CollectionSlug } from "@/lib/products";
 import { ProductCard } from "@/components/product/ProductCard";
 
@@ -38,6 +39,7 @@ export function Shop({ pageCollection, heading, description, previewLimit }: Sho
     : null;
   const isCategoryPage = Boolean(pageCollection);
   const isPreview = previewLimit != null && !isCategoryPage;
+  const isFullCatalog = !isPreview && !favOnly && !isCategoryPage;
 
   const list = useMemo(() => {
     return products.filter((p) => {
@@ -124,17 +126,9 @@ export function Shop({ pageCollection, heading, description, previewLimit }: Sho
                 </button>
               ))}
             </div>
-            <div className="filters filters-collections" aria-label="Коллекции">
-              {COLLECTIONS.map((collection) => (
-                <CityLink
-                  key={collection.slug}
-                  href={`/categories/${collection.slug}`}
-                  className={`chip${collectionFilter === collection.slug ? " active" : ""}`}
-                >
-                  {collection.name}
-                </CityLink>
-              ))}
-            </div>
+            {isFullCatalog && (
+              <CatalogCollectionGrid activeSlug={collectionFilter} />
+            )}
           </div>
           <div className="search">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">

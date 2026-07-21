@@ -386,7 +386,12 @@ a.col-card{color:inherit}
    ============================================================ */
 .shop-controls{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;flex-wrap:wrap;margin-bottom:34px}
 .shop-filters-stack{display:flex;flex-direction:column;gap:12px;flex:1 1 280px;min-width:0}
-.filters-collections .chip{text-decoration:none;display:inline-flex;align-items:center}
+.collections--catalog{margin:4px 0 8px;width:100%}
+.collections--catalog .col-card.is-extra{display:flex}
+.col-card--catalog.active{outline:3px solid var(--pink);outline-offset:2px}
+.catalog-page-shell .reveal{opacity:1;transform:none;transition:none}
+.catalog-page-shell .category-page{padding-top:16px;padding-bottom:0}
+.catalog-page-shell #shop.sec{padding-top:28px}
 .shop-collection-filter{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:-12px 0 22px;font-size:14px;font-weight:700;color:var(--ink-soft)}
 .shop-collection-filter .chip{margin:0;padding:8px 14px;font-size:13px;text-decoration:none;display:inline-flex;align-items:center}
 .shop-fav-clear{border-color:var(--pink);color:var(--pink)}
@@ -1062,6 +1067,13 @@ a.col-card{color:inherit}
 /* Планшеты (портрет) */
 @media (max-width:860px){
   .topbar:not(.topbar--home){display:none}
+  .catalog-page-shell #shop.sec{padding-top:16px}
+  .collections--catalog{grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:12px}
+  .collections--catalog .col-card{aspect-ratio:1/1;padding:10px;border-radius:18px;animation:none}
+  .collections--catalog .col-card .col-info h3{font-size:12px;line-height:1.25}
+  .collections--catalog .col-card .col-info span{display:none}
+  .collections--catalog .col-card .col-overlay{
+    background:linear-gradient(to top, rgba(40,16,42,.72) 0%, transparent 62%)}
   .products{grid-template-columns:repeat(2,1fr)}
   .nav{display:none}
   .btn-order{display:none}
