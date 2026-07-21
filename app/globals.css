@@ -223,6 +223,8 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   font-size:15px;font-weight:600;color:var(--ink);padding:0;
   transition:width .32s var(--ease),padding .32s var(--ease),flex-basis .32s var(--ease)}
 .head-search input::placeholder{color:var(--ink-2)}
+.head-search input[type="search"]::-webkit-search-cancel-button{display:none}
+.head-search input[type="search"]::-webkit-search-decoration{display:none}
 .head-search .hs-clear{display:none;width:28px;height:28px;margin-right:8px;border-radius:50%;flex:none;
   border:none;background:var(--soft);color:var(--ink-2);place-items:center;cursor:pointer;padding:0}
 .head-search .hs-clear svg{width:14px;height:14px}

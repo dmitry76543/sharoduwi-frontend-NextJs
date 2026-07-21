@@ -46,7 +46,7 @@ export function Header() {
 
   const pathname = usePathname();
   const router = useRouter();
-  const searchRef = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLFormElement>(null);
   const [searchOpen, setSearchOpen] = useState(false);
   const [resultsOpen, setResultsOpen] = useState(false);
 
@@ -88,9 +88,16 @@ export function Header() {
       ?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, []);
 
+  const readSearchInputValue = useCallback(() => {
+    const input = document.getElementById(
+      "headSearchInput"
+    ) as HTMLInputElement | null;
+    return input?.value ?? searchQuery;
+  }, [searchQuery]);
+
   const goToSearchResults = useCallback(
-    (query: string) => {
-      const trimmed = query.trim();
+    (query?: string) => {
+      const trimmed = (query ?? readSearchInputValue()).trim();
       if (!trimmed) {
         closeSearchUi();
         if (isSearchPage) {
@@ -105,15 +112,13 @@ export function Header() {
       markSearchFocusPending();
 
       const nextUrl = buildSearchPageUrl(searchPath, trimmed);
-      if (isSearchPage) {
-        router.replace(nextUrl, { scroll: false });
-      } else {
-        router.push(nextUrl);
-      }
+      // push надёжнее обновляет useSearchParams при смене только ?q=
+      router.push(nextUrl, { scroll: false });
     },
     [
       closeSearchUi,
       isSearchPage,
+      readSearchInputValue,
       router,
       searchPath,
       setSearchQuery,
@@ -201,10 +206,15 @@ export function Header() {
             </svg>
             <span>+7 926 708-63-74</span>
           </a>
-          <div
+          <form
             className={`head-search${searchOpen ? " open" : ""}`}
             id="headSearch"
             ref={searchRef}
+            role="search"
+            onSubmit={(e) => {
+              e.preventDefault();
+              goToSearchResults(readSearchInputValue());
+            }}
           >
             <button
               className="hs-btn"
@@ -214,8 +224,8 @@ export function Header() {
               onClick={(e) => {
                 e.stopPropagation();
                 if (searchOpen) {
-                  if (searchQuery.trim()) {
-                    goToSearchResults(searchQuery);
+                  if (searchQuery.trim() || readSearchInputValue().trim()) {
+                    goToSearchResults();
                   } else {
                     closeSearchUi();
                   }
@@ -230,11 +240,13 @@ export function Header() {
               </svg>
             </button>
             <input
-              type="text"
+              type="search"
+              name="q"
               id="headSearchInput"
               placeholder="Название или артикул…"
               aria-label="Поиск по каталогу"
               autoComplete="off"
+              enterKeyHint="search"
               value={searchQuery}
               onFocus={() => {
                 setSearchOpen(true);
@@ -242,10 +254,6 @@ export function Header() {
               }}
               onChange={(e) => handleSearchInput(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  goToSearchResults(searchQuery);
-                }
                 if (e.key === "Escape") {
                   if (resultsOpen) {
                     setResultsOpen(false);
@@ -271,7 +279,7 @@ export function Header() {
                 </svg>
               </button>
             )}
-          </div>
+          </form>
           <button
             className={`icon-btn fav-btn${favOnly ? " active" : ""}`}
             id="favBtn"

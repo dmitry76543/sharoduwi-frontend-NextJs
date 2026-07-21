@@ -22,6 +22,7 @@ import { MobMenu } from "@/components/MobMenu";
 import { Toast } from "@/components/Toast";
 import { FabContacts } from "@/components/FabContacts";
 import { ProductCard } from "@/components/product/ProductCard";
+import { formatVariantCount } from "@/lib/plural.ru";
 
 function SiteEffects() {
   const { closeAll, closeMob } = useApp();
@@ -39,12 +40,24 @@ function SiteEffects() {
 function SearchContent() {
   const isMobile = useMediaQuery("(max-width: 860px)");
   const searchParams = useSearchParams();
-  const q = (searchParams.get("q") ?? "").trim();
-  const { products, catalogLoading, setSearchQuery } = useApp();
+  const urlQ = (searchParams.get("q") ?? "").trim();
+  const { products, catalogLoading, searchQuery, setSearchQuery } = useApp();
+
+  // useSearchParams иногда отстаёт от window.location при первом client-navigation
+  const q = useMemo(() => {
+    if (urlQ) return urlQ;
+    if (typeof window !== "undefined") {
+      const fromLocation = (
+        new URLSearchParams(window.location.search).get("q") ?? ""
+      ).trim();
+      if (fromLocation) return fromLocation;
+    }
+    return searchQuery.trim();
+  }, [urlQ, searchQuery]);
 
   useEffect(() => {
-    setSearchQuery(q);
-  }, [q, setSearchQuery]);
+    if (urlQ) setSearchQuery(urlQ);
+  }, [urlQ, setSearchQuery]);
 
   const list = useMemo(() => {
     if (!q) return [];
@@ -78,7 +91,7 @@ function SearchContent() {
             <h2>
               {q
                 ? list.length
-                  ? `«${q}» · ${list.length}`
+                  ? `«${q}» · ${formatVariantCount(list.length)}`
                   : `«${q}»`
                 : "Поиск по каталогу"}
             </h2>
