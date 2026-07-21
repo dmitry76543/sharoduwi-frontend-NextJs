@@ -21,6 +21,7 @@ const REGIONAL_ROOT_REDIRECTS: { source: string; destination: string }[] = [
   { source: "/reviews", destination: "/zhukovskiy/reviews" },
   { source: "/delivery", destination: "/zhukovskiy/delivery" },
   { source: "/checkout", destination: "/zhukovskiy/checkout" },
+  { source: "/search", destination: "/zhukovskiy/search" },
   { source: "/products/:slug", destination: "/zhukovskiy/products/:slug" },
   { source: "/categories/:slug", destination: "/zhukovskiy/categories/:slug" },
 ];

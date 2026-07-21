@@ -25,6 +25,7 @@ export const NON_INDEXABLE_ROOT_REGIONAL_PATHS = [
   "/reviews",
   "/delivery",
   "/checkout",
+  "/search",
   "/products",
   "/categories",
 ] as const;

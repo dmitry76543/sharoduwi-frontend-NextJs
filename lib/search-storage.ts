@@ -30,7 +30,7 @@ export function readInitialSearchQuery(): string {
   return readStoredSearchQuery();
 }
 
-/** После перехода на каталог вернуть фокус в поле поиска в шапке. */
+/** После перехода на страницу поиска вернуть фокус в поле поиска в шапке. */
 export function markSearchFocusPending(): void {
   if (typeof window === "undefined") return;
   try {

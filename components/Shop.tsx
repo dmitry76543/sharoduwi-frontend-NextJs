@@ -5,7 +5,7 @@ import { useMemo } from "react";
 import { useApp } from "@/context/AppContext";
 import { CatalogCollectionGrid } from "@/components/CatalogCollectionGrid";
 import { TAGS, getCollectionBySlug } from "@/lib/data";
-import { productMatchesSearch, productMatchesTag, type CollectionSlug } from "@/lib/products";
+import { productMatchesTag, type CollectionSlug } from "@/lib/products";
 import { ProductCard } from "@/components/product/ProductCard";
 
 interface ShopProps {
@@ -23,8 +23,6 @@ export function Shop({ pageCollection, heading, description, previewLimit }: Sho
     setActiveTag,
     activeCollection,
     setActiveCollection,
-    searchQuery,
-    setSearchQuery,
     favOnly,
     favCount,
     clearFavorites,
@@ -46,11 +44,10 @@ export function Shop({ pageCollection, heading, description, previewLimit }: Sho
       const okTag = productMatchesTag(p, activeTag);
       const okCollection =
         !collectionFilter || p.collectionSlug === collectionFilter;
-      const okQ = productMatchesSearch(p, searchQuery);
       const okFav = !favOnly || isFav(p.id);
-      return okTag && okCollection && okQ && okFav;
+      return okTag && okCollection && okFav;
     });
-  }, [activeTag, collectionFilter, searchQuery, favOnly, isFav, products]);
+  }, [activeTag, collectionFilter, favOnly, isFav, products]);
 
   const visibleList = isPreview && !favOnly ? list.slice(0, previewLimit) : list;
   const hasMore = isPreview && !favOnly && list.length > previewLimit;
@@ -128,31 +125,6 @@ export function Shop({ pageCollection, heading, description, previewLimit }: Sho
             </div>
             {isFullCatalog && (
               <CatalogCollectionGrid activeSlug={collectionFilter} />
-            )}
-          </div>
-          <div className="search">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
-              <circle cx="11" cy="11" r="7" />
-              <path d="M21 21l-4-4" />
-            </svg>
-            <input
-              type="text"
-              id="search"
-              placeholder="Название или артикул…"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            {searchQuery.length > 0 && (
-              <button
-                type="button"
-                className="search-clear"
-                aria-label="Очистить поиск"
-                onClick={() => setSearchQuery("")}
-              >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-                  <path d="M18 6L6 18M6 6l12 12" />
-                </svg>
-              </button>
             )}
           </div>
         </div>

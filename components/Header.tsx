@@ -7,18 +7,18 @@ import { useCity } from "@/context/CityContext";
 import { CitySwitcher } from "@/components/CitySwitcher";
 import { CityLink } from "@/components/CityLink";
 import { HowToOrderLink } from "@/components/HowToOrderLink";
+import { HeaderSearchModal } from "@/components/HeaderSearchModal";
 import {
   consumeSearchFocusPending,
   markSearchFocusPending,
 } from "@/lib/search-storage";
 
 const LOGO = ["Ш", "А", "Р", "О", "Д", "У", "В", "Ы"];
-const SEARCH_NAVIGATE_DEBOUNCE_MS = 500;
 
-function buildCatalogSearchUrl(catalogPath: string, query: string): string {
+function buildSearchPageUrl(searchPath: string, query: string): string {
   const trimmed = query.trim();
-  if (!trimmed) return catalogPath;
-  return `${catalogPath}?q=${encodeURIComponent(trimmed)}#shop`;
+  if (!trimmed) return searchPath;
+  return `${searchPath}?q=${encodeURIComponent(trimmed)}`;
 }
 
 function focusHeaderSearchInput() {
@@ -47,23 +47,19 @@ export function Header() {
   const pathname = usePathname();
   const router = useRouter();
   const searchRef = useRef<HTMLDivElement>(null);
-  const searchStartedRef = useRef(false);
-  const navigateTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [resultsOpen, setResultsOpen] = useState(false);
 
   const catalogPath = href("/catalog");
+  const searchPath = href("/search");
   const isCatalogPage = pathname === catalogPath;
+  const isSearchPage =
+    pathname === searchPath || pathname.endsWith("/search");
 
-  const clearNavigateTimer = useCallback(() => {
-    if (!navigateTimerRef.current) return;
-    clearTimeout(navigateTimerRef.current);
-    navigateTimerRef.current = null;
+  const closeSearchUi = useCallback(() => {
+    setSearchOpen(false);
+    setResultsOpen(false);
   }, []);
-
-  useEffect(() => {
-    searchStartedRef.current = false;
-    clearNavigateTimer();
-  }, [pathname, clearNavigateTimer]);
 
   useEffect(() => {
     if (searchOpen) {
@@ -72,7 +68,7 @@ export function Header() {
   }, [searchOpen]);
 
   useEffect(() => {
-    if (!isCatalogPage || !consumeSearchFocusPending()) return;
+    if (!isSearchPage || !consumeSearchFocusPending()) return;
 
     setSearchOpen(true);
     const focus = () => focusHeaderSearchInput();
@@ -84,9 +80,7 @@ export function Header() {
       window.clearTimeout(timer);
       window.clearTimeout(retry);
     };
-  }, [isCatalogPage, pathname]);
-
-  useEffect(() => clearNavigateTimer, [clearNavigateTimer]);
+  }, [isSearchPage, pathname]);
 
   const scrollToShop = useCallback(() => {
     document
@@ -94,46 +88,35 @@ export function Header() {
       ?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, []);
 
-  const navigateToCatalogSearch = useCallback(
-    (query: string) => {
-      const trimmed = query.trim();
-      if (!trimmed) return;
-
-      markSearchFocusPending();
-      router.push(buildCatalogSearchUrl(catalogPath, trimmed));
-    },
-    [catalogPath, router]
-  );
-
   const goToSearchResults = useCallback(
     (query: string) => {
       const trimmed = query.trim();
-      clearNavigateTimer();
-
       if (!trimmed) {
-        if (isCatalogPage) {
-          router.replace(catalogPath, { scroll: false });
+        closeSearchUi();
+        if (isSearchPage) {
+          router.replace(searchPath, { scroll: false });
         }
         return;
       }
 
-      if (!isCatalogPage) {
-        navigateToCatalogSearch(trimmed);
-        return;
-      }
+      setSearchQuery(trimmed);
+      setResultsOpen(false);
+      setSearchOpen(false);
+      markSearchFocusPending();
 
-      router.replace(buildCatalogSearchUrl(catalogPath, trimmed), {
-        scroll: false,
-      });
-      scrollToShop();
+      const nextUrl = buildSearchPageUrl(searchPath, trimmed);
+      if (isSearchPage) {
+        router.replace(nextUrl, { scroll: false });
+      } else {
+        router.push(nextUrl);
+      }
     },
     [
-      catalogPath,
-      clearNavigateTimer,
-      isCatalogPage,
-      navigateToCatalogSearch,
+      closeSearchUi,
+      isSearchPage,
       router,
-      scrollToShop,
+      searchPath,
+      setSearchQuery,
     ]
   );
 
@@ -141,55 +124,36 @@ export function Header() {
     (value: string) => {
       setSearchQuery(value);
       const trimmed = value.trim();
-
-      clearNavigateTimer();
-
-      if (!trimmed) {
-        searchStartedRef.current = false;
-        if (isCatalogPage) {
-          router.replace(catalogPath, { scroll: false });
-        }
-        return;
-      }
-
-      if (isCatalogPage) {
-        router.replace(buildCatalogSearchUrl(catalogPath, trimmed), {
-          scroll: false,
-        });
-        if (!searchStartedRef.current) {
-          searchStartedRef.current = true;
-          scrollToShop();
-        }
-        return;
-      }
-
-      navigateTimerRef.current = setTimeout(() => {
-        navigateTimerRef.current = null;
-        navigateToCatalogSearch(trimmed);
-      }, SEARCH_NAVIGATE_DEBOUNCE_MS);
+      setResultsOpen(Boolean(trimmed));
+      if (!searchOpen) setSearchOpen(true);
     },
-    [
-      catalogPath,
-      clearNavigateTimer,
-      isCatalogPage,
-      navigateToCatalogSearch,
-      router,
-      scrollToShop,
-      setSearchQuery,
-    ]
+    [searchOpen, setSearchQuery]
   );
 
   useEffect(() => {
     const onDocClick = (e: MouseEvent) => {
       const box = searchRef.current;
-      if (searchOpen && box && !box.contains(e.target as Node)) {
-        setSearchOpen(false);
-      }
+      const modal = (e.target as Element | null)?.closest?.(
+        ".head-search-modal, .head-search-modal-overlay"
+      );
+      const target = e.target as Node;
+      if (!searchOpen && !resultsOpen) return;
+      if (box?.contains(target) || modal) return;
+      closeSearchUi();
     };
 
     document.addEventListener("click", onDocClick);
     return () => document.removeEventListener("click", onDocClick);
-  }, [searchOpen]);
+  }, [closeSearchUi, resultsOpen, searchOpen]);
+
+  useEffect(() => {
+    if (!resultsOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [resultsOpen]);
 
   const onFavClick = () => {
     const next = !favOnly;
@@ -239,7 +203,7 @@ export function Header() {
             <button
               className="hs-btn"
               id="hsBtn"
-              aria-label="Поиск по каталогу"
+              aria-label={searchQuery.trim() ? "Перейти к результатам поиска" : "Поиск по каталогу"}
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
@@ -247,7 +211,7 @@ export function Header() {
                   if (searchQuery.trim()) {
                     goToSearchResults(searchQuery);
                   } else {
-                    setSearchOpen(false);
+                    closeSearchUi();
                   }
                 } else {
                   setSearchOpen(true);
@@ -266,16 +230,23 @@ export function Header() {
               aria-label="Поиск по каталогу"
               autoComplete="off"
               value={searchQuery}
-              onFocus={() => setSearchOpen(true)}
+              onFocus={() => {
+                setSearchOpen(true);
+                if (searchQuery.trim()) setResultsOpen(true);
+              }}
               onChange={(e) => handleSearchInput(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
+                  e.preventDefault();
                   goToSearchResults(searchQuery);
                 }
                 if (e.key === "Escape") {
-                  clearNavigateTimer();
+                  if (resultsOpen) {
+                    setResultsOpen(false);
+                    return;
+                  }
                   setSearchQuery("");
-                  setSearchOpen(false);
+                  closeSearchUi();
                 }
               }}
             />
@@ -311,6 +282,13 @@ export function Header() {
           </button>
         </div>
       </div>
+      <HeaderSearchModal
+        query={searchQuery}
+        open={resultsOpen}
+        onClose={() => setResultsOpen(false)}
+        onGoToResults={goToSearchResults}
+        onSelectProduct={closeSearchUi}
+      />
     </header>
   );
 }

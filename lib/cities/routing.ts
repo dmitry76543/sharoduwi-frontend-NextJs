@@ -25,6 +25,7 @@ const REGIONAL_EXACT_PATHS = new Set([
   "/reviews",
   "/delivery",
   "/checkout",
+  "/search",
 ]);
 
 const REGIONAL_PREFIXES = ["/products/", "/categories/"] as const;
@@ -119,6 +120,7 @@ const APP_ROOT_SEGMENTS = new Set([
   "delivery",
   "products",
   "reviews",
+  "search",
   "staff-alert",
 ]);
 
