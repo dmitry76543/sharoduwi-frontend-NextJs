@@ -155,17 +155,16 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   width:100%;max-width:100%;box-sizing:border-box;
   transition:max-height .32s var(--ease),opacity .24s var(--ease),padding .32s var(--ease),transform .32s var(--ease);
   max-height:120px}
-.topbar-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;width:100%}
+.topbar-marquee{display:flex;flex-wrap:wrap;justify-content:center;gap:14px;width:100%}
+.topbar-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.topbar-marquee > .topbar-row[aria-hidden="true"]{display:none}
 .tb-badge{display:inline-flex;align-items:center;gap:8px;font-weight:800;font-size:13.5px;
   padding:6px 14px;border-radius:999px;background:rgba(255,255,255,.16);
   border:1px solid rgba(255,255,255,.28);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);white-space:nowrap;
   animation:bob 3.6s var(--ease) infinite}
 .tb-badge svg{width:16px;height:16px;flex:none}
-.tb-badge:nth-child(2){animation-delay:.3s}
-.tb-badge:nth-child(3){animation-delay:.6s}
-.tb-badge:nth-child(4){animation-delay:.9s}
-.tb-badge:nth-child(5){animation-delay:1.2s}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@keyframes topbarMarquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
 /* ============================================================
    HEADER
@@ -1229,10 +1228,18 @@ a.col-card{color:inherit}
   .fab-main .flabel svg.fab-chat-icon{width:28px;height:28px}
   .fab-main .fic svg{width:24px;height:24px}
   .footer-grid{grid-template-columns:1fr}
-  .topbar{padding-left:env(safe-area-inset-left,0);padding-right:env(safe-area-inset-right,0)}
-  .topbar-row{flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;padding:0 16px;
-    scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .topbar{padding-left:0;padding-right:0}
+  .topbar-marquee{
+    display:flex;flex-wrap:nowrap;justify-content:flex-start;gap:0;width:max-content;
+    animation:topbarMarquee 48s linear infinite;will-change:transform}
+  .topbar-marquee > .topbar-row[aria-hidden="true"]{display:flex}
+  .topbar-row{flex-wrap:nowrap;justify-content:flex-start;width:max-content;padding:0 0 0 16px;gap:14px;
+    flex:none;overflow:visible}
   .topbar-row::-webkit-scrollbar{display:none}
+  @media (prefers-reduced-motion:reduce){
+    .topbar-marquee{animation:none;width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+    .topbar-marquee > .topbar-row[aria-hidden="true"]{display:none}
+  }
   .hero{overflow-x:clip;padding:0 0 54px}
   .hero-grid{gap:10px}
   .hero-copy{min-width:0;width:100%;margin-top:-6px}

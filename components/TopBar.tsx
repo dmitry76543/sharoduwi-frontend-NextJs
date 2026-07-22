@@ -33,18 +33,37 @@ const BADGES = [
   },
 ];
 
+function BadgeRow({
+  badges,
+  ariaHidden = false,
+}: {
+  badges: typeof BADGES;
+  ariaHidden?: boolean;
+}) {
+  return (
+    <div className="topbar-row" aria-hidden={ariaHidden || undefined}>
+      {badges.map((b, index) => (
+        <span
+          className="tb-badge"
+          key={`${ariaHidden ? "dup-" : ""}${b.text}`}
+          style={{ animationDelay: `${index * 0.3}s` }}
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+            {b.icon}
+          </svg>
+          {b.text}
+        </span>
+      ))}
+    </div>
+  );
+}
+
 export function TopBar({ home = false }: { home?: boolean }) {
   return (
     <div className={`topbar${home ? " topbar--home" : ""}`}>
-      <div className="topbar-row">
-        {BADGES.map((b) => (
-          <span className="tb-badge" key={b.text}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-              {b.icon}
-            </svg>
-            {b.text}
-          </span>
-        ))}
+      <div className="topbar-marquee">
+        <BadgeRow badges={BADGES} />
+        <BadgeRow badges={BADGES} ariaHidden />
       </div>
     </div>
   );

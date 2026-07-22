@@ -5,25 +5,23 @@ import { usePathname } from "next/navigation";
 import type { MouseEvent, ReactNode } from "react";
 
 import { useCity } from "@/context/CityContext";
+import {
+  queueScrollAfterMobMenu,
+  scrollToSiteSection,
+} from "@/lib/mob-menu-scroll";
 
-export function scrollToSiteSection(sectionId: string, behavior: ScrollBehavior = "smooth") {
-  document.getElementById(sectionId)?.scrollIntoView({ behavior, block: "start" });
-}
+export { scrollToSiteSection };
 
-/**
- * После закрытия бургер-меню body снимается с position:fixed и scroll
- * возвращается. Прокрутку к якорю нужно делать после этого cleanup.
- */
+/** @deprecated Используйте queueScrollAfterMobMenu + closeMob; скролл делает MobMenu. */
 export function scrollToSiteSectionAfterMenuClose(
   sectionId: string,
   onNavigate?: () => void
 ) {
+  queueScrollAfterMobMenu(sectionId);
   onNavigate?.();
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      scrollToSiteSection(sectionId);
-    });
-  });
+  if (!document.body.classList.contains("mob-menu-open")) {
+    scrollToSiteSection(sectionId);
+  }
 }
 
 interface SiteSectionLinkProps {
@@ -34,6 +32,18 @@ interface SiteSectionLinkProps {
   children: ReactNode;
   className?: string;
   onNavigate?: () => void;
+}
+
+function navigateToSection(
+  sectionId: string,
+  onNavigate?: () => void
+) {
+  queueScrollAfterMobMenu(sectionId);
+  const menuWasOpen = document.body.classList.contains("mob-menu-open");
+  onNavigate?.();
+  if (!menuWasOpen) {
+    scrollToSiteSection(sectionId);
+  }
 }
 
 export function SiteSectionLink({
@@ -48,17 +58,18 @@ export function SiteSectionLink({
   const { href: cityHref, isHome } = useCity();
   const homeHref = cityHref("/");
   const target = href ?? (scrollOnAnyPage ? `#${sectionId}` : `${homeHref}#${sectionId}`);
+  const onHome = isHome || pathname === "/" || pathname === homeHref;
 
   const onClick = (e: MouseEvent<HTMLAnchorElement>) => {
     if (scrollOnAnyPage && document.getElementById(sectionId)) {
       e.preventDefault();
-      scrollToSiteSectionAfterMenuClose(sectionId, onNavigate);
+      navigateToSection(sectionId, onNavigate);
       return;
     }
 
-    if (isHome || pathname === homeHref) {
+    if (onHome) {
       e.preventDefault();
-      scrollToSiteSectionAfterMenuClose(sectionId, onNavigate);
+      navigateToSection(sectionId, onNavigate);
       return;
     }
 

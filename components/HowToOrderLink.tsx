@@ -5,18 +5,16 @@ import { usePathname } from "next/navigation";
 import type { MouseEvent, ReactNode } from "react";
 
 import {
-  scrollToSiteSectionAfterMenuClose,
-} from "@/components/SiteSectionLink";
+  queueScrollAfterMobMenu,
+  scrollToSiteSection,
+} from "@/lib/mob-menu-scroll";
 import { useCity } from "@/context/CityContext";
 
 export const HOW_SECTION_ID = "how";
 export const HOW_SECTION_HREF = "/#how";
 
 export function scrollToHowSection(behavior: ScrollBehavior = "smooth") {
-  document.getElementById(HOW_SECTION_ID)?.scrollIntoView({
-    behavior,
-    block: "start",
-  });
+  scrollToSiteSection(HOW_SECTION_ID, behavior);
 }
 
 interface HowToOrderLinkProps {
@@ -33,7 +31,12 @@ export function HowToOrderLink({ children, className, onNavigate }: HowToOrderLi
   const onClick = (e: MouseEvent<HTMLAnchorElement>) => {
     if (isHome || pathname === "/" || pathname === homeHref) {
       e.preventDefault();
-      scrollToSiteSectionAfterMenuClose(HOW_SECTION_ID, onNavigate);
+      queueScrollAfterMobMenu(HOW_SECTION_ID);
+      const menuWasOpen = document.body.classList.contains("mob-menu-open");
+      onNavigate?.();
+      if (!menuWasOpen) {
+        scrollToSiteSection(HOW_SECTION_ID);
+      }
       return;
     }
 

@@ -6,6 +6,10 @@ import { useApp } from "@/context/AppContext";
 import { CityLink } from "@/components/CityLink";
 import { HowToOrderLink } from "@/components/HowToOrderLink";
 import { SiteSectionLink } from "@/components/SiteSectionLink";
+import {
+  scrollToSiteSection,
+  takeQueuedScrollAfterMobMenu,
+} from "@/lib/mob-menu-scroll";
 
 const LOGO = ["Ш", "А", "Р", "О", "Д", "У", "В", "Ы"];
 
@@ -29,6 +33,7 @@ export function MobMenu() {
     body.style.width = "100%";
     body.style.touchAction = "none";
     body.classList.add("mob-menu-open");
+
     return () => {
       body.style.overflow = prev.overflow;
       body.style.position = prev.position;
@@ -36,6 +41,22 @@ export function MobMenu() {
       body.style.width = prev.width;
       body.style.touchAction = prev.touchAction;
       body.classList.remove("mob-menu-open");
+
+      const pendingSection = takeQueuedScrollAfterMobMenu();
+      if (pendingSection) {
+        // Сначала вернуть документ в нормальный scroll-контекст,
+        // затем прокрутить к секции (не к старому scrollY).
+        window.scrollTo(0, scrollY);
+        requestAnimationFrame(() => {
+          scrollToSiteSection(pendingSection, "smooth");
+          // Повтор на медленных мобилках / после layout
+          window.setTimeout(() => {
+            scrollToSiteSection(pendingSection, "smooth");
+          }, 80);
+        });
+        return;
+      }
+
       window.scrollTo(0, scrollY);
     };
   }, [mobOpen]);
