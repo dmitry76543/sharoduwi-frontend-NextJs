@@ -1,11 +1,11 @@
 "use client";
 
 import { CityLink } from "@/components/CityLink";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { useApp } from "@/context/AppContext";
 import { CatalogCollectionGrid } from "@/components/CatalogCollectionGrid";
 import { TAGS, getCollectionBySlug } from "@/lib/data";
-import { productMatchesTag, type CollectionSlug } from "@/lib/products";
+import { productMatchesTag, type CollectionSlug, type TagFilter } from "@/lib/products";
 import { ProductCard } from "@/components/product/ProductCard";
 
 interface ShopProps {
@@ -51,6 +51,23 @@ export function Shop({ pageCollection, heading, description, previewLimit }: Sho
 
   const visibleList = isPreview && !favOnly ? list.slice(0, previewLimit) : list;
   const hasMore = isPreview && !favOnly && list.length > previewLimit;
+
+  const scrollToProducts = useCallback(() => {
+    document.getElementById("products")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }, []);
+
+  const handleTagClick = useCallback(
+    (tag: TagFilter) => {
+      setActiveTag(tag);
+      if (isFullCatalog) {
+        requestAnimationFrame(scrollToProducts);
+      }
+    },
+    [isFullCatalog, scrollToProducts, setActiveTag]
+  );
 
   return (
     <section className="sec" id="shop">
@@ -117,7 +134,7 @@ export function Shop({ pageCollection, heading, description, previewLimit }: Sho
                   key={tag}
                   className={`chip${activeTag === tag ? " active" : ""}`}
                   type="button"
-                  onClick={() => setActiveTag(tag)}
+                  onClick={() => handleTagClick(tag)}
                 >
                   {tag}
                 </button>

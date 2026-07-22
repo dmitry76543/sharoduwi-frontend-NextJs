@@ -431,6 +431,7 @@ a.col-card{color:inherit}
 .catalog-page-shell .reveal{opacity:1;transform:none;transition:none}
 .catalog-page-shell .category-page{padding-top:16px;padding-bottom:0}
 .catalog-page-shell #shop.sec{padding-top:28px}
+.catalog-page-shell #products{scroll-margin-top:96px}
 .cities-page-shell .reveal{opacity:1;transform:none;transition:none}
 .collection-page-shell .reveal{opacity:1;transform:none;transition:none}
 .collection-page-shell .category-page{padding-top:16px;padding-bottom:0}
