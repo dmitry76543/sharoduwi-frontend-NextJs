@@ -89,11 +89,20 @@ function SearchContent() {
               <span className="dot" /> Поиск
             </div>
             <h2>
-              {q
-                ? list.length
-                  ? `«${q}» · ${formatVariantCount(list.length)}`
-                  : `«${q}»`
-                : "Поиск по каталогу"}
+              {q ? (
+                list.length ? (
+                  <>
+                    <span className="search-query-line">«{q}»</span>
+                    <span className="search-count-line">
+                      · {formatVariantCount(list.length)}
+                    </span>
+                  </>
+                ) : (
+                  `«${q}»`
+                )
+              ) : (
+                "Поиск по каталогу"
+              )}
             </h2>
             <p>
               {q

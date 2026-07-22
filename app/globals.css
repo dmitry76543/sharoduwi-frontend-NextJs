@@ -429,6 +429,9 @@ a.col-card{color:inherit}
 }
 .catalog-page-shell .reveal{opacity:1;transform:none;transition:none}
 .catalog-page-shell .category-page{padding-top:16px;padding-bottom:0}
+.search-page-shell .search-query-line,
+.search-page-shell .search-count-line{display:block}
+.search-page-shell .search-count-line{margin-top:0.12em}
 .catalog-page-shell #shop.sec{padding-top:28px}
 .catalog-page-shell #products{scroll-margin-top:96px}
 .cities-page-shell .reveal{opacity:1;transform:none;transition:none}
