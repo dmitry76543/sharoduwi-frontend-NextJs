@@ -41,13 +41,13 @@ export function Shop({ pageCollection, heading, description, previewLimit }: Sho
 
   const list = useMemo(() => {
     return products.filter((p) => {
-      const okTag = productMatchesTag(p, activeTag);
+      const okTag = isFullCatalog ? productMatchesTag(p, activeTag) : true;
       const okCollection =
         !collectionFilter || p.collectionSlug === collectionFilter;
       const okFav = !favOnly || isFav(p.id);
       return okTag && okCollection && okFav;
     });
-  }, [activeTag, collectionFilter, favOnly, isFav, products]);
+  }, [activeTag, collectionFilter, favOnly, isFav, isFullCatalog, products]);
 
   const visibleList = isPreview && !favOnly ? list.slice(0, previewLimit) : list;
   const hasMore = isPreview && !favOnly && list.length > previewLimit;
@@ -108,7 +108,7 @@ export function Shop({ pageCollection, heading, description, previewLimit }: Sho
             </CityLink>
           </div>
         )}
-        {!isPreview && !favOnly && (
+        {isFullCatalog && (
         <div className="shop-controls reveal">
           <div className="shop-filters-stack">
             <div className="filters" id="filters">
@@ -123,9 +123,7 @@ export function Shop({ pageCollection, heading, description, previewLimit }: Sho
                 </button>
               ))}
             </div>
-            {isFullCatalog && (
-              <CatalogCollectionGrid activeSlug={collectionFilter} />
-            )}
+            <CatalogCollectionGrid activeSlug={collectionFilter} />
           </div>
         </div>
         )}
