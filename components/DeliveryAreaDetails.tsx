@@ -42,8 +42,16 @@ export function DeliveryAreaDetails({ details }: { details: DeliveryAreaDetailsD
               <table className="delivery-table">
                 <thead>
                   <tr>
-                    <th scope="col">Населённый пункт</th>
-                    <th scope="col">Условие заказа</th>
+                    <th scope="col">
+                      Населённый
+                      <br />
+                      пункт
+                    </th>
+                    <th scope="col">
+                      Условие
+                      <br />
+                      заказа
+                    </th>
                     <th scope="col">Доставка</th>
                   </tr>
                 </thead>

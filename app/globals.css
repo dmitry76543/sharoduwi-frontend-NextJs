@@ -509,10 +509,19 @@ a.col-card{color:inherit}
 .delivery-table{width:100%;border-collapse:collapse;min-width:520px}
 .delivery-table th,.delivery-table td{padding:16px 18px;text-align:left;border-bottom:1px solid var(--line);
   font-size:15px;line-height:1.5;color:var(--ink-2);font-weight:500}
-.delivery-table thead th{background:var(--pink-soft);color:var(--pink-deep);font-weight:800;font-size:14px}
+.delivery-table thead th{background:var(--pink-soft);color:var(--pink-deep);font-weight:800;font-size:14px;
+  line-height:1.25}
 .delivery-table tbody tr:last-child td{border-bottom:none}
 .delivery-table td strong{font-family:'Unbounded',var(--font-unbounded),sans-serif;font-size:18px;
   font-weight:800;color:var(--pink-deep)}
+@media (max-width:720px){
+  .delivery-table-wrap{overflow-x:hidden}
+  .delivery-table{min-width:0;table-layout:fixed}
+  .delivery-table th,.delivery-table td{padding:14px 10px;overflow-wrap:anywhere;word-break:normal}
+  .delivery-table thead th:nth-child(1),.delivery-table td:nth-child(1){width:34%}
+  .delivery-table thead th:nth-child(2),.delivery-table td:nth-child(2){width:38%}
+  .delivery-table thead th:nth-child(3),.delivery-table td:nth-child(3){width:28%}
+}
 .delivery-note{font-size:15px;line-height:1.6;color:var(--ink-2);font-weight:500;margin:0;max-width:72ch}
 .delivery-note-block{display:grid;gap:6px;margin:0}
 .delivery-note-phone{white-space:nowrap}
