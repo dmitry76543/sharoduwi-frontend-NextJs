@@ -251,7 +251,7 @@ function CheckoutContent() {
           </nav>
 
           {!rows.length ? (
-            <div className="checkout-empty reveal">
+            <div className="checkout-empty reveal in">
               <div className="e-bln">🛒</div>
               <h1>Корзина пуста</h1>
               <p>Добавьте товары из каталога, чтобы оформить заказ.</p>
