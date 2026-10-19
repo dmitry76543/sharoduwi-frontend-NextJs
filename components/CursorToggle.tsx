@@ -10,7 +10,7 @@ import {
 
 export function CursorToggle() {
   const [mounted, setMounted] = useState(false);
-  const [enabled, setEnabled] = useState(true);
+  const [enabled, setEnabled] = useState(false);
   const [show, setShow] = useState(false);
 
   const sync = useCallback(() => {
